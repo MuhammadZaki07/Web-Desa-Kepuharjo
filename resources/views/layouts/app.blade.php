@@ -18,6 +18,8 @@
         <x-header-middle />
         <x-header-nav />
     </div>
+    <x-hero-banner />
+    <x-latest-information :blogs="$blogs"/>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
