@@ -51,7 +51,7 @@ Route::get('/', function () {
         ],
     ];
 
-    return view('layouts.app', [
+    return view('index', [
         'tanggal' => 'Min, 13 April',
         'jam' => '11:39:32',
         'format' => 'AM',

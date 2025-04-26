@@ -2,9 +2,10 @@
     'bg' => 'green-100',
     'dot' => 'green-600',
     'text' => 'green-700',
+    'class' => ''
 ])
 
-<div class="bg-{{ $bg }} rounded-lg py-2 px-5 text-center flex items-center gap-2 text-{{ $text }}">
+<div class="{{ $bg }} {{ $class }} rounded-lg w-1/5 flex justify-center items-center gap-3 border border-green-500/[0.5] text-{{ $text }}">
     <div class="w-3 h-3 rounded-full bg-{{ $dot }}"></div>
-    <span class="font-semibold text-lg">{{ $slot }}</span>
+    <span class="font-medium {{ $text }}">{{ $slot }}</span>
 </div>

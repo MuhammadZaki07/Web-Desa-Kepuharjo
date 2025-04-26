@@ -1,6 +1,6 @@
 <div class="pt-10 px-6 lg:px-20">
     <div class="flex justify-between items-center flex-wrap gap-y-4">
-        <div class="flex gap-3 text-lg text-green-800 mx-auto lg:m-0">
+        <div class="flex gap-3 text-lg text-slate-800 mx-auto lg:m-0">
             <i class="bi bi-instagram"></i>
             <i class="bi bi-tiktok"></i>
             <i class="bi bi-facebook"></i>
@@ -12,7 +12,7 @@
             <h1 class="text-3xl lg:text-3xl font-bold text-center text-green-700 uppercase">
                 KARANGPLOSO <span class="hidden lg:inline">|</span> DESA Kepuharjo
             </h1>
-            <h1 class="text-sm font-medium text-center text-gray-400">
+            <h1 class="text-sm font-medium text-center text-gray-400 hidden lg:block">
                 Official Site Desa Kepuharjo
             </h1>
         </div>

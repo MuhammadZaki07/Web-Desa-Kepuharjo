@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 
 <head>
     <meta charset="UTF-8">
@@ -13,14 +13,9 @@
 </head>
 
 <body>
-    <div class="w-full">
-        <x-header-top :tanggal="$tanggal" :jam="$jam" :format="$format" :headline="$headline" />
-        <x-header-middle />
-        <x-header-nav />
-    </div>
-    <x-hero-banner />
-    <x-latest-information :blogs="$blogs"/>
-
+    @include('partials.navbar')
+    @yield('content')
+    @stack('js')
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({
@@ -30,5 +25,4 @@
         });
     </script>
 </body>
-
 </html>

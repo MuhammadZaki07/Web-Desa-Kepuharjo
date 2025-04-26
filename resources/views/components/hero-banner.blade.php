@@ -5,7 +5,7 @@
     <div class="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between py-10 px-6 lg:p-0 lg:px-0 lg:pl-20 gap-8 lg:gap-0 h-full">
         <div class="text-white max-w-full lg:max-w-4xl space-y-5">
             <div class="flex justify-center lg:block" data-aos="fade-right" data-aos-delay="200">
-                <span class="inline-block px-10 py-2 bg-green-600 text-white rounded-md shadow text-lg">
+                <span class="lg:inline-block px-10 py-2 bg-green-600 text-white rounded-md shadow text-lg hidden">
                     <span class="inline-block w-3 h-3 bg-white rounded-full mr-2"></span> Desa Maju
                 </span>
             </div>
@@ -14,7 +14,7 @@
                 <p class="text-base sm:text-lg lg:text-3xl text-center lg:text-left font-medium"  data-aos="fade-right" data-aos-delay="400">Kecamatan Karangploso, Kabupaten Malang, Jawa Timur</p>
             </div>
 
-            <div class="flex justify-center sm:flex-row gap-4 mt-6 items-center sm:items-start sm:justify-start" data-aos="fade-right" data-aos-delay="600">
+            <div class="lg:flex justify-center sm:flex-row gap-4 mt-6 items-center sm:items-start sm:justify-start hidden" data-aos="fade-right" data-aos-delay="600">
                 <a href="#"
                     class="px-6 py-2 bg-white text-gray-800 rounded-md flex items-center gap-2 shadow hover:bg-gray-100 transition cursor-pointer">
                     <i class="bi bi-info-circle-fill"></i> Profile Desa
