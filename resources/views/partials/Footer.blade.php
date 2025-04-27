@@ -1,4 +1,4 @@
-<footer class="bg-gray-50 text-gray-800 py-10 relative">
+<footer class="bg-gray-50 text-gray-800 py-10 mt-16 relative">
     <a href="#top"
         class="absolute lg:right-38 right-10 cursor-pointer -top-7 z-20 w-13 h-13 lg:w-14 lg:h-14 rounded-full bg-green-600 flex justify-center items-center shadow-sm">
         <i class="bi bi-chevron-up text-white font-bold text-2xl"></i>

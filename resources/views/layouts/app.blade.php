@@ -14,8 +14,11 @@
 
 <body>
     @include('partials.navbar')
+    @stack('blog-running')
     @yield('content')
+    @include('partials.footer')
     @stack('js')
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({
