@@ -11,9 +11,13 @@ class Sambutan extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct()
+
+     public $id;
+     public $class;
+    public function __construct($class,$id)
     {
-        //
+        $this->class = $class;
+        $this->id = $id;
     }
 
     /**

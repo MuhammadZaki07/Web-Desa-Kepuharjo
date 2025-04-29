@@ -1,4 +1,4 @@
-<div id="visi-misi" class="tab-content hidden w-full py-3">
+<div id="visi-misi" class="tab-content {{ $class }} w-full py-3">
     <div class="lg:flex gap-3 items-center hidden">
         <div
             class="w-[70px] h-[70px] rounded-lg shadow-lg border-4 border-green-600 flex justify-center items-center">

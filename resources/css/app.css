@@ -27,19 +27,21 @@
     }
 
     @keyframes marquee {
-        0% {
-            transform: translateX(35%);
-        }
-        100% {
-            transform: translateX(-100%);
-        }
+    0% {
+        transform: translateX(35%);
     }
-    .animate-bounce-slow {
-        animation: bounce-slow 2s infinite;
+    100% {
+        transform: translateX(-100%);
     }
+}
 
-    .animate-marquee {
-        display: inline-block;
-        animation: marquee 60s linear infinite;
-    }
+.animate-marquee {
+    display: inline-block;
+    animation: marquee 60s linear infinite;
+    white-space: nowrap;
+}
+
+.group:hover .animate-marquee {
+    animation-play-state: paused;
+}
 }

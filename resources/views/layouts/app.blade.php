@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Kepuharjo Web</title>
+    <title>Kepuharjo Web | {{ $title }}</title>
     @vite('resources/css/app.css')
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -17,6 +17,7 @@
     @stack('blog-running')
     @yield('content')
     @include('partials.footer')
+    <x-pengajuan/>
     @stack('js')
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -28,4 +29,5 @@
         });
     </script>
 </body>
+
 </html>

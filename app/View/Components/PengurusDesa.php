@@ -6,15 +6,16 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class VisiMisi extends Component
+class PengurusDesa extends Component
 {
     /**
      * Create a new component instance.
      */
-    public $class;
-    public function __construct($class)
+
+     public $pengurusDesa;
+    public function __construct($pengurusDesa)
     {
-        $this->class = $class;
+        $this->pengurusDesa = $pengurusDesa;
     }
 
     /**
@@ -22,6 +23,6 @@ class VisiMisi extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.visi-misi');
+        return view('components.pengurus-desa');
     }
 }

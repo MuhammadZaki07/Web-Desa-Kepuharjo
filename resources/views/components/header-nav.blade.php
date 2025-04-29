@@ -1,20 +1,20 @@
 @php
     $navItems = [
-        ['label' => 'Beranda', 'href' => '#'],
+        ['label' => 'Beranda', 'href' => '/'],
         [
             'label' => 'Profile Desa',
             'dropdown' => [
                 ['label' => 'Profile Data Penduduk', 'href' => '/profile-data-penduduk'],
-                ['label' => 'Sejarah Desa', 'href' => '#'],
-                ['label' => 'Visi & Misi', 'href' => '#'],
-                ['label' => 'Struktur Organisasi', 'href' => '#'],
+                ['label' => 'Visi & Misi', 'href' => '/visi-misi'],
+                ['label' => 'Sejarah Desa', 'href' => '/sejarah'],
             ],
         ],
-        ['label' => 'Berita', 'href' => '#'],
-        ['label' => 'Pemerintahan', 'href' => '#'],
-        ['label' => 'Galeri', 'href' => '#'],
+        ['label' => 'Berita', 'href' => '/berita'],
+        ['label' => 'Pemerintahan', 'href' => '/pemerintahan'],
+        ['label' => 'Galeri', 'href' => '/gallery'],
         ['label' => 'UMKM', 'href' => '#'],
     ];
+    $currentUrl = request()->path();
 @endphp
 
 <nav x-data="{ sidebarOpen: false, searchOpen: false }"
@@ -28,25 +28,33 @@
     <div class="hidden lg:flex items-center gap-10 justify-center flex-1">
         @foreach ($navItems as $item)
             @if (isset($item['dropdown']))
-                <div x-data="{ open: false }" class="relative">
-                    <button @click="open = !open" @click.away="open = false"
-                        class="flex items-center gap-1 hover:text-green-700 transition font-bold">
-                        {{ $item['label'] }}
+                <div x-data="{ open: false, selected: '{{ $item['label'] }}' }" class="relative group">
+                    <button @mouseenter="open = true" @mouseleave="open = false" @click.away="open = false"
+                        class="flex items-center gap-1 hover:text-green-700 transition font-bold cursor-pointer">
+                        <span x-text="selected"></span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <div x-show="open" x-transition
+
+                    <div x-show="open" x-transition @mouseenter="open = true" @mouseleave="open = false"
                         class="absolute left-0 mt-2 w-44 bg-white shadow-md rounded-md z-50 overflow-hidden">
                         @foreach ($item['dropdown'] as $subItem)
-                            <a href="{{ $subItem['href'] }}"
-                                class="block px-4 py-2 hover:bg-gray-100 text-slate-700">{{ $subItem['label'] }}</a>
+                            <a href="{{ $subItem['href'] }}" @click="selected = '{{ $subItem['label'] }}'; open = false"
+                                class="block px-4 py-2
+                                    hover:bg-green-50 hover:text-green-600 text-slate-700
+                                    {{ request()->is(ltrim($subItem['href'], '/')) ? 'text-green-600 font-bold border-l-4 border-green-600 bg-green-50' : '' }}">
+                                {{ $subItem['label'] }}
+                            </a>
                         @endforeach
                     </div>
                 </div>
             @else
                 <a href="{{ $item['href'] }}"
-                    class="text-green-700 hover:text-green-800 transition font-bold">{{ $item['label'] }}</a>
+                    class="transition font-bold
+                    {{ request()->is(ltrim($item['href'], '/')) ? 'text-green-700 border-b-2 border-green-600 pb-1' : 'hover:text-green-700' }}">
+                    {{ $item['label'] }}
+                </a>
             @endif
         @endforeach
     </div>
@@ -86,7 +94,7 @@
                 @if (isset($item['dropdown']))
                     <div x-data="{ open: false }">
                         <button @click="open = !open"
-                            class="flex justify-between items-center w-full px-2 py-0 text-left text-green-700 font-semibold hover:bg-gray-100">
+                            class="flex justify-between items-center w-full px-2 py-2 rounded text-left text-green-700 font-semibold hover:bg-gray-100">
                             <span>{{ $item['label'] }}</span>
                             <svg :class="{ 'rotate-180': open }" class="w-4 h-4 transform transition-transform"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,7 +111,7 @@
                     </div>
                 @else
                     <a href="{{ $item['href'] }}"
-                        class="px-2 py-2 text-green-700 hover:bg-gray-100 font-semibold">{{ $item['label'] }}</a>
+                        class="px-2 py-2 text-green-700 hover:bg-gray-100 rounded font-semibold">{{ $item['label'] }}</a>
                 @endif
             @endforeach
         </nav>
