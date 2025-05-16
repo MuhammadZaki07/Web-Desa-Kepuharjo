@@ -6,8 +6,8 @@
             <x-running-blog :blogs="$blogs" />
             <x-banner-sejarah />
         </div>
-        <div class="flex flex-col lg:flex-row gap-5 lg:gap-15 items-start">
-            <div class="flex-1 lg:flex-7">
+        <x-layouts-blogs>
+            <x-flex-one>
                 <x-content>
                     <div class="overflow-hidden rounded-xl w-full">
                         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuzbpvCM-BxrE97T4p2EALEtG3UBsy3WcOfA&s"
@@ -75,12 +75,12 @@
                     </div>
                 </x-content>
                 <x-comment />
-            </div>
-            <div class="flex-1 lg:flex-2 flex flex-col gap-5">
+            </x-flex-one>
+            <x-flex-two>
                 <x-youtube />
                 <x-latest-blogs />
                 <x-suara-pembaca />
-            </div>
-        </div>
+            </x-flex-two>
+        </x-layouts-blogs>
     </section>
 @endsection

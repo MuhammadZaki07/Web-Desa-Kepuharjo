@@ -4,7 +4,7 @@
             class="w-[70px] h-[70px] rounded-lg shadow-lg border-4 border-green-600 flex justify-center items-center">
             <i class="bi bi-file-earmark-text text-blue-500 text-3xl"></i>
         </div>
-        <div class="w-full bg-white shadow rounded-lg text-left text-xl text-slate-600 px-3 py-1.5">
+        <div class="w-full bg-white shadow rounded-lg text-left text-xl text-slate-600 px-3 py-1.5 lg:py-5">
             Fungsi dari visi & misi di desa kami yaitu untuk pembangunan desa juga untuk mewujudkan
             kesejahteraan
             masyarakat

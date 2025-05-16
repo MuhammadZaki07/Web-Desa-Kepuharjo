@@ -7,12 +7,14 @@
                 ['label' => 'Profile Data Penduduk', 'href' => '/profile-data-penduduk'],
                 ['label' => 'Visi & Misi', 'href' => '/visi-misi'],
                 ['label' => 'Sejarah Desa', 'href' => '/sejarah'],
+                ['label' => 'PKK', 'href' => '/pkk'],
+                ['label' => 'Karang Taruna', 'href' => '/karang-taruna'],
             ],
         ],
         ['label' => 'Berita', 'href' => '/berita'],
         ['label' => 'Pemerintahan', 'href' => '/pemerintahan'],
         ['label' => 'Galeri', 'href' => '/gallery'],
-        ['label' => 'UMKM', 'href' => '#'],
+        ['label' => 'UMKM', 'href' => '/umkm'],
     ];
     $currentUrl = request()->path();
 @endphp
@@ -52,7 +54,7 @@
             @else
                 <a href="{{ $item['href'] }}"
                     class="transition font-bold
-                    {{ request()->is(ltrim($item['href'], '/')) ? 'text-green-700 border-b-2 border-green-600 pb-1' : 'hover:text-green-700' }}">
+            {{ url()->current() === url($item['href']) ? 'text-green-700 border-b-2 border-green-600 pb-1' : 'hover:text-green-700' }}">
                     {{ $item['label'] }}
                 </a>
             @endif

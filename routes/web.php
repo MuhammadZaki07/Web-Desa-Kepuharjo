@@ -294,4 +294,41 @@ Route::get('/berita', function () {
         'title' => 'Berita'
     ]);
 });
+Route::get('/umkm', function () {
+
+    return view('pages.umkm', [
+        'tanggal' => 'Min, 13 April',
+        'jam' => '11:39:32',
+        'format' => 'AM',
+        'headline' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
+        'title' => 'UMKM'
+    ]);
+});
+Route::get('/karang-taruna', function () {
+    return view('pages.karangtaruna', [
+        'tanggal' => 'Min, 13 April',
+        'jam' => '11:39:32',
+        'format' => 'AM',
+        'headline' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
+        'title' => 'Karang-Taruna'
+    ]);
+});
+Route::get('/pkk', function () {
+    return view('pages.pkk', [
+        'tanggal' => 'Min, 13 April',
+        'jam' => '11:39:32',
+        'format' => 'AM',
+        'headline' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
+        'title' => 'PKK'
+    ]);
+});
+Route::get('/detail-umkm', function () {
+    return view('pages.DetailUmkm', [
+        'tanggal' => 'Min, 13 April',
+        'jam' => '11:39:32',
+        'format' => 'AM',
+        'headline' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
+        'title' => 'PKK'
+    ]);
+});
 

@@ -1,4 +1,4 @@
-<section class="w-full h-[464px] relative bg-cover bg-center bg-no-repeat"
+<section class="w-full h-[500px] relative bg-cover bg-center bg-no-repeat"
     style="background-image: url('{{ asset('assets/banners/gellery/swah2.png') }}')">
     <div class="absolute bottom-0 left-0 w-full h-full bg-gradient-to-t from-black to-transparent"></div>
     <div

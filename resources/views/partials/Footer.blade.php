@@ -52,15 +52,9 @@
                         <li class="hover:text-green-500 cursor-pointer"><span class="text-emerald-600">●</span>
                             Pariwisata</li>
                         <li class="hover:text-green-500 cursor-pointer"><span class="text-emerald-600">●</span>
-                            Taman Bacaan Desa</li>
-                        <li class="hover:text-green-500 cursor-pointer"><span class="text-emerald-600">●</span>
                             Berita</li>
                         <li class="hover:text-green-500 cursor-pointer"><span class="text-emerald-600">●</span>
                             UMKM</li>
-                        <li class="hover:text-green-500 cursor-pointer"><span class="text-emerald-600">●</span>
-                            Imunisasi Anak</li>
-                        <li class="hover:text-green-500 cursor-pointer"><span class="text-emerald-600">●</span>
-                            Bantuan Pendidikan</li>
                     </ul>
                 </div>
             </div>

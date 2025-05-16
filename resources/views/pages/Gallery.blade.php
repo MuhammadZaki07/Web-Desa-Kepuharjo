@@ -34,7 +34,7 @@
                 </div>
                 <div class="row-span-2 col-span-2">
                     <img src="{{ asset('assets/banners/gellery/sawah.jpg') }}" onclick="openModal(this.src)"
-                        class="w-full h-full object-cover rounded-xl cursor-pointer hover:scale-105 transition duration-400 ease-in-out" />
+                        class="w-full h-full object-cover rounded-xl cursor-pointer hover:scale-102 transition duration-400 ease-in-out" />
                 </div>
                 <div>
                     <img src="{{ asset('assets/banners/gellery/sawah.jpg') }}" onclick="openModal(this.src)"

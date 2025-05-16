@@ -108,10 +108,26 @@
                     </div>
 
                 </x-content>
+                <div class="flex lg:justify-start justify-center items-center gap-4 mt-6">
+                    <button id="prevBtn" class="w-10 h-10 bg-green-800 opacity-50 text-white cursor-not-allowed">
+                        <i class="bi bi-arrow-left"></i>
+                    </button>
+                    <div id="paginationDots" class="flex gap-2">
+                        <div class="w-10 h-10 bg-green-50 text-green-700 font-medium cursor-pointer hover:bg-green-200 flex items-center justify-center">1</div>
+                        <div class="w-10 h-10 bg-green-50 text-green-700 font-medium cursor-pointer hover:bg-green-200 flex items-center justify-center">2</div>
+                        <div class="w-10 h-10 bg-green-50 text-green-700 font-medium cursor-pointer hover:bg-green-200 flex items-center justify-center">...</div>
+                        <div class="w-10 h-10 bg-green-50 text-green-700 font-medium cursor-pointer hover:bg-green-200 flex items-center justify-center">9</div>
+                        <div class="w-10 h-10 bg-green-50 text-green-700 font-medium cursor-pointer hover:bg-green-200 flex items-center justify-center">10</div>
+                    </div>
+                    <button id="nextBtn" class="w-10 h-10 bg-green-600 text-white cursor-pointer hover:bg-green-800">
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
             </div>
             <div class="lg:w-1/4 w-full flex flex-col gap-5 mt-10 lg:mt-0">
-                <x-youtube />
+                <x-category-blogs/>
                 <x-latest-blogs />
+                <x-youtube />
             </div>
         </div>
     </div>

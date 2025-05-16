@@ -13,7 +13,7 @@
 @endphp
 @section('content')
     <x-banner-pemerintahan>
-        <section class="w-full h-[464px] relative bg-cover bg-center bg-no-repeat"
+        <section class="w-full h-[500px] relative bg-cover bg-center bg-no-repeat"
             style="background-image: url('{{ asset('assets/banners/pemerintahan/pemerintahan.jpg') }}')">
             <div class="absolute bottom-0 left-0 w-full h-full bg-gradient-to-r from-black to-transparent"></div>
             <div
@@ -52,7 +52,7 @@
                 <div
                     class="absolute top-0 left-0 -translate-x-6 -translate-y-6 text-6xl text-black select-none hidden lg:block">
                     “</div>
-                <h2 class="text-2xl lg:text-5xl font-bold mb-4 text-black text-center lg:text-left">Sambutan Kepala Desa
+                <h2 class="text-2xl lg:text-5xl font-bold mb-4 text-black text-center lg:text-left">Sambutan <span class="text-green-700">Kepala Desa</span>
                 </h2>
                 <p class="text-lg leading-relaxed font-light text-center lg:text-left">
                     Dengan rasa syukur dan bangga, kami menyambut Anda di website resmi Desa Kepuharjo. Melalui platform

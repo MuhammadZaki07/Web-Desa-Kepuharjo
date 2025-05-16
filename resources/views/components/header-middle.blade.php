@@ -13,7 +13,7 @@
                 KARANGPLOSO <span class="hidden lg:inline">|</span> DESA Kepuharjo
             </h1>
             <h1 class="text-sm font-medium text-center text-gray-400 hidden lg:block">
-                Official Site Desa Kepuharjo
+                Website Resmi Desa Kepuharjo Kab.Malang
             </h1>
         </div>
 
