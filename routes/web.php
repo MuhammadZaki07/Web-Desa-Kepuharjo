@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Controllers\CustomLoginController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/auth', function () {
-    return view('auth.auth');
-});
+Route::get('/auth', [CustomLoginController::class, 'index'])->name('login');
+Route::post('/custom-login', [CustomLoginController::class, 'login'])->name('custom.login')->middleware('throttle:5,1');
+
 Route::get('/', function () {
     $blogs = [
         [
@@ -331,4 +332,3 @@ Route::get('/detail-umkm', function () {
         'title' => 'PKK'
     ]);
 });
-

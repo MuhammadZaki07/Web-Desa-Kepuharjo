@@ -7,10 +7,12 @@
     <title>Login Kepuharjo</title>
     @vite('resources/css/app.css')
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
 </head>
 
 <body>
-    <div class="absolute top-5 lg:top-4 left-3 lg:left-5 flex gap-4 items-center" data-aos="fade-down" data-aos-duration="1000">
+    <div class="absolute top-5 lg:top-4 left-3 lg:left-5 flex gap-4 items-center" data-aos="fade-down"
+        data-aos-duration="1000">
         <img src="{{ asset('assets/logo/Logo_Kabupaten_Malang.png') }}" alt="Logo Kabupaten Malang"
             class="w-11 lg:w-14 h-auto" />
         <div class="flex flex-col">
@@ -49,8 +51,11 @@
                 </div>
             </div>
 
-            <form class="max-w-md md:ml-auto w-full" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="400">
-                <div class="space-y-3 text-left py-3" data-aos="fade-right" data-aos-duration="1000" data-aos-delay="200">
+            <form class="max-w-md md:ml-auto w-full" method="POST" action="{{ route('custom.login') }}"
+                data-aos="fade-up" data-aos-duration="1000" data-aos-delay="400">
+                @csrf
+                <div class="space-y-3 text-left py-3" data-aos="fade-right" data-aos-duration="1000"
+                    data-aos-delay="200">
                     <h2 class="lg:text-5xl text-4xl font-bold lg:leading-[57px] text-green-700">
                         Portal Admin Desa
                     </h2>
@@ -62,16 +67,28 @@
                 <div class="space-y-6">
                     <div>
                         <label class='text-sm text-slate-800 font-medium mb-2 block'>Email</label>
-                        <input name="email" type="email" required
-                            class="bg-slate-100 w-full text-sm text-slate-800 px-4 py-3 rounded-md outline-none border border-slate-300 focus:border-green-600 focus:bg-white focus:ring-1 focus:ring-green-300 transition"
+                        <input name="email" type="email" value="{{ old('email') }}"
+                            class="bg-slate-100 w-full text-sm text-slate-800 px-4 py-3 rounded-md outline-none border @error('email') border-red-600 @else border-slate-300 @enderror focus:border-green-600 focus:bg-white focus:ring-1 focus:ring-green-300 transition"
                             placeholder="Masukkan Email" />
+                        @error('email')
+                            <p class="mt-1 text-red-600 text-xs font-semibold">{{ $message }}</p>
+                        @enderror
                     </div>
-                    <div>
+
+                    <div class="relative">
                         <label class='text-sm text-slate-800 font-medium mb-2 block'>Password</label>
-                        <input name="password" type="password" required
-                            class="bg-slate-100 w-full text-sm text-slate-800 px-4 py-3 rounded-md outline-none border border-slate-300 focus:border-green-600 focus:bg-white focus:ring-1 focus:ring-green-300 transition"
+                        <input id="password" name="password" type="password"
+                            class="bg-slate-100 w-full text-sm text-slate-800 px-4 py-3 rounded-md outline-none border @error('password') border-red-600 @else border-slate-300 @enderror focus:border-green-600 focus:bg-white focus:ring-1 focus:ring-green-300 transition pr-10"
                             placeholder="Masukkan Password" />
+                        @error('password')
+                            <p class="mt-1 text-red-600 text-xs font-semibold">{{ $message }}</p>
+                        @enderror
+                        <button type="button" id="togglePassword"
+                            class="absolute cursor-pointer right-3 top-[38px] text-slate-400 hover:text-green-600 focus:outline-none">
+                            <i id="eyeIcon" class="bi bi-eye"></i>
+                        </button>
                     </div>
+
                     <div class="flex flex-wrap items-center justify-between gap-4">
                         <div class="flex items-center">
                             <input id="remember-me" name="remember-me" type="checkbox"
@@ -85,40 +102,34 @@
 
                 <div class="!mt-5">
                     <button type="submit"
-                        class="w-full cursor-pointer shadow-xl py-2.5 px-4 text-sm font-semibold rounded-full text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-400 transition">
+                        class="w-full cursor-pointer shadow-xl py-3 px-4 text-sm font-semibold rounded-full text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-400 transition">
                         Masuk
                     </button>
                 </div>
             </form>
+
         </div>
     </div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-       AOS.init({
-        once: true,
-        duration: 1000,
-        easing: 'ease-in-out'
-    });
-    </script>
-    <script>
-        function updateClock() {
-            const now = new Date();
-            const optionsDate = {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            };
-            const date = now.toLocaleDateString('id-ID', optionsDate);
-            const time = now.toLocaleTimeString('id-ID', {
-                hour12: false
-            });
-            document.getElementById('realtime-clock').textContent = `Waktu saat ini: ${date} | ${time}`;
-        }
+        AOS.init({
+            once: true,
+            duration: 1000,
+            easing: 'ease-in-out'
+        });
 
-        setInterval(updateClock, 1000);
-        updateClock();
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+        const eyeIcon = document.querySelector('#eyeIcon');
+
+        togglePassword.addEventListener('click', function() {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+
+            eyeIcon.classList.toggle('bi-eye');
+            eyeIcon.classList.toggle('bi-eye-slash');
+        });
     </script>
 </body>
 
