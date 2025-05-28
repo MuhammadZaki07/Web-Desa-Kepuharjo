@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Filament\Facades\Filament;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CustomLoginController extends Controller
 {
@@ -29,8 +30,15 @@ class CustomLoginController extends Controller
 
 
         if (Filament::auth()->attempt($credentials, $remember)) {
-            $request->session()->regenerate();
+            $user = Auth::user();
 
+            if ($user->role !== 'admin') {
+                Filament::auth()->logout();
+                return back()->withErrors([
+                    'email' => 'Akses hanya diperbolehkan untuk admin.',
+                ])->withInput();
+            }
+            $request->session()->regenerate();
             return redirect()->intended('/admin');
         }
 

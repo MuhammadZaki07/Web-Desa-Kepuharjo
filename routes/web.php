@@ -3,7 +3,7 @@
 use App\Http\Controllers\CustomLoginController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/auth', [CustomLoginController::class, 'index'])->name('login');
+Route::get('/auth', [CustomLoginController::class, 'index'])->name('login')->middleware('guest');
 Route::post('/custom-login', [CustomLoginController::class, 'login'])->name('custom.login')->middleware('throttle:5,1');
 
 Route::get('/', function () {

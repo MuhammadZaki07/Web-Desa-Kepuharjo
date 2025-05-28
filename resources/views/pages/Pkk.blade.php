@@ -6,7 +6,7 @@
             <div class="absolute bottom-0 left-0 w-full h-full bg-gradient-to-r from-black to-transparent"></div>
             <div
                 class="absolute flex justify-start flex-col gap-4 lg:w-4/5 lg:left-15 left-0 top-1/4 sm:top-40 lg:px-4 px-8">
-                <h1 class="font-bold text-white lg:text-6xl text-5xl lg:text-left text-center">PKK</h1>
+                <h1 class="font-bold text-white lg:text-6xl text-5xl lg:text-left text-center uppercase">PKK</h1>
                 <p class="lg:text-left text-center lg:text-lg text-sm text-white font-normal lg:w-2/3">
                     Informasi seputar program kerja, kegiatan, dan peran aktif PKK Desa Kepuharjo. Bersama membangun
                     keluarga sejahtera, mandiri, dan berdaya melalui semangat gotong royong dan pemberdayaan masyarakat.
