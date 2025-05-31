@@ -22,6 +22,7 @@ use Illuminate\Support\HtmlString;
 class BannerResource extends Resource
 {
     protected static ?string $navigationIcon = 'heroicon-o-photo';
+    protected static ?string $navigationLabel = 'Spanduk (Banners)';
 
     protected static ?string $model = Banner::class;
 

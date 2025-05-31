@@ -55,6 +55,7 @@
             <form class="max-w-md md:ml-auto w-full" method="POST" action="{{ route('custom.login') }}"
                 data-aos="fade-up" data-aos-duration="1000" data-aos-delay="400">
                 @csrf
+                <a href="/" class="font-medium text-lg hover:text-gray-800"><i class="bi bi-arrow-left"></i> Back</a>
                 <div class="space-y-3 text-left py-3" data-aos="fade-right" data-aos-duration="1000"
                     data-aos-delay="200">
                     <h2 class="lg:text-5xl text-4xl font-bold lg:leading-[57px] text-green-700">

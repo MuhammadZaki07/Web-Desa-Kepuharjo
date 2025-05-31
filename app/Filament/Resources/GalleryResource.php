@@ -30,6 +30,10 @@ class GalleryResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationLabel = 'Gallery';
 
+    protected static ?string $navigationGroup = 'Profil & Identitas Desa';
+
+    protected static ?int $navigationSort = 2;
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
@@ -47,6 +51,12 @@ class GalleryResource extends Resource
                     ->maxSize(3072)
                     ->directory('galeri')
                     ->required()
+                    ->imageEditor()
+                    ->imageEditorAspectRatios([
+                        '16:9',
+                        '4:3',
+                        '1:1',
+                    ])
                     ->preserveFilenames()
                     ->columnSpanFull()
             ]);
