@@ -16,6 +16,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 
@@ -26,10 +27,19 @@ class BannerResource extends Resource
 
     protected static ?string $model = Banner::class;
 
-    public static function getNavigationBadge(): ?string
+    // OPTIMASI 1: Query optimization
+    public static function getEloquentQuery(): Builder
     {
-        return static::getModel()::count();
+        return parent::getEloquentQuery()
+            ->select(['id', 'title', 'title_sejarah', 'images', 'type', 'description']) // Select specific columns
+            ->orderBy('id'); // Consistent ordering
     }
+
+    // DISABLED: Navigation badge untuk performa
+    // public static function getNavigationBadge(): ?string
+    // {
+    //     return static::getModel()::count();
+    // }
 
     public static function canCreate(): bool
     {
@@ -78,7 +88,6 @@ class BannerResource extends Resource
                         }
                     }),
 
-
                 TextInput::make('title')
                     ->label('Judul Banner')
                     ->required()
@@ -88,8 +97,6 @@ class BannerResource extends Resource
                         is_array($state) ? ($state[0] ?? '') : $state
                     ))
                     ->dehydrateStateUsing(fn($state) => [$state]),
-
-
 
                 TextInput::make('type')->readOnly(),
                 Textarea::make('description')
@@ -104,22 +111,28 @@ class BannerResource extends Resource
     {
         return $table
             ->columns([
+                // OPTIMASI 2: Simplified image column
                 ImageColumn::make('images')
-                    ->stacked()
+                    ->label('Gambar')
                     ->circular()
-                    ->limit(1)
-                    ->limitedRemainingText()
-                    ->width(100)
-                    ->url(function ($record) {
+                    ->size(50) // Smaller size for better performance
+                    ->getStateUsing(function ($record) {
+                        // Optimized image handling
                         $images = $record->images;
-                        if (is_array($images)) {
-                            return isset($images[0]) ? Storage::url($images[0]) : asset('assets/banners/preview-1.png');
+                        if (is_array($images) && !empty($images)) {
+                            return $images[0];
                         }
-                        return $images ? Storage::url($images) : asset('assets/banners/preview-1.png');
+                        return $images;
                     })
-                    ->defaultImageUrl(asset('assets/banners/preview-1.png')),
+                    ->defaultImageUrl(asset('assets/banners/preview-1.png'))
+                    ->checkFileExistence(false), // Skip file existence check
 
-                TextColumn::make('formatted_title')->label('Judul')->limit(50),
+                TextColumn::make('formatted_title')
+                    ->label('Judul')
+                    ->limit(30) // Reduced limit for better performance
+                    ->tooltip(function ($record) {
+                        return $record->formatted_title;
+                    }),
 
                 TextColumn::make('type')
                     ->badge()
@@ -129,35 +142,30 @@ class BannerResource extends Resource
                 ViewAction::make(),
                 EditAction::make()
                     ->using(function (Banner $record, array $data): Banner {
+                        // Simplified logic
+                        $updateData = [];
+
                         if ($record->type === 'sejarah') {
-                            if (!isset($data['title_sejarah']) || !is_array($data['title_sejarah'])) {
-                                throw new \Exception('Judul sejarah harus berupa array.');
-                            }
-                            $title_sejarah = $data['title_sejarah'];
-                            $title = $record->title ?? [];
+                            $updateData['title_sejarah'] = $data['title_sejarah'] ?? [];
                         } else {
-                            if (!isset($data['title']) || !is_array($data['title'])) {
-                                throw new \Exception('Judul harus berupa array.');
-                            }
-                            $title = $data['title'];
-                            $title_sejarah = null;
+                            $updateData['title'] = $data['title'] ?? [];
                         }
 
-                        if (!is_array($data['images'])) {
-                            $data['images'] = [$data['images']];
+                        if (isset($data['images'])) {
+                            $updateData['images'] = is_array($data['images']) ? $data['images'] : [$data['images']];
                         }
 
-                        $record->update([
-                            'title' => $title,
-                            'title_sejarah' => $title_sejarah,
-                            'images' => $data['images'],
-                        ]);
+                        if (isset($data['description'])) {
+                            $updateData['description'] = $data['description'];
+                        }
 
+                        $record->update($updateData);
                         return $record;
                     }),
-
             ])
-            ->paginated(false)
+            // OPTIMASI 3: Enable pagination with small number
+            ->paginated([5, 10, 25])
+            ->defaultPaginationPageOption(10)
             ->bulkActions([]);
     }
 

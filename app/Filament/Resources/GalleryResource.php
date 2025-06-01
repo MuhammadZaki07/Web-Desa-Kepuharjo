@@ -32,13 +32,12 @@ class GalleryResource extends Resource
 
     protected static ?string $navigationGroup = 'Profil & Identitas Desa';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
     }
-
 
     public static function form(Form $form): Form
     {

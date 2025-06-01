@@ -1,19 +1,3 @@
-<section class="w-full relative bg-white py-32 lg:py-0 hidden lg:block">
-    <img src="{{ asset('assets/svg/Vector-green.svg') }}" alt="Vector" class="w-full hidden lg:block">
-    <div
-        class="absolute top-[27%] lg:left-1/2  w-full transform lg:-translate-x-1/2 -translate-y-1/2 z-10 text-center text-black lg:text-white px-5 lg:px-0">
-        <div class="mb-14">
-            <x-badge text="text-white" bg="bg-green-50/50" class="mb-4 mx-auto py-1 w-48 hidden lg:flex">
-                Desa Maju
-            </x-badge>
-        </div>
-        <h1 class="font-bold lg:text-4xl text-3xl text-green-800 lg:text-white">Mari Ketahui Lebih Banyak Tentang
-            Desa Kami</h1>
-        <h2 class="mt-4 font-normal text-sm lg:text-base ">Temukan informasi lengkap tentang Desa Kepuharjo dan
-            layanan yang
-            tersedia</h2>
-    </div>
-</section>
 <section class="w-full bg-white py-20 relative lg:px-20 px-5">
     <div class="absolute top-0 right-0 left-0 flex justify-center flex-col gap-5">
         <x-badge class="py-1 w-56 mx-auto">Lokasi & Kontak</x-badge>

@@ -34,6 +34,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cache;
 
 class AdminResource extends Resource
 {
@@ -133,15 +134,18 @@ class AdminResource extends Resource
                                                     ->label('Pilih Penduduk')
                                                     ->placeholder('Pilih penduduk yang akan dijadikan admin...')
                                                     ->searchable()
-                                                    ->preload()
+                                                    ->preload(false) // Disable preloading for better performance
                                                     ->required(fn(Get $get, $operation) => $operation === 'create' && $get('form_mode') === 'promote_existing')
                                                     ->options(function () {
-                                                        return User::where('role', 'penduduk')
-                                                            ->whereDoesntHave('admin')
-                                                            ->orderBy('name')
-                                                            ->limit(100)
-                                                            ->pluck('name', 'id')
-                                                            ->toArray();
+                                                        // Use caching for options
+                                                        return Cache::remember('admin_resource_available_users', 300, function () {
+                                                            return User::where('role', 'penduduk')
+                                                                ->whereDoesntHave('admin')
+                                                                ->orderBy('name')
+                                                                ->limit(50) // Reduced limit for better performance
+                                                                ->pluck('name', 'id')
+                                                                ->toArray();
+                                                        });
                                                     })
                                                     ->getSearchResultsUsing(
                                                         fn(string $search): array =>
@@ -152,14 +156,14 @@ class AdminResource extends Resource
                                                                     ->orWhere('phone', 'like', "%{$search}%");
                                                             })
                                                             ->whereDoesntHave('admin')
-                                                            ->limit(50)
+                                                            ->limit(25) // Reduced limit for search results
                                                             ->pluck('name', 'id')
                                                             ->toArray()
                                                     )
                                                     ->live()
                                                     ->afterStateUpdated(function ($state, $set) {
                                                         if ($state) {
-                                                            $user = User::find($state);
+                                                            $user = User::with('penduduk')->find($state); // Use eager loading
                                                             if ($user) {
                                                                 $set('preview_name', $user->name);
                                                                 $set('preview_nik', $user->penduduk->nik ?? 'N/A');
@@ -430,6 +434,8 @@ class AdminResource extends Resource
                         ->color(fn(Admin $record) => $record->is_active ? 'danger' : 'success')
                         ->action(function (Admin $record) {
                             $record->update(['is_active' => !$record->is_active]);
+                            // Clear cache after status change
+                            Cache::forget('admin_navigation_badge_count');
                         })
                         ->requiresConfirmation()
                         ->modalDescription('Apakah Anda yakin ingin mengubah status admin ini?'),
@@ -464,6 +470,8 @@ class AdminResource extends Resource
                             }
 
                             $record->delete();
+                            // Clear cache after deletion
+                            Cache::forget('admin_navigation_badge_count');
 
                             Notification::make()
                                 ->title('Berhasil')
@@ -521,6 +529,9 @@ class AdminResource extends Resource
                                 $record->delete();
                             }
 
+                            // Clear cache after bulk deletion
+                            Cache::forget('admin_navigation_badge_count');
+
                             Notification::make()
                                 ->title('Berhasil')
                                 ->body($recordsToDelete->count() . ' admin berhasil dihapus.')
@@ -533,6 +544,8 @@ class AdminResource extends Resource
                         ->color('success')
                         ->action(function ($records) {
                             $records->each->update(['is_active' => true]);
+                            // Clear cache after bulk activation
+                            Cache::forget('admin_navigation_badge_count');
                         }),
                     BulkAction::make('deactivate')
                         ->label('Nonaktifkan')
@@ -558,6 +571,8 @@ class AdminResource extends Resource
                             }
 
                             $records->each->update(['is_active' => false]);
+                            // Clear cache after bulk deactivation
+                            Cache::forget('admin_navigation_badge_count');
                         }),
                 ]),
             ])
@@ -584,7 +599,10 @@ class AdminResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('is_active', true)->count();
+        // Cache the navigation badge count to prevent duplicate queries
+        return Cache::remember('admin_navigation_badge_count', 300, function () {
+            return static::getModel()::where('is_active', true)->count();
+        });
     }
 
     public static function getNavigationBadgeColor(): ?string
