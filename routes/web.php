@@ -323,6 +323,24 @@ Route::get('/pkk', function () {
         'title' => 'PKK'
     ]);
 });
+Route::get('/wisata', function () {
+    return view('pages.wisata', [
+        'tanggal' => 'Min, 13 April',
+        'jam' => '11:39:32',
+        'format' => 'AM',
+        'headline' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
+        'title' => 'PKK'
+    ]);
+});
+Route::get('/wisata/detail-wisata', function () {
+    return view('pages.DetailWIsata', [
+        'tanggal' => 'Min, 13 April',
+        'jam' => '11:39:32',
+        'format' => 'AM',
+        'headline' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
+        'title' => 'PKK'
+    ]);
+});
 Route::get('/detail-umkm', function () {
     return view('pages.DetailUmkm', [
         'tanggal' => 'Min, 13 April',

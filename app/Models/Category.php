@@ -50,4 +50,24 @@ class Category extends Model
     {
         return 'slug';
     }
+
+    public function scopeWisata($query)
+    {
+        return $query->where('type', 'wisata');
+    }
+
+    public function wisata()
+    {
+        return $this->hasMany(Wisata::class);
+    }
+
+    public function umkmProducts(): HasMany
+    {
+        return $this->hasMany(UmkmProduct::class);
+    }
+
+    public function scopeUmkmType($query)
+    {
+        return $query->where('type', 'umkm');
+    }
 }

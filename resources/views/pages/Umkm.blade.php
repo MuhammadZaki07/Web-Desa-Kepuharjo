@@ -69,13 +69,6 @@
                             dengan
                             metode ramah lingkungan oleh petani lokal kami.</p>
 
-                        <div class="flex items-center mb-4">
-                            <div class="flex items-center text-gray-500 text-sm mr-4">
-                                <i class="bi bi-geo-alt mr-1"></i>
-                                <span>Desa Sejahtera</span>
-                            </div>
-                        </div>
-
                         <div class="flex justify-between items-center">
                             <div>
                                 <p class="text-xs text-gray-500">Harga</p>
@@ -115,13 +108,6 @@
                             oleh
                             pengrajin lokal dengan teknik tradisional.</p>
 
-                        <div class="flex items-center mb-4">
-                            <div class="flex items-center text-gray-500 text-sm mr-4">
-                                <i class="bi bi-geo-alt mr-1"></i>
-                                <span>Desa Kreatif</span>
-                            </div>
-                        </div>
-
                         <div class="flex justify-between items-center">
                             <div>
                                 <p class="text-xs text-gray-500">Harga</p>
@@ -160,13 +146,6 @@
                         <p class="text-gray-600 text-sm mb-4 line-clamp-2">Kue tradisional dengan cita rasa autentik,
                             dibuat
                             dengan bahan-bahan berkualitas dan resep turun-temurun.</p>
-
-                        <div class="flex items-center mb-4">
-                            <div class="flex items-center text-gray-500 text-sm mr-4">
-                                <i class="bi bi-geo-alt mr-1"></i>
-                                <span>Desa Lestari</span>
-                            </div>
-                        </div>
 
                         <div class="flex justify-between items-center">
                             <div>

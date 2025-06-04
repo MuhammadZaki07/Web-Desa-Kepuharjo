@@ -36,7 +36,6 @@ class ProfileDesa extends Model
     ];
 
     protected $casts = [
-        'visi' => 'array',
         'misi' => 'array',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -59,7 +58,10 @@ class ProfileDesa extends Model
 
     public function getVisiListAttribute(): array
     {
-        return $this->visi ? collect($this->visi)->pluck('poin_visi')->filter()->toArray() : [];
+        if ($this->visi && is_string($this->visi)) {
+            return array_filter(explode("\n", $this->visi));
+        }
+        return [];
     }
 
     public function getMisiListAttribute(): array
@@ -67,7 +69,6 @@ class ProfileDesa extends Model
         return $this->misi ? collect($this->misi)->pluck('poin_misi')->filter()->toArray() : [];
     }
 
-    // Social Media URL Getters
     public function getInstagramUrlAttribute(): ?string
     {
         return $this->instagram ? 'https://instagram.com/' . $this->instagram : null;
@@ -119,7 +120,7 @@ class ProfileDesa extends Model
     // Methods
     public function hasVisiMisi(): bool
     {
-        return !empty($this->visi_list) || !empty($this->misi_list);
+        return !empty($this->visi) || !empty($this->misi_list);
     }
 
     public function hasSocialMedia(): bool
@@ -184,14 +185,11 @@ class ProfileDesa extends Model
         return $links;
     }
 
-    // Boot method for model events
     protected static function boot()
     {
         parent::boot();
 
-        // Before saving, validate unique constraints
         static::saving(function ($model) {
-            // Clean up social media inputs
             $model->instagram = $model->cleanSocialMediaInput($model->instagram);
             $model->facebook = $model->cleanSocialMediaInput($model->facebook);
             $model->tiktok = $model->cleanSocialMediaInput($model->tiktok);
@@ -200,7 +198,6 @@ class ProfileDesa extends Model
             $model->threads = $model->cleanSocialMediaInput($model->threads);
         });
 
-        // After deleting, clean up files
         static::deleted(function ($model) {
             if ($model->logo_desa) {
                 Storage::disk('public')->delete($model->logo_desa);

@@ -105,7 +105,7 @@ class GalleryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            //`
         ];
     }
 

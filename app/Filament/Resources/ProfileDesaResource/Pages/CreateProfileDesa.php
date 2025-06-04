@@ -29,21 +29,14 @@ class CreateProfileDesa extends CreateRecord
             ->body('Profile desa telah berhasil dibuat dan dapat dikelola.');
     }
 
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        // Process visi misi data
-        if (isset($data['visi']) && is_array($data['visi'])) {
-            $data['visi'] = array_filter($data['visi'], function ($item) {
-                return !empty($item['poin_visi']);
-            });
-        }
-
-        if (isset($data['misi']) && is_array($data['misi'])) {
-            $data['misi'] = array_filter($data['misi'], function ($item) {
-                return !empty($item['poin_misi']);
-            });
-        }
-
-        return $data;
+protected function mutateFormDataBeforeCreate(array $data): array
+{
+    if (isset($data['misi']) && is_array($data['misi'])) {
+        $data['misi'] = array_filter($data['misi'], function ($item) {
+            return !empty($item['poin_misi']);
+        });
     }
+
+    return $data;
+}
 }

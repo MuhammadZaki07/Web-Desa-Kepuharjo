@@ -42,7 +42,6 @@ class ProfileDesaResource extends Resource
 
         return $form
             ->schema([
-                // Section Identitas Desa
                 Section::make('🏛️ Identitas Desa')
                     ->description('Informasi dasar tentang desa dan kontak resmi')
                     ->icon('heroicon-o-identification')
@@ -50,7 +49,6 @@ class ProfileDesaResource extends Resource
                     ->collapsible(true)
                     ->schema([
                         Grid::make(3)->schema([
-                            // Logo Desa
                             Card::make()
                                 ->schema([
                                     FileUpload::make('logo_desa')
@@ -75,7 +73,6 @@ class ProfileDesaResource extends Resource
                                 ])
                                 ->columnSpan(1),
 
-                            // Informasi Dasar
                             Grid::make(1)->schema([
                                 TextInput::make('name')
                                     ->label('Nama Desa')
@@ -136,7 +133,6 @@ class ProfileDesaResource extends Resource
                         ]),
                     ]),
 
-                // Section Visi & Misi
                 Section::make('🎯 Visi & Misi Desa')
                     ->description('Visi dan misi pembangunan desa')
                     ->icon('heroicon-o-eye')
@@ -144,34 +140,19 @@ class ProfileDesaResource extends Resource
                     ->collapsible(true)
                     ->schema([
                         Grid::make(2)->schema([
-                            // Visi
                             Card::make()
                                 ->schema([
-                                    Repeater::make('visi')
+                                    Textarea::make('visi')
                                         ->label('Visi Desa')
-                                        ->schema([
-                                            TextInput::make('poin_visi')
-                                                ->label('Poin Visi')
-                                                ->required()
-                                                ->maxLength(500)
-                                                ->placeholder('Masukkan poin visi desa')
-                                                ->columnSpanFull()
-                                        ])
-                                        ->addActionLabel('+ Tambah Visi')
-                                        ->reorderableWithButtons()
-                                        ->collapsible()
-                                        ->cloneable()
-                                        ->deleteAction(
-                                            fn ($action) => $action->requiresConfirmation()
-                                        )
-                                        ->minItems(1)
-                                        ->maxItems(5)
-                                        ->defaultItems(1)
-                                        ->itemLabel(fn (array $state): ?string => $state['poin_visi'] ?? 'Visi Baru')
+                                        ->required()
+                                        ->rows(5)
+                                        ->maxLength(1000)
+                                        ->placeholder('Masukkan visi desa...')
+                                        ->helperText('Tulis visi desa dalam bentuk paragraf atau gunakan enter untuk poin-poin terpisah')
+                                        ->columnSpanFull()
                                 ])
                                 ->columnSpan(1),
 
-                            // Misi
                             Card::make()
                                 ->schema([
                                     Repeater::make('misi')
@@ -189,18 +170,17 @@ class ProfileDesaResource extends Resource
                                         ->collapsible()
                                         ->cloneable()
                                         ->deleteAction(
-                                            fn ($action) => $action->requiresConfirmation()
+                                            fn($action) => $action->requiresConfirmation()
                                         )
                                         ->minItems(1)
                                         ->maxItems(10)
                                         ->defaultItems(1)
-                                        ->itemLabel(fn (array $state): ?string => $state['poin_misi'] ?? 'Misi Baru')
+                                        ->itemLabel(fn(array $state): ?string => $state['poin_misi'] ?? 'Misi Baru')
                                 ])
                                 ->columnSpan(1),
                         ]),
                     ]),
 
-                // Section Konten Desa
                 Section::make('📝 Konten & Informasi Desa')
                     ->description('Informasi detail tentang desa')
                     ->icon('heroicon-o-document-text')
@@ -210,9 +190,17 @@ class ProfileDesaResource extends Resource
                         RichEditor::make('sambutan_kepala_desa')
                             ->label('Sambutan Kepala Desa')
                             ->toolbarButtons([
-                                'bold', 'italic', 'underline', 'strike',
-                                'bulletList', 'orderedList', 'h2', 'h3',
-                                'link', 'blockquote', 'codeBlock'
+                                'bold',
+                                'italic',
+                                'underline',
+                                'strike',
+                                'bulletList',
+                                'orderedList',
+                                'h2',
+                                'h3',
+                                'link',
+                                'blockquote',
+                                'codeBlock'
                             ])
                             ->placeholder('Tulis sambutan dari kepala desa...')
                             ->helperText('Sambutan resmi dari kepala desa untuk website'),
@@ -227,9 +215,17 @@ class ProfileDesaResource extends Resource
                         RichEditor::make('sejarah_desa')
                             ->label('Sejarah Desa')
                             ->toolbarButtons([
-                                'bold', 'italic', 'underline', 'strike',
-                                'bulletList', 'orderedList', 'h2', 'h3',
-                                'link', 'blockquote', 'codeBlock'
+                                'bold',
+                                'italic',
+                                'underline',
+                                'strike',
+                                'bulletList',
+                                'orderedList',
+                                'h2',
+                                'h3',
+                                'link',
+                                'blockquote',
+                                'codeBlock'
                             ])
                             ->placeholder('Ceritakan sejarah pembentukan dan perkembangan desa...')
                             ->helperText('Sejarah singkat tentang desa'),
@@ -237,15 +233,22 @@ class ProfileDesaResource extends Resource
                         RichEditor::make('program_unggulan')
                             ->label('Program Unggulan Desa')
                             ->toolbarButtons([
-                                'bold', 'italic', 'underline', 'strike',
-                                'bulletList', 'orderedList', 'h2', 'h3',
-                                'link', 'blockquote', 'codeBlock'
+                                'bold',
+                                'italic',
+                                'underline',
+                                'strike',
+                                'bulletList',
+                                'orderedList',
+                                'h2',
+                                'h3',
+                                'link',
+                                'blockquote',
+                                'codeBlock'
                             ])
                             ->placeholder('Deskripsikan program-program unggulan desa...')
                             ->helperText('Program-program prioritas dan unggulan desa'),
                     ]),
 
-                // Section Media Sosial
                 Section::make('📱 Media Sosial Desa')
                     ->description('Akun media sosial resmi desa')
                     ->icon('heroicon-o-share')
@@ -347,7 +350,7 @@ class ProfileDesaResource extends Resource
 
                 TextColumn::make('website')
                     ->label('Website')
-                    ->url(fn ($record) => $record->website)
+                    ->url(fn($record) => $record->website)
                     ->openUrlInNewTab()
                     ->icon('heroicon-o-globe-alt')
                     ->color('primary'),
@@ -392,7 +395,6 @@ class ProfileDesaResource extends Resource
 
     public static function canCreate(): bool
     {
-        // Hanya boleh ada satu profile desa
         return ProfileDesa::count() === 0;
     }
 

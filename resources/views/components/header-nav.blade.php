@@ -15,6 +15,7 @@
         ['label' => 'Pemerintahan', 'href' => '/pemerintahan'],
         ['label' => 'Galeri', 'href' => '/gallery'],
         ['label' => 'UMKM', 'href' => '/umkm'],
+        ['label' => 'Wisata', 'href' => '/wisata'],
     ];
     $currentUrl = request()->path();
 @endphp
