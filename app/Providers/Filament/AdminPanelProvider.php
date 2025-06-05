@@ -30,6 +30,9 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->brandName('DESA KEPUHARJO')
             ->sidebarCollapsibleOnDesktop()
+            ->databaseNotifications()
+            ->globalSearch(false)
+            ->databaseNotificationsPolling('30s')
             ->userMenuItems([
                 'logout' => MenuItem::make()->label('Log Out')
             ])
@@ -47,7 +50,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-               PagesDashboard::class
+                PagesDashboard::class
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->middleware([

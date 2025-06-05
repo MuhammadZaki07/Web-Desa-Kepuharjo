@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\CustomLoginController;
+use App\Http\Controllers\PengajuanController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/auth', [CustomLoginController::class, 'index'])->name('login')->middleware('guest');
 Route::post('/custom-login', [CustomLoginController::class, 'login'])->name('custom.login')->middleware('throttle:5,1');
+Route::post('/pengajuan',[PengajuanController::class,'store'])->name('addpengajuan');
 
 Route::get('/', function () {
     $blogs = [
