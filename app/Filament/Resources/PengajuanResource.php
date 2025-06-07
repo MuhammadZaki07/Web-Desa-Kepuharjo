@@ -10,6 +10,11 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Infolists;
+use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
@@ -100,7 +105,7 @@ class PengajuanResource extends Resource
                         'success' => 'selesai',
                         'danger' => 'ditolak',
                     ])
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
                         'pending' => 'Menunggu',
                         'diproses' => 'Diproses',
                         'selesai' => 'Selesai',
@@ -131,7 +136,7 @@ class PengajuanResource extends Resource
                     ->label('WhatsApp')
                     ->icon('heroicon-o-chat-bubble-left-right')
                     ->color('success')
-                    ->url(fn (Pengajuan $record): string => $record->whatsapp_url)
+                    ->url(fn(Pengajuan $record): string => $record->whatsapp_url)
                     ->openUrlInNewTab(),
 
                 Tables\Actions\EditAction::make()
@@ -162,40 +167,40 @@ class PengajuanResource extends Resource
     {
         return $infolist
             ->schema([
-                Infolists\Components\Section::make('Informasi Pengajuan')
+                Section::make('Informasi Pengajuan')
                     ->schema([
-                        Infolists\Components\Grid::make(2)
+                        Grid::make(2)
                             ->schema([
-                                Infolists\Components\TextEntry::make('id')
+                                TextEntry::make('id')
                                     ->label('ID Pengajuan')
                                     ->badge()
                                     ->color('primary'),
 
-                                Infolists\Components\TextEntry::make('created_at')
+                                TextEntry::make('created_at')
                                     ->label('Tanggal Pengajuan')
                                     ->dateTime('d M Y H:i'),
 
-                                Infolists\Components\TextEntry::make('name')
+                                TextEntry::make('name')
                                     ->label('Nama Lengkap')
                                     ->size('lg')
                                     ->weight('bold'),
 
-                                Infolists\Components\TextEntry::make('no_tlp')
+                                TextEntry::make('no_tlp')
                                     ->label('Nomor Telepon')
                                     ->copyable()
                                     ->copyMessage('Nomor telepon berhasil disalin!'),
 
-                                Infolists\Components\TextEntry::make('status')
+                                TextEntry::make('status')
                                     ->label('Status')
                                     ->badge()
-                                    ->color(fn (string $state): string => match ($state) {
+                                    ->color(fn(string $state): string => match ($state) {
                                         'pending' => 'warning',
                                         'diproses' => 'primary',
                                         'selesai' => 'success',
                                         'ditolak' => 'danger',
                                         default => 'gray',
                                     })
-                                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                                    ->formatStateUsing(fn(string $state): string => match ($state) {
                                         'pending' => 'Menunggu',
                                         'diproses' => 'Sedang Diproses',
                                         'selesai' => 'Selesai',
@@ -204,41 +209,64 @@ class PengajuanResource extends Resource
                                     }),
                             ]),
 
-                        Infolists\Components\TextEntry::make('description')
+                        TextEntry::make('description')
                             ->label('Deskripsi Pengajuan')
                             ->prose()
                             ->markdown(),
                     ]),
 
-                Infolists\Components\Section::make('Bukti Gambar')
+                Section::make('Bukti Gambar')
                     ->schema([
-                        Infolists\Components\RepeatableEntry::make('images')
+                        TextEntry::make('images')
                             ->label('')
-                            ->schema([
-                                Infolists\Components\ImageEntry::make('.')
-                                    ->label('')
-                                    ->disk('public')
-                                    ->height(200)
-                                    ->width(200),
-                            ])
-                            ->grid(3)
-                            ->visible(fn (Pengajuan $record): bool => !empty($record->images)),
+                            ->formatStateUsing(function ($state, $record) {
+                                // Gunakan $record->images yang adalah array asli, bukan $state yang sudah jadi string
+                                $images = $record->images;
 
-                        Infolists\Components\TextEntry::make('no_images')
+                                if (empty($images) || !is_array($images)) {
+                                    return '<div class="text-gray-500 text-center py-8 border border-gray-200 rounded-lg bg-gray-50">
+                                <p class="text-sm">Tidak ada bukti gambar yang diunggah</p>
+                            </div>';
+                                }
+
+                                $html = '<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">';
+                                foreach ($images as $imagePath) {
+                                    $imageUrl = asset('storage/' . $imagePath);
+                                    $html .= '
+                                    <a href="' . $imageUrl . '" target="_blank">
+                                        <div class="border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                                            <img
+                                                src="' . $imageUrl . '"
+                                                alt="Bukti Gambar"
+                                                class="w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                                                style="max-width: 100%; height: 200px;"
+                                                onerror="this.parentElement.innerHTML=\'<div class=&quot;flex items-center justify-center h-48 bg-gray-100 text-gray-500&quot;><span>Gambar tidak ditemukan</span></div>\'"
+                                            >
+                                        </div>
+                                    </a>';
+                                }
+                                $html .= '</div>';
+
+                                return $html;
+                            })
+                            ->html()
+                            ->visible(fn(Pengajuan $record): bool => !empty($record->images) && is_array($record->images)),
+
+                        TextEntry::make('no_images')
                             ->label('')
                             ->default('Tidak ada bukti gambar yang diunggah')
                             ->color('gray')
-                            ->visible(fn (Pengajuan $record): bool => empty($record->images)),
+                            ->visible(fn(Pengajuan $record): bool => empty($record->images) || !is_array($record->images)),
                     ]),
 
-                Infolists\Components\Section::make('Aksi Cepat')
+                Section::make('Aksi Cepat')
                     ->schema([
                         Infolists\Components\Actions::make([
                             Infolists\Components\Actions\Action::make('whatsapp')
                                 ->label('Hubungi via WhatsApp')
                                 ->icon('heroicon-o-chat-bubble-left-right')
                                 ->color('success')
-                                ->url(fn (Pengajuan $record): string => $record->whatsapp_url)
+                                ->url(fn(Pengajuan $record): string => $record->whatsapp_url)
                                 ->openUrlInNewTab(),
 
                             Infolists\Components\Actions\Action::make('edit_status')
@@ -254,7 +282,7 @@ class PengajuanResource extends Resource
                                             'selesai' => 'Selesai',
                                             'ditolak' => 'Ditolak',
                                         ])
-                                        ->default(fn (Pengajuan $record): string => $record->status)
+                                        ->default(fn(Pengajuan $record): string => $record->status)
                                         ->required(),
                                 ])
                                 ->action(function (array $data, Pengajuan $record): void {

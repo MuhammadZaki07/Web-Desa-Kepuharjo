@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Dashboard as PagesDashboard;
+use App\Http\Middleware\CheckAdminRole;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -31,8 +32,8 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('DESA KEPUHARJO')
             ->sidebarCollapsibleOnDesktop()
             ->databaseNotifications()
+            ->databaseNotificationsPolling('10s')
             ->globalSearch(false)
-            ->databaseNotificationsPolling('30s')
             ->userMenuItems([
                 'logout' => MenuItem::make()->label('Log Out')
             ])
@@ -63,6 +64,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                CheckAdminRole::class
             ])
             ->authMiddleware([
                 Authenticate::class,

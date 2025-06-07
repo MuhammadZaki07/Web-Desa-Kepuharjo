@@ -19,7 +19,7 @@
 
         <div class="lg:px-20 px-0 py-5">
             <x-sambutan id="sambutan" class="tab-content w-full py-3">
-                <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 py-10">
+                <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 py-10 px-5">
                     <div class="w-48 h-48 lg:w-64 lg:h-64 overflow-hidden shadow-lg">
                         <img src="{{ asset('assets/images/profile.jpg') }}" alt="Kepala Desa"
                             class="w-full h-full object-cover" />
