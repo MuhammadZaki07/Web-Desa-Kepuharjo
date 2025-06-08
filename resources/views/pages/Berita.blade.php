@@ -46,9 +46,9 @@
                         <h1 class="text-2xl font-semibold text-black">Berita Terbaru</h1>
                     </div>
                     <div class="py-5 space-y-5">
-                        <!-- Berita Besar -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             @for ($i = 0; $i < 2; $i++)
+                             <a href="/detail-blog">
                                 <div class="group cursor-pointer">
                                     <div class="relative rounded-xl overflow-hidden">
                                         <img src="{{ asset('assets/images/foto_brawijaya 1.png') }}" alt=""
@@ -76,12 +76,13 @@
                                         </div>
                                     </div>
                                 </div>
+                            </a>
                             @endfor
                         </div>
 
-                        <!-- Daftar Berita Kecil -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             @foreach ($berita as $item)
+                            <a href="/detail-blog">
                                 <div class="flex gap-3 items-start">
                                     <div class="w-28 h-20 md:w-32 md:h-24 flex-shrink-0 rounded-lg overflow-hidden relative">
                                         <img src="{{ asset('assets/images/foto_brawijaya 1.png') }}"
@@ -103,6 +104,7 @@
                                         </div>
                                     </div>
                                 </div>
+                            </a>
                             @endforeach
                         </div>
                     </div>

@@ -56,6 +56,7 @@ class WisataResource extends Resource
                                     ->maxLength(255)
                                     ->unique(Wisata::class, 'slug', ignoreRecord: true)
                                     ->rules(['alpha_dash'])
+                                    ->readOnly()
                                     ->helperText('URL-friendly version dari nama wisata'),
                             ]),
 
@@ -390,8 +391,6 @@ class WisataResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->color('info'),
                 Tables\Actions\EditAction::make()
                     ->color('warning'),
                 Tables\Actions\DeleteAction::make(),

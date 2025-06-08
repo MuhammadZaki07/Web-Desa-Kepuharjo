@@ -33,6 +33,7 @@ use Filament\Support\Enums\ActionSize;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
+use Closure;
 use Filament\Forms\Components\MarkdownEditor;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -83,27 +84,47 @@ class PendudukResource extends Resource
                                         $set('user.email', strtolower(str_replace(' ', '.', $state)) . '@example.com');
                                     }),
 
-                                TextInput::make('user.email')
-                                    ->label('Email')
-                                    ->email()
-                                    ->unique(ignoreRecord: true)
-                                    ->maxLength(255),
+                                // TextInput::make('user.email')
+                                //     ->label('Email')
+                                //     ->email()
+                                //     ->unique(ignoreRecord: true)
+                                //     ->maxLength(255),
 
                                 TextInput::make('user.phone')
                                     ->label('No. Telepon')
                                     ->tel()
-                                    ->unique(ignoreRecord: true)
+                                    ->required()
                                     ->maxLength(20)
-                                    ->placeholder('08123456789'),
+                                    ->placeholder('08123456789')
+                                    ->rules([
+                                        function ($livewire) {
+                                            return function (string $attribute, $value, Closure $fail) use ($livewire) {
+                                                $currentUserId = null;
+                                                if (method_exists($livewire, 'getRecord') && $livewire->getRecord()) {
+                                                    $currentUserId = $livewire->getRecord()->user?->id;
+                                                }
 
-                                TextInput::make('user.password')
-                                    ->label('Password')
-                                    ->password()
-                                    ->dehydrateStateUsing(fn($state) => filled($state) ? bcrypt($state) : null)
-                                    ->dehydrated(fn($state) => filled($state))
-                                    ->required(fn(string $context): bool => $context === 'create')
-                                    ->maxLength(255)
-                                    ->placeholder('Kosongkan jika tidak ingin mengubah'),
+                                                $existingUser = \App\Models\User::where('phone', $value)
+                                                    ->when($currentUserId, function ($query) use ($currentUserId) {
+                                                        $query->where('id', '!=', $currentUserId);
+                                                    })
+                                                    ->first();
+
+                                                if ($existingUser) {
+                                                    $fail('Nomor telepon sudah digunakan.');
+                                                }
+                                            };
+                                        },
+                                    ]),
+
+                                // TextInput::make('user.password')
+                                //     ->label('Password')
+                                //     ->password()
+                                //     ->dehydrateStateUsing(fn($state) => filled($state) ? bcrypt($state) : null)
+                                //     ->dehydrated(fn($state) => filled($state))
+                                //     ->required(fn(string $context): bool => $context === 'create')
+                                //     ->maxLength(255)
+                                //     ->placeholder('Kosongkan jika tidak ingin mengubah'),
                             ]),
                     ]),
 
@@ -115,7 +136,7 @@ class PendudukResource extends Resource
                             ->schema([
                                 TextInput::make('nik')
                                     ->label('NIK')
-                                    ->required()
+                                    // ->required()
                                     ->unique(ignoreRecord: true)
                                     ->length(16)
                                     ->numeric()
@@ -137,11 +158,13 @@ class PendudukResource extends Resource
                                 TextInput::make('tempat_lahir')
                                     ->label('Tempat Lahir')
                                     ->maxLength(255)
+                                    ->required()
                                     ->placeholder('Jakarta'),
 
                                 DatePicker::make('tanggal_lahir')
                                     ->label('Tanggal Lahir')
                                     ->native(false)
+                                    ->required()
                                     ->displayFormat('d/m/Y')
                                     ->maxDate(now()),
                             ]),
@@ -154,6 +177,7 @@ class PendudukResource extends Resource
                         Textarea::make('alamat')
                             ->label('Alamat Lengkap')
                             ->rows(3)
+                            ->required()
                             ->placeholder('Jl. Contoh No. 123, Kelurahan ABC, Kecamatan XYZ')
                             ->columnSpanFull(),
 
@@ -162,12 +186,14 @@ class PendudukResource extends Resource
                                 TextInput::make('RT')
                                     ->label('RT')
                                     ->numeric()
+                                    ->required()
                                     ->maxLength(3)
                                     ->placeholder('001'),
 
                                 TextInput::make('RW')
                                     ->label('RW')
                                     ->numeric()
+                                    ->required()
                                     ->maxLength(3)
                                     ->placeholder('001'),
                             ]),
@@ -182,6 +208,7 @@ class PendudukResource extends Resource
                             ->schema([
                                 Select::make('agama')
                                     ->label('Agama')
+                                    ->required()
                                     ->options([
                                         'Islam' => 'Islam',
                                         'Kristen' => 'Kristen',
@@ -194,6 +221,7 @@ class PendudukResource extends Resource
 
                                 Select::make('status_perkawinan')
                                     ->label('Status Perkawinan')
+                                    ->required()
                                     ->options([
                                         'Belum Kawin' => 'Belum Kawin',
                                         'Kawin' => 'Kawin',
@@ -204,11 +232,13 @@ class PendudukResource extends Resource
 
                                 TextInput::make('pekerjaan')
                                     ->label('Pekerjaan')
+                                    ->required()
                                     ->maxLength(255)
                                     ->placeholder('Pegawai Swasta'),
 
                                 Select::make('pendidikan')
                                     ->label('Pendidikan Terakhir')
+                                    ->required()
                                     ->options([
                                         'Tidak Sekolah' => 'Tidak Sekolah',
                                         'SD' => 'SD',
@@ -497,7 +527,6 @@ class PendudukResource extends Resource
 
             TextColumn::make('user.phone')
                 ->label('Telepon')
-                ->searchable()
                 ->copyable()
                 ->icon('heroicon-o-phone')
                 ->iconColor('green')

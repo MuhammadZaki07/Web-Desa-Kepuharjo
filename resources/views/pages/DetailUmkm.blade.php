@@ -16,10 +16,8 @@
             <div class="relative">
                 <span class="absolute top-4 left-4 bg-green-500 text-white text-xs font-medium px-3 py-1 rounded-full z-10">Makanan</span>
 
-                <!-- Image Carousel -->
                 <div class="relative">
                     <div class="carousel-container relative h-96 bg-gray-100 rounded-xl overflow-hidden">
-                        <!-- Carousel Images -->
                         <div class="carousel-wrapper flex transition-transform duration-300 ease-in-out h-full" id="carousel">
                             <div class="carousel-slide min-w-full h-full">
                                 <img src="{{ asset('assets/banners/gellery/sawah.jpg') }}" alt="Beras Organik - Sawah" class="w-full h-full object-cover">

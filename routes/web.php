@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/auth', [CustomLoginController::class, 'index'])->name('login')->middleware('guest');
 Route::post('/custom-login', [CustomLoginController::class, 'login'])->name('custom.login')->middleware('throttle:5,1');
 Route::post('/pengajuan', [PengajuanController::class, 'store'])->name('addpengajuan');
+Route::post('/comments', [App\Http\Controllers\CommentController::class, 'store'])->name('comments.store');
 
 Route::get('/', function () {
     $blogs = [
@@ -350,5 +351,14 @@ Route::get('/detail-umkm', function () {
         'format' => 'AM',
         'headline' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
         'title' => 'PKK'
+    ]);
+});
+Route::get('/detail-blog', function () {
+    return view('pages.DetailBerita', [
+        'tanggal' => 'Min, 13 April',
+        'jam' => '11:39:32',
+        'format' => 'AM',
+        'headline' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
+        'title' => 'Detail Blogs'
     ]);
 });
