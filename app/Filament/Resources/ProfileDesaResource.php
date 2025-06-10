@@ -144,7 +144,6 @@ class ProfileDesaResource extends Resource
                                 ->schema([
                                     Textarea::make('visi')
                                         ->label('Visi Desa')
-                                        ->required()
                                         ->rows(5)
                                         ->maxLength(1000)
                                         ->placeholder('Masukkan visi desa...')
@@ -160,7 +159,6 @@ class ProfileDesaResource extends Resource
                                         ->schema([
                                             TextInput::make('poin_misi')
                                                 ->label('Poin Misi')
-                                                ->required()
                                                 ->maxLength(500)
                                                 ->placeholder('Masukkan poin misi desa')
                                                 ->columnSpanFull()
@@ -172,8 +170,6 @@ class ProfileDesaResource extends Resource
                                         ->deleteAction(
                                             fn($action) => $action->requiresConfirmation()
                                         )
-                                        ->minItems(1)
-                                        ->maxItems(10)
                                         ->defaultItems(1)
                                         ->itemLabel(fn(array $state): ?string => $state['poin_misi'] ?? 'Misi Baru')
                                 ])
@@ -190,17 +186,7 @@ class ProfileDesaResource extends Resource
                         RichEditor::make('sambutan_kepala_desa')
                             ->label('Sambutan Kepala Desa')
                             ->toolbarButtons([
-                                'bold',
-                                'italic',
-                                'underline',
-                                'strike',
-                                'bulletList',
-                                'orderedList',
-                                'h2',
-                                'h3',
-                                'link',
-                                'blockquote',
-                                'codeBlock'
+                          
                             ])
                             ->placeholder('Tulis sambutan dari kepala desa...')
                             ->helperText('Sambutan resmi dari kepala desa untuk website'),
@@ -348,29 +334,17 @@ class ProfileDesaResource extends Resource
                     ->copyable()
                     ->icon('heroicon-o-phone'),
 
-                TextColumn::make('website')
-                    ->label('Website')
-                    ->url(fn($record) => $record->website)
-                    ->openUrlInNewTab()
-                    ->icon('heroicon-o-globe-alt')
-                    ->color('primary'),
-
                 TextColumn::make('updated_at')
                     ->label('Terakhir Diupdate')
                     ->dateTime('d M Y, H:i')
                     ->sortable()
-                    ->toggleable(),
             ])
-            ->filters([
-                //
-            ])
+            ->searchable(false)
+            ->paginated(false)
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->label('Edit')
                     ->icon('heroicon-o-pencil'),
-            ])
-            ->bulkActions([
-                // Tidak ada bulk actions untuk profile desa
             ])
             ->emptyStateHeading('Belum Ada Profile Desa')
             ->emptyStateDescription('Silakan buat profile desa untuk memulai.')

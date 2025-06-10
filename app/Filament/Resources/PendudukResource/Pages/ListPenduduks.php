@@ -11,6 +11,9 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
+use App\Exports\PendudukExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ListPenduduks extends ListRecords
 {
@@ -21,16 +24,18 @@ class ListPenduduks extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('export')
+                Action::make('export')
                 ->label('Export Data')
                 ->icon('heroicon-o-arrow-down-tray')
+                ->action(function (): BinaryFileResponse {
+                    Notification::make()
+                        ->title('Export sedang diproses...')
+                        ->success()
+                        ->send();
+                    return Excel::download(new PendudukExport, 'data_penduduk.xlsx');
+                })
                 ->color('success')
-                ->action(function () {
-                Notification::make()
-                    ->title('Export sedang diproses...')
-                    ->success()
-                    ->send();
-            }),
+                ->requiresConfirmation(),
 
             CreateAction::make()
                 ->label('Tambah Penduduk')

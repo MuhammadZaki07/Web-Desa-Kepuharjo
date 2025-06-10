@@ -8,6 +8,10 @@ use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
+use App\Exports\PengurusDesaExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Filament\Actions\Action;
+
 
 class ListPengurusDesas extends ListRecords
 {
@@ -21,11 +25,11 @@ class ListPengurusDesas extends ListRecords
                 ->icon('heroicon-o-plus-circle')
                 ->color('primary'),
 
-            Actions\Action::make('export')
+            Action::make('export')
                 ->label('Export Data')
                 ->icon('heroicon-o-arrow-down-tray')
                 ->action(function () {
-                    // Add export logic here
+                    return Excel::download(new PengurusDesaExport, 'pengurus_desa.xlsx');
                 })
                 ->color('success'),
         ];

@@ -15,7 +15,7 @@ class ViewComment extends ViewRecord
         return [
             Actions\Action::make('visit_page')
                 ->label('Lihat Halaman Website')
-                ->icon('heroicon-o-external-link')
+                ->icon('heroicon-o-link')
                 ->color('gray')
                 ->url(fn (): string => $this->record->page_url)
                 ->openUrlInNewTab(),

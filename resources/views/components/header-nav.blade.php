@@ -65,9 +65,16 @@
     <div class="relative">
         <div class="flex items-center gap-4 text-green-700">
             <i @click="searchOpen = !searchOpen" class="bi bi-search cursor-pointer text-xl"></i>
-            <a href="/auth">
-                <i class="bi bi-box-arrow-in-right cursor-pointer text-xl"></i>
-            </a>
+            @auth
+                <a href="/admin" class="text-md underline font-medium text-green-700">
+                    Dashboard Admin
+                </a>
+            @else
+                <a href="/auth">
+                    <i class="bi bi-box-arrow-in-right cursor-pointer text-xl"></i>
+                </a>
+            @endauth
+
         </div>
 
         <div x-show="searchOpen" @click.away="searchOpen = false" x-transition

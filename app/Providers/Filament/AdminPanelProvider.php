@@ -44,9 +44,6 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Green,
             ])
-            ->resources([
-                CommentResource::class,
-            ])
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label('Profile Desa')

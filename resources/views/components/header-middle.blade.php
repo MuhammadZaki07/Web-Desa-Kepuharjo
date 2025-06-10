@@ -1,25 +1,42 @@
+@php
+$dataDesa = \App\Models\ProfileDesa::first();
+@endphp
+
 <div class="pt-10 px-6 lg:px-20">
     <div class="flex justify-between items-center flex-wrap gap-y-4">
         <div class="flex gap-3 text-lg text-slate-800 mx-auto lg:m-0">
-            <i class="bi bi-instagram"></i>
-            <i class="bi bi-tiktok"></i>
-            <i class="bi bi-facebook"></i>
-            <i class="bi bi-whatsapp"></i>
-            <i class="bi bi-youtube"></i>
+            @if ($dataDesa?->instagram)
+                <a href="{{ $dataDesa->instagram }}" target="_blank"><i class="bi bi-instagram"></i></a>
+            @endif
+            @if ($dataDesa?->tiktok)
+                <a href="{{ $dataDesa->tiktok }}" target="_blank"><i class="bi bi-tiktok"></i></a>
+            @endif
+            @if ($dataDesa?->facebook)
+                <a href="{{ $dataDesa->facebook }}" target="_blank"><i class="bi bi-facebook"></i></a>
+            @endif
+            @if ($dataDesa?->whatsapp)
+                <a href="https://wa.me/{{ $dataDesa->whatsapp }}" target="_blank"><i class="bi bi-whatsapp"></i></a>
+            @endif
+            @if ($dataDesa?->youtube)
+                <a href="{{ $dataDesa->youtube }}" target="_blank"><i class="bi bi-youtube"></i></a>
+            @endif
         </div>
 
         <div class="flex flex-col gap-2">
             <h1 class="text-3xl lg:text-3xl font-bold text-center text-green-700 uppercase">
-                KARANGPLOSO <span class="hidden lg:inline">|</span> DESA Kepuharjo
+                {{ strtoupper($dataDesa?->kecamatan ?? 'KARANGPLOSO') }}
+                <span class="hidden lg:inline">|</span>
+                DESA {{ strtoupper($dataDesa?->name ?? 'KEPUHARJO') }}
             </h1>
             <h1 class="text-sm font-medium text-center text-gray-400 hidden lg:block">
-                Website Resmi Desa Kepuharjo Kab.Malang
+                {{ $dataDesa?->motto_desa ?? "Website resmi desa kepuharjo kab.Malang"}}
             </h1>
         </div>
 
         <h1 class="text-sm text-slate-500 hidden lg:block">
-            Kepuharjo@gmail.com
+            {{ $dataDesa?->email ?? 'kepuharjo@gmail.com' }}
         </h1>
+
         <div class="w-full h-0.5 bg-green-900 mt-3 rounded"></div>
     </div>
 </div>

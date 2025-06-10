@@ -1,4 +1,4 @@
-<section class="w-full px-5 lg:px-20 py-10">
+<section class="w-full px-5 lg:px-20 py-10" id="prestasi">
     <h2 class="text-2xl lg:text-5xl uppercase font-semibold mb-6">Prestasi Desa Kepuharjo</h2>
     <div class="bg-green-600 py-0.5 w-1/4 rounded-full"></div>
 

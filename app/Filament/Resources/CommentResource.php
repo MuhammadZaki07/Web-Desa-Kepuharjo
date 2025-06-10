@@ -10,22 +10,21 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
 
 class CommentResource extends Resource
 {
     protected static ?string $model = Comment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left';
+    protected static ?string $navigationGroup = "Konten";
+    protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationLabel = 'Komentar';
 
-    protected static ?string $modelLabel = 'Komentar';
-
-    protected static ?string $pluralModelLabel = 'Komentar';
-
-    protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
     {
@@ -59,57 +58,44 @@ class CommentResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->query(Comment::query())
             ->columns([
-                TextColumn::make('id')
-                    ->label('ID')
-                    ->sortable(),
-                TextColumn::make('name')
-                    ->label('Nama')
-                    ->searchable()
-                    ->sortable()
-                    ->limit(20),
-
-                TextColumn::make('email')
-                    ->label('Email')
-                    ->searchable()
-                    ->toggleable(),
-
-                TextColumn::make('comment')
-                    ->label('Komentar')
-                    ->limit(50)
-                    ->tooltip(function (TextColumn $column): ?string {
-                        $state = $column->getState();
-                        if (strlen($state) <= 50) {
-                            return null;
-                        }
-                        return $state;
-                    }),
-
-                TextColumn::make('page_title')
-                    ->label('Halaman')
-                    ->limit(30)
-                    ->searchable(),
-
-                TextColumn::make('created_at')
-                    ->label('Tanggal')
-                    ->dateTime('d M Y, H:i')
-                    ->sortable(),
+                TextColumn::make('id')->label('ID')->sortable(),
+                TextColumn::make('name')->label('Nama')->searchable(),
+                TextColumn::make('email')->label('Email')->searchable(),
+                TextColumn::make('comment')->label('Komentar')->limit(50)->searchable(),
+                TextColumn::make('created_at')->label('Tanggal')->dateTime('d M Y, H:i')->sortable(),
             ])
             ->actions([
-                Action::make('visit_page')
-                    ->label('Lihat Halaman')
-                    ->icon('heroicon-o-external-link')
-                    ->url(fn (Comment $record): string => $record->page_url)
-                    ->openUrlInNewTab(),
+                ViewAction::make()
+                    ->label('Lihat')
+                    ->icon('heroicon-m-eye'),
+                DeleteAction::make()
+                    ->label('Hapus')
+                    ->icon('heroicon-m-trash')
+                    ->requiresConfirmation()
+                    ->modalHeading('Hapus Komentar')
+                    ->modalDescription('Apakah Anda yakin ingin menghapus komentar ini? Tindakan ini tidak dapat dibatalkan.')
+                    ->modalSubmitActionLabel('Ya, Hapus'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()
+                        ->label('Hapus yang Dipilih')
+                        ->icon('heroicon-m-trash')
+                        ->requiresConfirmation()
+                        ->modalHeading('Hapus Komentar Terpilih')
+                        ->modalDescription('Apakah Anda yakin ingin menghapus semua komentar yang dipilih? Tindakan ini tidak dapat dibatalkan.')
+                        ->modalSubmitActionLabel('Ya, Hapus Semua'),
                 ]),
             ])
-            ->defaultSort('created_at', 'desc')
-            ->poll('30s');
+            ->paginated(false)
+            ->searchable(true)
+            ->defaultSort('created_at', 'desc');
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->withoutGlobalScopes();
     }
 
     public static function getRelations(): array
@@ -123,20 +109,5 @@ class CommentResource extends Resource
             'index' => Pages\ListComments::route('/'),
             'view' => Pages\ViewComment::route('/{record}'),
         ];
-    }
-
-    public static function canCreate(): bool
-    {
-        return false;
-    }
-
-    public static function canEdit($record): bool
-    {
-        return false;
-    }
-
-    public static function canDelete($record): bool
-    {
-        return true;
     }
 }

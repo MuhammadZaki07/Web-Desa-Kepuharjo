@@ -1,10 +1,5 @@
 <div x-data="{
-    headlines: [
-        'Desa Kepuharjo Terima Penghargaan Desa Terbaik',
-        'Panen Raya Sukses, Petani Desa Kepuharjo Bersuka Cita',
-        'Pembangunan Infrastruktur Jalan Sudah 90% Selesai',
-        'Festival Budaya Kepuharjo Akan Digelar Minggu Depan'
-    ],
+   headlines: @json($headline),
     currentIndex: 0,
     init() {
         setInterval(() => {

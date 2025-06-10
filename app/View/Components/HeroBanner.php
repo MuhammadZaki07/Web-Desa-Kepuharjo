@@ -11,9 +11,11 @@ class HeroBanner extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct()
+
+    public $banner;
+    public function __construct($banner)
     {
-        //
+        $this->banner = $banner;
     }
 
     /**
