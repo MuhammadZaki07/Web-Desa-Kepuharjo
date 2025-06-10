@@ -8,65 +8,94 @@
             <div class="flex-2">
                 <h2 class="text-lg font-bold uppercase mb-3">Tentang Desa</h2>
                 <div class="w-16 h-1 bg-emerald-600 mb-4"></div>
-                <img src="{{ asset('assets/logo/Logo_Kabupaten_Malang.png') }}" alt="Logo Desa" class="w-20 mb-4" />
-                <p class="font-semibold mb-2">Desa Kepuharjo</p>
+                @if (!empty($ProfileDesa?->logo_desa))
+                    <img src="{{ asset('storage/' . $ProfileDesa->logo_desa) }}" alt="Logo Desa" class="w-20 mb-4" />
+                @else
+                    <img src="{{ asset('assets/logo/Logo_Kabupaten_Malang.png') }}" alt="Logo Default"
+                        class="w-20 mb-4" />
+                @endif
+
+
+                <p class="font-semibold mb-2">Desa {{ $ProfileDesa->name ?? "Kepuharjo" }}</p>
                 <div class="flex items-center gap-2 mb-2">
                     <div class="bg-emerald-100 p-2 lg:w-10 lg:h-10 lg:flex justify-center items-center rounded-full">
                         <i class="bi bi-telephone-fill text-emerald-600"></i>
                     </div>
-                    <span>+62 8123456789</span>
+                    <span>{{ $ProfileDesa->no_tlp ?? "nomor tlp desa" }}</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <div class="bg-emerald-100 p-2 lg:w-10 lg:h-10 lg:flex justify-center items-center rounded-full">
                         <i class="bi bi-envelope-fill text-emerald-600"></i>
                     </div>
-                    <span>Desa_Kepuharjo@Kabupaten_malang.desa.id</span>
+                    <span>{{ $ProfileDesa->email ?? "email desa"}}</span>
                 </div>
             </div>
             <div class="flex lg:flex-3 flex-col sm:flex-row lg:gap-60 gap-10">
-                <!-- Akses Cepat -->
                 <div>
                     <h2 class="text-lg font-bold uppercase mb-3">Akses Cepat</h2>
                     <div class="w-16 h-1 bg-emerald-600 mb-4"></div>
                     <ul class="space-y-2">
-                        <li class="hover:text-green-500 cursor-pointer"><span class="text-emerald-600">●</span>
-                            Beranda</li>
-                        <li class="hover:text-green-500 cursor-pointer"><span class="text-emerald-600">●</span>
-                            Profile Desa</li>
-                        <li class="hover:text-green-500 cursor-pointer"><span class="text-emerald-600">●</span>
-                            Berita</li>
-                        <li class="hover:text-green-500 cursor-pointer"><span class="text-emerald-600">●</span>
-                            Pemerintahan</li>
-                        <li class="hover:text-green-500 cursor-pointer"><span class="text-emerald-600">●</span>
-                            Galeri</li>
-                        <li class="hover:text-green-500 cursor-pointer"><span class="text-emerald-600">●</span>
-                            Artikel</li>
+                        <li class="hover:text-green-500 cursor-pointer">
+                            <a href="#top" class="flex items-center gap-2">
+                                <span class="text-emerald-600">●</span> Beranda
+                            </a>
+                        </li>
+                        <li class="hover:text-green-500 cursor-pointer">
+                            <a href="/profile-data-penduduk" class="flex items-center gap-2">
+                                <span class="text-emerald-600">●</span> Profile Data Penduduk
+                            </a>
+                        </li>
+                        <li class="hover:text-green-500 cursor-pointer">
+                            <a href="/berita" class="flex items-center gap-2">
+                                <span class="text-emerald-600">●</span> Berita
+                            </a>
+                        </li>
+                        <li class="hover:text-green-500 cursor-pointer">
+                            <a href="/pemerintahan" class="flex items-center gap-2">
+                                <span class="text-emerald-600">●</span> Pemerintahan
+                            </a>
+                        </li>
+                        <li class="hover:text-green-500 cursor-pointer">
+                            <a href="/gallery" class="flex items-center gap-2">
+                                <span class="text-emerald-600">●</span> Galeri
+                            </a>
+                        </li>
+                        <li class="hover:text-green-500 cursor-pointer">
+                            <a href="/umkm" class="flex items-center gap-2">
+                                <span class="text-emerald-600">●</span> UMKM
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+
+                <div>
+                    <h2 class="text-lg font-bold uppercase mb-3">Bidang Prioritas Desa</h2>
+                    <div class="w-16 h-1 bg-emerald-600 mb-4"></div>
+                    <ul class="space-y-2">
+                        <li class="hover:text-green-500 cursor-pointer">
+                            <a href="/wisata" class="flex items-center gap-2">
+                                <span class="text-emerald-600">●</span> Pariwisata
+                            </a>
+                        </li>
+                        <li class="hover:text-green-500 cursor-pointer">
+                            <a href="/berita" class="flex items-center gap-2">
+                                <span class="text-emerald-600">●</span> Berita
+                            </a>
+                        </li>
+                        <li class="hover:text-green-500 cursor-pointer">
+                            <a href="/umkm" class="flex items-center gap-2">
+                                <span class="text-emerald-600">●</span> UMKM
+                            </a>
+                        </li>
                     </ul>
                 </div>
 
-                <!-- Layanan Desa -->
-                <div>
-                    <h2 class="text-lg font-bold uppercase mb-3">Layanan Desa</h2>
-                    <div class="w-16 h-1 bg-emerald-600 mb-4"></div>
-                    <ul class="space-y-2">
-                        <li class="hover:text-green-500 cursor-pointer"><span class="text-emerald-600">●</span>
-                            Pariwisata</li>
-                        <li class="hover:text-green-500 cursor-pointer"><span class="text-emerald-600">●</span>
-                            Berita</li>
-                        <li class="hover:text-green-500 cursor-pointer"><span class="text-emerald-600">●</span>
-                            UMKM</li>
-                    </ul>
-                </div>
             </div>
         </div>
         <div
-            class="border-t border-gray-200 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between text-sm text-gray-500">
+            class="border-t border-gray-200 mt-10 pt-6 flex flex-col md:flex-row items-center justify-center text-sm text-gray-500">
             <p>© 2025 Desa Kepuharjo. Hak Cipta Dilindungi.</p>
-            <div class="flex gap-6 mt-4 md:mt-0">
-                <a href="#">Kebijakan Privasi</a>
-                <a href="#">Syarat & Ketentuan</a>
-                <a href="#">Peta Situs</a>
-            </div>
         </div>
     </div>
 </footer>

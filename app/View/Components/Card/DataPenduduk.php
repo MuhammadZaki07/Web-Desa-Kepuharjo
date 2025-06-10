@@ -11,13 +11,15 @@ class DataPenduduk extends Component
 
     public $class;
     public $id;
+    public $dataPenduduk;
     /**
      * Create a new component instance.
      */
-    public function __construct($class,$id)
+    public function __construct($class = '', $id = null, $dataPenduduk = [])
     {
         $this->class = $class;
         $this->id = $id;
+        $this->dataPenduduk = $dataPenduduk;
     }
 
     /**

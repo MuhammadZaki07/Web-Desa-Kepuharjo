@@ -1,21 +1,4 @@
-<div x-data="{
-   headlines: @json($headline),
-    currentIndex: 0,
-    init() {
-        setInterval(() => {
-            this.next();
-        }, 3000);
-    },
-    get currentHeadline() {
-        return this.headlines[this.currentIndex];
-    },
-    next() {
-        this.currentIndex = (this.currentIndex + 1) % this.headlines.length;
-    },
-    prev() {
-        this.currentIndex = (this.currentIndex - 1 + this.headlines.length) % this.headlines.length;
-    }
-}" x-init="init">
+<div x-data="headlineSlider" x-init="init">
     <div class="bg-green-700 py-2.5 flex flex-col lg:flex-row justify-between px-4 sm:px-6 lg:px-20">
         <div class="lg:flex gap-3 text-white text-xs font-medium hidden">
             <h1>{{ $tanggal }}</h1>
@@ -45,3 +28,26 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('headlineSlider', () => ({
+            headlines: @json($headline),
+            currentIndex: 0,
+            init() {
+                setInterval(() => {
+                    this.next();
+                }, 3000);
+            },
+            get currentHeadline() {
+                return this.headlines.length > 0 ? this.headlines[this.currentIndex] : '';
+            },
+            next() {
+                this.currentIndex = (this.currentIndex + 1) % this.headlines.length;
+            },
+            prev() {
+                this.currentIndex = (this.currentIndex - 1 + this.headlines.length) % this.headlines.length;
+            }
+        }));
+    });
+</script>

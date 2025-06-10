@@ -16,7 +16,7 @@
                     data-aos="fade-right" data-aos-delay="200">
                     {{ !empty($banner->title[0]) ? $banner->title[0] : 'Title Banner' }}</h1>
                 <p class="text-base sm:text-lg lg:text-3xl text-center lg:text-left font-medium" data-aos="fade-right"
-                    data-aos-delay="400">{{ $banner->description }}</p>
+                    data-aos-delay="400">{{ $banner->description ?? "No Data" }}</p>
             </div>
 
             <div class="lg:flex justify-center sm:flex-row gap-4 mt-6 items-center sm:items-start sm:justify-start hidden"

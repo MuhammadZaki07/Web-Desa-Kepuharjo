@@ -1,9 +1,8 @@
 @extends('layouts.app')
 @section('content')
-    <x-hero-banner :banner="$banner"/>
+    <x-hero-banner :banner="$banner" />
     <section class="w-full lg:px-32 px-4 lg:pb-16">
         <div class="bg-green-600 py-0.5 rounded-full mt-7" id="profiledesa"></div>
-
         <nav class="w-full border-b border-slate-200 lg:border-none py-0 lg:py-5">
             <ul class="flex flex-wrap justify-center gap-4 md:gap-8 lg:gap-15 px-4 py-4">
                 <li class="tab relative font-semibold text-sm md:text-base text-slate-500 hover:text-green-600 hover:border-green-600 pb-2 border-b-2 border-transparent cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-105"
@@ -20,8 +19,14 @@
             <x-sambutan id="sambutan" class="tab-content w-full py-3">
                 <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 py-10 px-5">
                     <div class="w-48 h-48 lg:w-64 lg:h-64 overflow-hidden shadow-lg">
-                        <img src="{{ asset('assets/images/profile.jpg') }}" alt="Kepala Desa"
-                            class="w-full h-full object-cover" />
+                        @if ($ProfileDesa->user && $ProfileDesa->user->photo)
+                            <img src="{{ asset('storage/' . $ProfileDesa->user->photo) }}" alt="Foto Kepala Desa"
+                                class="w-full h-full object-cover" />
+                        @else
+                            <img src="{{ asset('assets/images/profile.jpg') }}" alt="Foto Kepala Desa (Default)"
+                                class="w-full h-full object-cover" />
+                        @endif
+
                     </div>
 
                     <div class="flex-1 text-gray-800 relative">
@@ -29,18 +34,18 @@
                         </div>
                         <h2 class="text-2xl lg:text-5xl font-bold mb-4 text-black">Sambutan Kepala Desa</h2>
                         <p class="text-lg leading-relaxed font-light">
-                            {{  $ProfileDesa->sambutan_kepala_desa }}
+                            {{ $ProfileDesa->sambutan_kepala_desa ?? '-' }}
                         </p>
                         <div class="mt-6">
-                            <p class="font-semibold text-black text-xl">{{ $kepalaDesa }}</p>
+                            <p class="font-semibold text-black text-xl">{{ $kepalaDesa ?? '-' }}</p>
                             <p class="text-sm text-gray-500 font-light">Kepala Desa Kepuharjo</p>
                         </div>
                     </div>
                 </div>
             </x-sambutan>
-            <x-card.data-penduduk class="tab-content hidden w-full py-3" id="data-penduduk" />
-            <x-visi-misi class="hidden" />
-            <x-sejarah />
+            <x-card.data-penduduk :dataPenduduk="$dataPenduduk" class="tab-content hidden w-full py-3" id="data-penduduk" />
+            <x-visi-misi :misi="$misi" :visi="$visi" class="hidden" />
+            <x-sejarah :sejarah="$sejarah" />
         </div>
     </section>
     <x-latest-information :blogs="$blogs" />

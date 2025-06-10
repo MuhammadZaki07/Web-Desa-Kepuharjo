@@ -11,9 +11,11 @@ class Sejarah extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct()
+
+     public $sejarah;
+    public function __construct($sejarah = "")
     {
-        //
+        $this->sejarah = $sejarah;
     }
 
     /**

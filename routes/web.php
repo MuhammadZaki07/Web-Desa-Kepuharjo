@@ -301,7 +301,7 @@ Route::get('/detail-umkm', function () {
         'title' => 'PKK'
     ]);
 });
-Route::get('/detail-blog', function () {
+Route::get('/detail-blog/{slug}', function () {
     return view('pages.DetailBerita', [
         'tanggal' => 'Min, 13 April',
         'jam' => '11:39:32',
@@ -309,4 +309,4 @@ Route::get('/detail-blog', function () {
         'headline' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
         'title' => 'Detail Blogs'
     ]);
-});
+})->name('artikel.show');
