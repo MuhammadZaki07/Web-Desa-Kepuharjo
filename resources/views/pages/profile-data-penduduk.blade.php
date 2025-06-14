@@ -3,9 +3,17 @@
     @push('blog-running')
         <section class="lg:px-20 px-5">
             <x-running-blog :blogs="$blogs" />
-            <x-chart.mixed-chart id="pendudukChart" :series1-data="[2, 3, 1, 1, 2, 3, 3, 2, 2, 1, 1, 3]" :series2-data="[30, 35, 20, 25, 40, 55, 60, 40, 30, 20, 25, 50]" :categories="['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']" series1-name="Usage"
-                series2-name="Banyak Jiwa" y-axis-title="Jumlah" />
-            <x-card.data-penduduk class="w-full py-3" id="#" />
+            <x-chart.mixed-chart
+                id="pendudukChart"
+                :series1-data="$series1Data"
+                :series2-data="$series2Data"
+                :categories="$categories"
+                series1-name="Laki-Laki"
+                series2-name="Perempuan"
+                y-axis-title="Jumlah Penduduk"
+            />
+            {{-- {{ dd($dataPenduduk) }} --}}
+            <x-card.data-penduduk class="w-full py-3" id="#" :dataPenduduk="$dataPenduduk" />
             <div class="flex flex-col lg:flex-row gap-15 items-center py-10">
                 <div class="lg:flex-8">
                     <x-comment />

@@ -4,6 +4,6 @@
     <div class="hidden lg:block my-10">
         <x-running-blog :blogs="$blogs" />
     </div>
-    <x-visi-misi class="block"/>
+    <x-visi-misi class="block" :misi="$misi" :visi="$visi"/>
 </section>
 @endsection

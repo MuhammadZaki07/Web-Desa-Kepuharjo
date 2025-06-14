@@ -1,3 +1,4 @@
+@if (count($blogs) >= 3)
 <div
     class="group flex items-center bg-white shadow-sm border border-slate-400/[0.2] mt-10 overflow-hidden rounded-lg relative">
     <div class="w-[170px] h-full overflow-hidden">
@@ -32,3 +33,4 @@
         </div>
     </div>
 </div>
+@endif

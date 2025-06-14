@@ -33,24 +33,7 @@ class ViewCategory extends ViewRecord
                             ->size('lg')
                             ->weight('bold'),
 
-                        TextEntry::make('slug')
-                            ->badge()
-                            ->color('gray')
-                            ->copyable(),
-
-                        TextEntry::make('type')
-                            ->badge()
-                            ->color(fn (string $state): string => match ($state) {
-                                'blogs' => 'primary',
-                                'umkm' => 'success',
-                                'wisata' => 'warning',
-                                default => 'gray',
-                            }),
-
                         ColorEntry::make('color'),
-
-                        TextEntry::make('description')
-                            ->placeholder('No description provided'),
 
                         TextEntry::make('articles_count')
                             ->label('Total Articles')

@@ -17,6 +17,10 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Filters\Filter;
 
 class ArticleResource extends Resource
 {
@@ -82,7 +86,7 @@ class ArticleResource extends Resource
                             ->relationship(
                                 name: 'category',
                                 titleAttribute: 'name',
-                                modifyQueryUsing: fn (Builder $query) => $query->where('type', 'blogs')
+                                modifyQueryUsing: fn(Builder $query) => $query->where('type', 'blogs')
                             )
                             ->searchable()
                             ->preload()
@@ -98,18 +102,8 @@ class ArticleResource extends Resource
                                         }
                                     }),
 
-                                Forms\Components\TextInput::make('slug')
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->unique(Category::class, 'slug')
-                                    ->alphaDash(),
-
                                 Forms\Components\Hidden::make('type')
                                     ->default('blogs'),
-
-                                Forms\Components\Textarea::make('description')
-                                    ->rows(3)
-                                    ->maxLength(500),
 
                                 Forms\Components\ColorPicker::make('color')
                                     ->default('#3B82F6'),
@@ -129,9 +123,9 @@ class ArticleResource extends Resource
 
                         Forms\Components\DateTimePicker::make('published_at')
                             ->label('Publish Date')
-                            ->visible(fn (Forms\Get $get): bool => $get('status') === 'published')
+                            ->visible(fn(Forms\Get $get): bool => $get('status') === 'published')
                             ->default(now())
-                            ->required(fn (Forms\Get $get): bool => $get('status') === 'published'),
+                            ->required(fn(Forms\Get $get): bool => $get('status') === 'published'),
 
                         Forms\Components\FileUpload::make('featured_image')
                             ->label('Featured Image')
@@ -145,8 +139,9 @@ class ArticleResource extends Resource
                                 '4:3',
                                 '1:1',
                             ])
-                            ->maxSize(2048)
-                            ->helperText('Max size: 2MB. Recommended ratio: 16:9'),
+                            ->maxSize(1024)
+                            ->helperText('Max size: 1MB. Recommended ratio: 16:9'),
+
 
                         Forms\Components\Hidden::make('user_id')
                             ->default(Auth::user()->id),
@@ -160,27 +155,28 @@ class ArticleResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('featured_image')
+                ImageColumn::make('featured_image')
                     ->disk('public')
                     ->size(60)
                     ->circular(),
 
-                Tables\Columns\TextColumn::make('title')
+                TextColumn::make('title')
                     ->searchable()
                     ->sortable()
                     ->weight(FontWeight::Bold)
-                    ->wrap(),
+                    ->wrap()
+                    ->limit(30), // Batasi 30 karakter, tambahkan elipsis (...)
 
-                Tables\Columns\TextColumn::make('category.name')
+                TextColumn::make('category.name')
                     ->badge()
-                    ->color(fn (Article $record): string => match ($record->category?->type) {
+                    ->color(fn(Article $record): string => match ($record->category?->type) {
                         'blogs' => 'primary',
                         'umkm' => 'success',
                         'wisata' => 'warning',
                         default => 'gray',
                     }),
 
-                Tables\Columns\BadgeColumn::make('status')
+                BadgeColumn::make('status')
                     ->colors([
                         'gray' => 'draft',
                         'success' => 'published',
@@ -192,30 +188,32 @@ class ArticleResource extends Resource
                         'heroicon-o-archive-box' => 'archived',
                     ]),
 
-                Tables\Columns\TextColumn::make('author.name')
+                TextColumn::make('author.name')
                     ->label('Author')
                     ->sortable()
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('viewers')
+                TextColumn::make('viewers')
                     ->label('Views')
                     ->badge()
                     ->color('gray')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('published_at')
+                TextColumn::make('published_at')
                     ->label('Published')
                     ->dateTime()
                     ->sortable()
                     ->since()
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->since()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->recordUrl(null)
+            ->recordAction(null)
             ->filters([
                 SelectFilter::make('status')
                     ->options([
@@ -226,11 +224,11 @@ class ArticleResource extends Resource
                     ->multiple(),
 
                 SelectFilter::make('category')
-                    ->relationship('category', 'name', fn (Builder $query) => $query->where('type', 'blogs'))
+                    ->relationship('category', 'name', fn(Builder $query) => $query->where('type', 'blogs'))
                     ->searchable()
                     ->preload(),
 
-                Tables\Filters\Filter::make('published_at')
+                Filter::make('published_at')
                     ->form([
                         Forms\Components\DatePicker::make('published_from')
                             ->label('Published from'),
@@ -241,56 +239,62 @@ class ArticleResource extends Resource
                         return $query
                             ->when(
                                 $data['published_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('published_at', '>=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('published_at', '>=', $date),
                             )
                             ->when(
                                 $data['published_until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('published_at', '<=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('published_at', '<=', $date),
                             );
                     }),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('toggleStatus')
-                    ->label(fn (Article $record): string => match ($record->status) {
-                        'draft' => 'Publish',
-                        'published' => 'Unpublish',
-                        'archived' => 'Restore',
-                        default => 'Update',
-                    })
-                    ->icon(fn (Article $record): string => match ($record->status) {
-                        'draft' => 'heroicon-o-eye',
-                        'published' => 'heroicon-o-eye-slash',
-                        'archived' => 'heroicon-o-arrow-uturn-left',
-                        default => 'heroicon-o-arrow-path',
-                    })
-                    ->color(fn (Article $record): string => match ($record->status) {
-                        'draft' => 'success',
-                        'published' => 'warning',
-                        'archived' => 'info',
-                        default => 'gray',
-                    })
-                    ->action(function (Article $record): void {
-                        match ($record->status) {
-                            'draft' => $record->update([
-                                'status' => 'published',
-                                'published_at' => now(),
-                            ]),
-                            'published' => $record->update(['status' => 'draft']),
-                            'archived' => $record->update(['status' => 'draft']),
-                        };
-                    })
-                    ->requiresConfirmation(),
-
-                Tables\Actions\DeleteAction::make()
-                    ->requiresConfirmation(),
-            ])
+            ->actions(
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('view')
+                        ->label('View')
+                        ->icon('heroicon-o-eye')
+                        ->url(fn(Article $record): string => route('detail-blog', $record->slug))
+                        ->openUrlInNewTab(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\Action::make('toggleStatus')
+                        ->label(fn(Article $record): string => match ($record->status) {
+                            'draft' => 'Publish',
+                            'published' => 'Unpublish',
+                            'archived' => 'Restore',
+                            default => 'Update',
+                        })
+                        ->icon(fn(Article $record): string => match ($record->status) {
+                            'draft' => 'heroicon-o-eye',
+                            'published' => 'heroicon-o-eye-slash',
+                            'archived' => 'heroicon-o-arrow-uturn-left',
+                            default => 'heroicon-o-arrow-path',
+                        })
+                        ->color(fn(Article $record): string => match ($record->status) {
+                            'draft' => 'success',
+                            'published' => 'warning',
+                            'archived' => 'info',
+                            default => 'gray',
+                        })
+                        ->action(function (Article $record): void {
+                            match ($record->status) {
+                                'draft' => $record->update([
+                                    'status' => 'published',
+                                    'published_at' => now(),
+                                ]),
+                                'published' => $record->update(['status' => 'draft']),
+                                'archived' => $record->update(['status' => 'draft']),
+                            };
+                        })
+                        ->requiresConfirmation(),
+                    Tables\Actions\DeleteAction::make()
+                        ->requiresConfirmation(),
+                ])
+                    ->icon('heroicon-o-ellipsis-vertical')
+                    ->color('gray')
+            )
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
                         ->requiresConfirmation(),
-
                     Tables\Actions\BulkAction::make('publish')
                         ->label('Publish Selected')
                         ->icon('heroicon-o-eye')

@@ -48,14 +48,6 @@ class CategoryResource extends Resource
                                         }
                                     })
                                     ->columnSpan(1),
-
-                                Forms\Components\TextInput::make('slug')
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->unique(Category::class, 'slug', ignoreRecord: true)
-                                    ->alphaDash()
-                                    ->helperText('URL-friendly version of the name')
-                                    ->columnSpan(1),
                             ]),
 
                         Forms\Components\Select::make('type')
@@ -67,11 +59,6 @@ class CategoryResource extends Resource
                             ])
                             ->native(false)
                             ->helperText('Select the content type this category belongs to'),
-
-                        Forms\Components\Textarea::make('description')
-                            ->rows(3)
-                            ->maxLength(500)
-                            ->helperText('Optional description for this category'),
 
                         Forms\Components\ColorPicker::make('color')
                             ->default('#3B82F6')
@@ -89,13 +76,6 @@ class CategoryResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->weight(FontWeight::Bold),
-
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable()
-                    ->color('gray')
-                    ->copyable()
-                    ->copyMessage('Slug copied!')
-                    ->copyMessageDuration(1500),
 
                 Tables\Columns\BadgeColumn::make('type')
                     ->colors([
@@ -116,14 +96,6 @@ class CategoryResource extends Resource
                     ->counts('articles')
                     ->label('Articles')
                     ->badge()
-                    ->color('gray'),
-
-                Tables\Columns\TextColumn::make('description')
-                    ->limit(50)
-                    ->tooltip(function (Tables\Columns\TextColumn $column): ?string {
-                        $state = $column->getState();
-                        return strlen($state) > 50 ? $state : null;
-                    })
                     ->color('gray'),
 
                 Tables\Columns\TextColumn::make('created_at')

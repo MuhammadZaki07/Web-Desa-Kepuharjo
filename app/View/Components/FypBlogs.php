@@ -11,9 +11,11 @@ class FypBlogs extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct()
+
+     public $viralBlogs;
+    public function __construct($viralBlogs)
     {
-        //
+        $this->viralBlogs = $viralBlogs;
     }
 
     /**

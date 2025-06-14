@@ -20,7 +20,7 @@ class EditArticle extends EditRecord
                 ->label('Preview')
                 ->icon('heroicon-o-eye')
                 ->color('gray')
-                ->url(fn ($record) => route('articles.show', $record->slug), shouldOpenInNewTab: true)
+                ->url(fn ($record) => route('detail-blog', $record->slug), shouldOpenInNewTab: true)
                 ->visible(fn ($record) => $record->status === 'published'),
         ];
     }

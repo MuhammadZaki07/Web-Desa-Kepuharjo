@@ -32,7 +32,7 @@
 <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('headlineSlider', () => ({
-            headlines: @json($headline),
+            headlines: @json($headlines),
             currentIndex: 0,
             init() {
                 setInterval(() => {

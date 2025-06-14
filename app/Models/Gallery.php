@@ -9,7 +9,11 @@ class Gallery extends Model
 {
     protected $guarded = [];
 
-     public function getUrlAttribute()
+    protected $attributes = [
+        'type' => 'gallery',
+    ];
+
+    public function getUrlAttribute()
     {
         return Storage::url($this->path);
     }
@@ -22,5 +26,14 @@ class Gallery extends Model
     public static function getByType($type)
     {
         return static::where('type', $type)->latest()->get();
+    }
+
+    protected static function booted()
+    {
+        static::deleted(function ($gallery) {
+            if ($gallery->path && Storage::disk('public')->exists($gallery->path)) {
+                Storage::disk('public')->delete($gallery->path);
+            }
+        });
     }
 }

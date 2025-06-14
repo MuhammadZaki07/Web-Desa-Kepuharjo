@@ -5,5 +5,5 @@
         </x-badge>
     </div>
     <x-running-blog :blogs="$blogs" />
-    <x-fyp-blogs />
+    <x-fyp-blogs :viralBlogs="$viralBlogs"/>
 </section>

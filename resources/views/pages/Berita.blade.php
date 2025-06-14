@@ -35,10 +35,6 @@
 @endphp
 @section('content')
     <div class="lg:px-20 px-5">
-        <div class="hidden lg:block">
-            <x-running-blog :blogs="$blogs" />
-        </div>
-        <x-fyp-blogs />
         <div class="lg:py-16 py-10 flex flex-col lg:flex-row gap-10 items-start">
             <div class="flex-1 lg:flex-7">
                 <x-content>

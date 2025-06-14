@@ -25,7 +25,7 @@ class ViewArticle extends ViewRecord
                 ->label('Preview')
                 ->icon('heroicon-o-eye')
                 ->color('gray')
-                ->url(fn ($record) => route('articles.show', $record->slug),  true)
+                ->url(fn ($record) => route('detail-blog', $record->slug),  true)
                 ->visible(fn ($record) => $record->status === 'published'),
         ];
     }

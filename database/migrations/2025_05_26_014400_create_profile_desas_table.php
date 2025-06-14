@@ -23,6 +23,7 @@ return new class extends Migration
             $table->longText('sambutan_kepala_desa')->nullable();
             $table->string('motto_desa')->nullable();
             $table->longText('sejarah_desa')->nullable();
+            $table->binary('image_sejarah')->nullable();
             $table->longText('program_unggulan')->nullable();
             $table->text('visi')->nullable();
             $table->json('misi')->nullable();

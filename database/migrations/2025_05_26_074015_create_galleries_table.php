@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('galleries', function (Blueprint $table) {
             $table->id();
             $table->string('path');
-            $table->enum('type', ['gallery', 'pkk', 'karang_taruna'])->nullable()->default('gallery');
+            $table->string('type')->nullable();
             $table->index('type');
             $table->timestamps();
         });

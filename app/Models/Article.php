@@ -50,6 +50,17 @@ class Article extends Model
             if ($article->isDirty('content') && empty($article->excerpt)) {
                 $article->excerpt = Str::limit(strip_tags($article->content), 150);
             }
+            if ($article->isDirty('featured_image') && $article->getOriginal('featured_image')) {
+                if (Storage::disk('public')->exists($article->getOriginal('featured_image'))) {
+                    Storage::disk('public')->delete($article->getOriginal('featured_image'));
+                }
+            }
+        });
+
+        static::deleted(function ($article) {
+            if ($article->featured_image && Storage::disk('public')->exists($article->featured_image)) {
+                Storage::disk('public')->delete($article->featured_image);
+            }
         });
     }
 
@@ -66,8 +77,8 @@ class Article extends Model
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('status', 'published')
-                    ->whereNotNull('published_at')
-                    ->where('published_at', '<=', now());
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now());
     }
 
     public function scopeDraft(Builder $query): Builder
@@ -93,7 +104,7 @@ class Article extends Model
     public function getReadingTimeAttribute(): int
     {
         $wordCount = str_word_count(strip_tags($this->content));
-        $readingSpeed = 200; 
+        $readingSpeed = 200;
         return max(1, ceil($wordCount / $readingSpeed));
     }
 }

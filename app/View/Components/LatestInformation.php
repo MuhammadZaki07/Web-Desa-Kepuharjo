@@ -12,10 +12,12 @@ class LatestInformation extends Component
      * Create a new component instance.
      */
 
-     public $blogs;
-    public function __construct($blogs)
+    public $blogs;
+    public $viralBlogs;
+    public function __construct($blogs, $viralBlogs)
     {
         $this->blogs = $blogs;
+        $this->viralBlogs = $viralBlogs;
     }
 
     /**

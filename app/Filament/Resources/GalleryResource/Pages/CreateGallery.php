@@ -16,8 +16,16 @@ class CreateGallery extends CreateRecord
     {
         $records = [];
         foreach ($data['path'] as $path) {
-            $records[] = Gallery::create(['path' => $path]);
+            $records[] = Gallery::create([
+                'path' => $path,
+                'type' => $data['type'],
+            ]);
         }
-        return $records[0];
+        return end($records);
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
     }
 }

@@ -21,6 +21,7 @@ class ProfileDesa extends Model
         'website',
         'alamat_kantor',
         'kode_pos',
+        'image_sejarah',
         'sambutan_kepala_desa',
         'motto_desa',
         'sejarah_desa',
@@ -41,13 +42,11 @@ class ProfileDesa extends Model
         'updated_at' => 'datetime',
     ];
 
-    // Relationships
     public function images(): MorphMany
     {
         return $this->morphMany(Images::class, 'imageable');
     }
 
-    // Accessors
     public function getLogoDesaUrlAttribute(): ?string
     {
         if ($this->logo_desa) {
@@ -99,7 +98,6 @@ class ProfileDesa extends Model
         return $this->threads ? 'https://threads.net/@' . $this->threads : null;
     }
 
-    // Scopes
     public function scopeActive($query)
     {
         return $query->whereNotNull('name')->whereNotNull('email');
@@ -117,7 +115,6 @@ class ProfileDesa extends Model
         });
     }
 
-    // Methods
     public function hasVisiMisi(): bool
     {
         return !empty($this->visi) || !empty($this->misi_list);

@@ -185,9 +185,7 @@ class ProfileDesaResource extends Resource
                     ->schema([
                         RichEditor::make('sambutan_kepala_desa')
                             ->label('Sambutan Kepala Desa')
-                            ->toolbarButtons([
-                          
-                            ])
+                            ->toolbarButtons([])
                             ->placeholder('Tulis sambutan dari kepala desa...')
                             ->helperText('Sambutan resmi dari kepala desa untuk website'),
 
@@ -197,6 +195,14 @@ class ProfileDesaResource extends Resource
                             ->placeholder('Contoh: Bersatu Membangun Desa')
                             ->prefixIcon('heroicon-o-star')
                             ->helperText('Motto atau tagline desa'),
+
+                        FileUpload::make('image_sejarah')
+                            ->label('Logo')
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                            ->image()
+                            ->imageEditor()
+                            ->maxSize(1024)
+                            ->helperText('Max 1MB. Recommended size: 1040px'),
 
                         RichEditor::make('sejarah_desa')
                             ->label('Sejarah Desa')

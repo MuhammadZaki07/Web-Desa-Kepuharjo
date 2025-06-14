@@ -1,8 +1,8 @@
 @php
     $bannerImages = $banner->images;
     $bannerImagePath =
-        !empty($bannerImages) && isset($bannerImages[0])
-            ? asset('storage/' . $bannerImages[0])
+        !empty($bannerImages) && isset($bannerImages)
+            ? asset('storage/' . $bannerImages)
             : asset('assets/banners/preview-1.png');
 @endphp
 <div class="relative w-full h-auto min-h-[560px] bg-cover bg-center overflow-hidden"

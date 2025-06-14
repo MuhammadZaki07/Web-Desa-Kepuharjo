@@ -23,12 +23,9 @@ class CreateArticle extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        // Auto-set user_id if not set
         if (empty($data['user_id'])) {
             $data['user_id'] = Auth::user()->id;
         }
-
-        // Auto-set published_at if status is published and no date is set
         if ($data['status'] === 'published' && empty($data['published_at'])) {
             $data['published_at'] = now();
         }

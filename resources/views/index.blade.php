@@ -48,7 +48,7 @@
             <x-sejarah :sejarah="$sejarah" />
         </div>
     </section>
-    <x-latest-information :blogs="$blogs" />
+    <x-latest-information :viralBlogs="$viralBlogs" :blogs="$blogs" />
     @include('partials.LocationContact')
 @endsection
 @push('js')

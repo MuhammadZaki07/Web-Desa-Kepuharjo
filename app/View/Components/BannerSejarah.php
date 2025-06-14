@@ -11,9 +11,10 @@ class BannerSejarah extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public $menus;
+    public function __construct($menus)
     {
-        //
+        $this->menus = $menus;
     }
 
     /**
