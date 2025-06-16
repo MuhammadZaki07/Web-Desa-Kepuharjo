@@ -56,7 +56,7 @@
                     @endif
 
                     @if (!empty($data['activities']))
-                        <h2 class="text-xl font-semibold text-gray-800 mb-3">Kegiatan Rutin PKK</h2>
+                        <h2 class="text-xl font-semibold text-gray-800 mb-3">{{ count($data['activities']) }} Kegiatan Rutin PKK</h2>
                         <ul class="list-disc pl-6 text-gray-700 space-y-2 mb-8">
                             @foreach ($data['activities'] as $activity)
                                 <li>{{ $activity }}</li>
@@ -64,12 +64,12 @@
                         </ul>
                     @endif
 
-                    <h2 class="text-xl font-semibold text-gray-800 mb-3">Hubungi Kami</h2>
-                    <p class="text-gray-700">
-                        Untuk informasi lebih lanjut mengenai kegiatan PKK Desa Kepuharjo, silakan hubungi sekretariat PKK
-                        di kantor desa atau melalui WhatsApp:
-                        <span class="text-blue-600 font-medium">{{ $data['contact_phone'] }}</span>.
-                    </p>
+                      <h2 class="text-xl font-semibold text-gray-800 mb-3">Hubungi Kami</h2>
+                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $data['contact_phone']) }}" target="_blank"
+                        class="inline-flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">
+                        <i class="bi bi-whatsapp text-lg"></i>
+                        Hubungi via WhatsApp
+                    </a>
                 </x-content>
                 <div class="w-full pt-10">
                     <div class="flex flex-col gap-4">
@@ -90,9 +90,7 @@
             </x-flex-one>
 
             <x-flex-two>
-                <x-latest-blogs />
-                <x-category-blogs />
-                <x-youtube />
+                <x-latest-blogs :articles="$articles"/>
             </x-flex-two>
         </x-layouts-blogs>
     </div>

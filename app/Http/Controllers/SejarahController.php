@@ -18,9 +18,9 @@ class SejarahController extends Controller
 
         $headlines = ArticleService::getHeadlines();
         $blogs = ArticleService::getLatestPublishedBlogs();
-
+          $viralBlogs = ArticleService::getViralBlogs(5);
         $ProfileDesa = ProfileDesa::first();
-        $sejarah = $ProfileDesa->sejarah_desa ?? 'Tidak ada sejarah tersedia';
+        $categories = ArticleService::getCategoriesWithCount();
 
         $menus = Banner::where('type', 'sejarah')
             ->select('title', 'images')
@@ -49,9 +49,11 @@ class SejarahController extends Controller
             'tanggal',
             'jam',
             'format',
+            'viralBlogs',
             'headlines',
+            'categories',
             'blogs',
-            'sejarah',
+            'ProfileDesa',
             'menus',
             'title'
         ));

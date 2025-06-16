@@ -19,18 +19,15 @@ class VisiMisiController extends Controller
         $blogs = ArticleService::getLatestPublishedBlogs();
 
         $ProfileDesa = ProfileDesa::first();
-        $visi = $ProfileDesa->visi ?? 'Tidak ada visi tersedia';
-        $misi = $ProfileDesa->misi ?? [];
         $title = 'Visi Misi';
 
         return view('pages.VisiMisi', compact(
             'tanggal',
             'jam',
             'format',
+            'ProfileDesa',
             'headlines',
             'blogs',
-            'visi',
-            'misi',
             'title'
         ));
     }

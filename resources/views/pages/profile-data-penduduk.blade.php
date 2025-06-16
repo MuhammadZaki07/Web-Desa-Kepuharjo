@@ -12,14 +12,14 @@
                 series2-name="Perempuan"
                 y-axis-title="Jumlah Penduduk"
             />
-            {{-- {{ dd($dataPenduduk) }} --}}
+            {{-- {{ dd($ProfileDesa) }} --}}
             <x-card.data-penduduk class="w-full py-3" id="#" :dataPenduduk="$dataPenduduk" />
             <div class="flex flex-col lg:flex-row gap-15 items-center py-10">
                 <div class="lg:flex-8">
                     <x-comment />
                 </div>
                 <div class="lg:flex-3 lg:w-1/3">
-                    <x-suara-pembaca />
+                    <x-latest-blogs :articles="$viralBlogs"/>
                 </div>
             </div>
         </section>

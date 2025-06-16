@@ -35,6 +35,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 use Closure;
 use Filament\Forms\Components\MarkdownEditor;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PendudukResource extends Resource
@@ -50,6 +51,15 @@ class PendudukResource extends Resource
     protected static ?string $navigationGroup = "User Management";
 
     protected static ?int $navigationSort = 2;
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::check() && in_array(Auth::user()->jabatan, ['super_admin', 'admin_desa']);
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::check() && in_array(Auth::user()->jabatan, ['super_admin', 'admin_desa']);
+    }
 
     public static function form(Form $form): Form
     {
@@ -275,6 +285,7 @@ class PendudukResource extends Resource
                     ->label('Import Excel')
                     ->icon('heroicon-o-arrow-up-tray')
                     ->color('success')
+                    ->visible(fn() => in_array(Auth::user()->jabatan, ['super_admin', 'admin_desa']))
                     ->form([
                         Section::make('Upload File Excel')
                             ->description('Pilih file Excel yang berisi data penduduk')
@@ -295,22 +306,22 @@ class PendudukResource extends Resource
                                     ->disabled()
                                     ->columnSpan(2)
                                     ->default("
-    ### Kolom Wajib:
-    - **nama_lengkap** (Nama lengkap penduduk)
-    - **nik** (16 digit NIK)
-    - **jenis_kelamin** (L/P atau Laki-laki/Perempuan)
+### Kolom Wajib:
+- **nama_lengkap** (Nama lengkap penduduk)
+- **nik** (16 digit NIK)
+- **jenis_kelamin** (L/P atau Laki-laki/Perempuan)
 
-    ### Kolom Opsional:
-    - email, no_telepon, password
-    - tempat_lahir, tanggal_lahir
-    - alamat, rt, rw
-    - agama, status_perkawinan, pekerjaan, pendidikan
-    - catatan
+### Kolom Opsional:
+- email, no_telepon, password
+- tempat_lahir, tanggal_lahir
+- alamat, rt, rw
+- agama, status_perkawinan, pekerjaan, pendidikan
+- catatan
 
-    ### Catatan:
-    - Baris pertama harus berisi header kolom
-    - Tanggal lahir format: YYYY-MM-DD atau DD/MM/YYYY
-    ")
+### Catatan:
+- Baris pertama harus berisi header kolom
+- Tanggal lahir format: YYYY-MM-DD atau DD/MM/YYYY
+")
                             ])
                             ->collapsible(),
                     ])
@@ -354,6 +365,7 @@ class PendudukResource extends Resource
                     ->label('Template Excel')
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('info')
+                    ->visible(fn() => in_array(Auth::user()->jabatan, ['super_admin', 'admin_desa'])) // 👈 di sini juga
                     ->action(function () {
                         return response()->streamDownload(function () {
                             $headers = [
@@ -401,55 +413,7 @@ class PendudukResource extends Resource
                         ]);
                     }),
             ])
-            ->actions([
-                ActionGroup::make([
-                    ViewAction::make()
-                        ->icon('heroicon-o-eye')
-                        ->color('info'),
-                    EditAction::make()
-                        ->icon('heroicon-o-pencil')
-                        ->color('warning'),
-                    Action::make('toggle_status')
-                        ->label(fn(Penduduk $record) => $record->status_nyawa === 'hidup' ? 'Tandai Meninggal' : 'Tandai Hidup')
-                        ->icon(fn(Penduduk $record) => $record->status_nyawa === 'hidup' ? 'heroicon-o-x-circle' : 'heroicon-o-heart')
-                        ->color(fn(Penduduk $record) => $record->status_nyawa === 'hidup' ? 'danger' : 'success')
-                        ->action(function (Penduduk $record) {
-                            $record->update([
-                                'status_nyawa' => $record->status_nyawa === 'hidup' ? 'meninggal' : 'hidup'
-                            ]);
-                        })
-                        ->requiresConfirmation()
-                        ->modalDescription('Apakah Anda yakin ingin mengubah status hidup penduduk ini?'),
-                    DeleteAction::make()
-                        ->icon('heroicon-o-trash')
-                        ->color('danger'),
-                ])
-                    ->label('Aksi')
-                    ->icon('heroicon-m-ellipsis-vertical')
-                    ->size(ActionSize::Small)
-                    ->color('gray')
-                    ->button()
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\BulkAction::make('mark_alive')
-                        ->label('Tandai Hidup')
-                        ->icon('heroicon-o-heart')
-                        ->color('success')
-                        ->action(function ($records) {
-                            $records->each->update(['status_nyawa' => 'hidup']);
-                        }),
-                    Tables\Actions\BulkAction::make('mark_deceased')
-                        ->label('Tandai Meninggal')
-                        ->icon('heroicon-o-x-circle')
-                        ->color('danger')
-                        ->action(function ($records) {
-                            $records->each->update(['status_nyawa' => 'meninggal']);
-                        })
-                        ->requiresConfirmation(),
-                ]),
-            ])
+
             ->emptyStateHeading('Belum ada data penduduk')
             ->emptyStateDescription('Mulai dengan menambahkan data penduduk pertama.')
             ->emptyStateIcon('heroicon-o-user-group')

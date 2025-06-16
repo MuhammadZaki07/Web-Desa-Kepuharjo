@@ -87,4 +87,10 @@ class EditAdmin extends EditRecord
                 ->icon('heroicon-o-trash'),
         ];
     }
+
+    public static function canAccess(array $parameters = []): bool
+    {
+        $user = Auth::user();
+        return $user?->jabatan === 'super_admin';
+    }
 }

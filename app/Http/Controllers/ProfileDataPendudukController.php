@@ -50,6 +50,7 @@ class ProfileDataPendudukController extends Controller
         }
 
         $ProfileDesa = ProfileDesa::GetProfileDesa();
+        $viralBlogs = ArticleService::getViralBlogs(5);
         $title = 'Profile Data Penduduk';
 
         return view('pages.profile-data-penduduk', compact(
@@ -57,6 +58,7 @@ class ProfileDataPendudukController extends Controller
             'jam',
             'format',
             'headlines',
+            'viralBlogs',
             'blogs',
             'dataPenduduk',
             'ProfileDesa',

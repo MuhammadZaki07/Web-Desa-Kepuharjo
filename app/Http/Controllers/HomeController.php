@@ -25,8 +25,20 @@ class HomeController extends Controller
 
         $banner = Banner::where('type', 'beranda')->first();
         $headlines = ArticleService::getHeadlines();
-        $blogs = ArticleService::getLatestPublishedBlogs();
-        $viralBlogs = ArticleService::getViralBlogs();
+        $blogs = ArticleService::getViralBlogs();
+        $viralBlogs = Article::query()
+            ->where('status', 'published')
+            ->whereHas('category', function ($q) {
+                $q->where('type', 'blogs');
+            })
+            ->with('category')
+            ->orderByDesc('published_at')
+            ->limit(5)
+            ->get();
+
+        if ($viralBlogs->count() < 4) {
+            $viralBlogs = collect();
+        }
 
         $ProfileDesa = ProfileDesa::first();
         $kepalaDesa = PengurusDesa::where('jabatan', 'kepala_desa')->first();
@@ -60,7 +72,6 @@ class HomeController extends Controller
             'headlines',
             'visi',
             'misi',
-            'sejarah',
             'title'
         ));
     }

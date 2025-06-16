@@ -79,8 +79,8 @@
 
         <div x-show="searchOpen" @click.away="searchOpen = false" x-transition
             class="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg p-2 z-50">
-            <form action="/search" method="GET" class="flex items-center gap-2">
-                <input type="text" name="q" placeholder="Cari sesuatu..."
+            <form action="{{ route('articles.index') }}" method="GET" class="flex items-center gap-2">
+                <input type="text" name="search" placeholder="Cari sesuatu..."
                     class="w-full border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-green-600" />
                 <button type="submit"
                     class="bg-green-700 cursor-pointer text-white px-3 py-1 rounded hover:bg-green-800 text-sm"><i

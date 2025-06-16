@@ -11,15 +11,16 @@
     </div>
     <div class="overflow-hidden whitespace-nowrap w-full relative">
         <div class="animate-marquee inline-block">
+            {{-- {{ dd($blogs) }} --}}
             @forelse ($blogs as $blog)
                 <a href="{{ $blog['url'] }}"
                     class="inline-flex items-center space-x-2 px-4 text-gray-800 hover:underline hover:animate-bounce-stop">
-                    <img src="{{ $blog['image'] ? asset('storage/' . $blog['image']) : asset('assets/images/default-thumbnail.jpg') }}"
+                    <img src="{{ $blog['featured_image'] ? asset('storage/' . $blog['featured_image']) : asset('assets/images/default-thumbnail.jpg') }}"
                         class="w-full h-8 mt-1 object-cover rounded" alt="thumbnail">
                     <div class="flex flex-col text-[10px]">
                         <span class="font-medium text-black text-sm">{{ $blog['title'] }}</span>
                         <span class="text-gray-500">
-                            <i class="bi bi-clock text-slate-500"></i> {{ $blog['time'] }}
+                         <i class="bi bi-clock text-slate-500"></i> {{ $blog['created_at']->translatedFormat('d F Y') }}
                         </span>
                     </div>
                 </a>

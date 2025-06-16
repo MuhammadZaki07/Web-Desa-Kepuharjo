@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CustomLoginController;
 use App\Http\Controllers\ProfileDataPendudukController;
@@ -18,7 +19,10 @@ Route::post('/comments', [CommentController::class, 'store'])->name('comments.st
 Route::get('/profile-data-penduduk', [ProfileDataPendudukController::class, 'index'])->name('profile-data-penduduk');
 Route::get('/visi-misi', [VisiMisiController::class, 'index'])->name('visi-misi');
 Route::get('/sejarah', [SejarahController::class, 'index'])->name('sejarah');
-Route::get('/pkk', [OrganizationsController::class,'index']);
+Route::get('/pkk', [OrganizationsController::class, 'index']);
+Route::get('/karang-taruna', [OrganizationsController::class, 'halamanKarangtaruna']);
+Route::get('/berita', [ArticleController::class, 'index'])->name('articles.index');
+Route::get('/berita/{slug}', [ArticleController::class, 'show'])->name('articles.show');
 
 Route::get('/gallery', function () {
     return view('pages.gallery', [
@@ -38,60 +42,7 @@ Route::get('/pemerintahan', function () {
         'title' => 'Pemerintahan'
     ]);
 });
-Route::get('/berita', function () {
-    $blogs = [
-        [
-            'title' => 'Segini Besaran Biaya UKT di Universitas Brawijaya Untuk Jalur SNBT Dan Mandiri',
-            'image' => asset('assets/images/foto_brawijaya.png'),
-            'url' => "/",
-            'time' => '3 Hari Yang Lalu'
-        ],
-        [
-            'title' => 'Segini Besaran Biaya UKT di Universitas Brawijaya Untuk Jalur SNBT Dan Mandiri',
-            'image' => asset('assets/images/foto_brawijaya.png'),
-            'url' => "/",
-            'time' => '3 Hari Yang Lalu'
-        ],
-        [
-            'title' => 'Segini Besaran Biaya UKT di Universitas Brawijaya Untuk Jalur SNBT Dan Mandiri',
-            'image' => asset('assets/images/foto_brawijaya.png'),
-            'url' => "/",
-            'time' => '3 Hari Yang Lalu'
-        ],
-        [
-            'title' => 'Segini Besaran Biaya UKT di Universitas Brawijaya Untuk Jalur SNBT Dan Mandiri',
-            'image' => asset('assets/images/foto_brawijaya.png'),
-            'url' => "/",
-            'time' => '3 Hari Yang Lalu'
-        ],
-        [
-            'title' => 'Segini Besaran Biaya UKT di Universitas Brawijaya Untuk Jalur SNBT Dan Mandiri',
-            'image' => asset('assets/images/foto_brawijaya.png'),
-            'url' => "/",
-            'time' => '3 Hari Yang Lalu'
-        ],
-        [
-            'title' => 'Segini Besaran Biaya UKT di Universitas Brawijaya Untuk Jalur SNBT Dan Mandiri',
-            'image' => asset('assets/images/foto_brawijaya.png'),
-            'url' => "/",
-            'time' => '3 Hari Yang Lalu'
-        ],
-        [
-            'title' => 'Segini Besaran Biaya UKT di Universitas Brawijaya Untuk Jalur SNBT Dan Mandiri',
-            'image' => asset('assets/images/foto_brawijaya.png'),
-            'url' => "/",
-            'time' => '3 Hari Yang Lalu'
-        ],
-    ];
-    return view('pages.berita', [
-        'tanggal' => 'Min, 13 April',
-        'jam' => '11:39:32',
-        'format' => 'AM',
-        'headlines' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
-        'blogs' => $blogs,
-        'title' => 'Berita'
-    ]);
-});
+
 Route::get('/umkm', function () {
 
     return view('pages.umkm', [
@@ -102,15 +53,7 @@ Route::get('/umkm', function () {
         'title' => 'UMKM'
     ]);
 });
-Route::get('/karang-taruna', function () {
-    return view('pages.karangtaruna', [
-        'tanggal' => 'Min, 13 April',
-        'jam' => '11:39:32',
-        'format' => 'AM',
-        'headlines' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
-        'title' => 'Karang-Taruna'
-    ]);
-});
+
 Route::get('/wisata', function () {
     return view('pages.wisata', [
         'tanggal' => 'Min, 13 April',
@@ -138,12 +81,12 @@ Route::get('/detail-umkm', function () {
         'title' => 'PKK'
     ]);
 });
-Route::get('/detail-blog/{slug}', function () {
-    return view('pages.DetailBerita', [
-        'tanggal' => 'Min, 13 April',
-        'jam' => '11:39:32',
-        'format' => 'AM',
-        'headlines' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
-        'title' => 'Detail Blogs'
-    ]);
-})->name('detail-blog');
+// Route::get('/detail-blog/{slug}', function () {
+//     return view('pages.DetailBerita', [
+//         'tanggal' => 'Min, 13 April',
+//         'jam' => '11:39:32',
+//         'format' => 'AM',
+//         'headlines' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
+//         'title' => 'Detail Blogs'
+//     ]);
+// })->name('detail-blog');

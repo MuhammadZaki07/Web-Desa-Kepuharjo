@@ -11,9 +11,10 @@ class LatestBlogs extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public $articles;
+    public function __construct($articles)
     {
-        //
+        $this->articles = $articles;
     }
 
     /**

@@ -5,13 +5,21 @@ namespace App\Filament\Resources\AdminResource\Pages;
 use App\Filament\Resources\AdminResource;
 use App\Models\Admin;
 use App\Models\User;
+use Filament\Panel;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class CreateAdmin extends CreateRecord
 {
     protected static string $resource = AdminResource::class;
+
+    public static function canAccess(array $parameters = []): bool
+    {
+        $user = Auth::user();
+        return $user?->jabatan === 'super_admin';
+    }
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {

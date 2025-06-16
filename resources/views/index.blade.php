@@ -45,7 +45,7 @@
             </x-sambutan>
             <x-card.data-penduduk :dataPenduduk="$dataPenduduk" class="tab-content hidden w-full py-3" id="data-penduduk" />
             <x-visi-misi :misi="$misi" :visi="$visi" class="hidden" />
-            <x-sejarah :sejarah="$sejarah" />
+            <x-sejarah :sejarah="$ProfileDesa" />
         </div>
     </section>
     <x-latest-information :viralBlogs="$viralBlogs" :blogs="$blogs" />

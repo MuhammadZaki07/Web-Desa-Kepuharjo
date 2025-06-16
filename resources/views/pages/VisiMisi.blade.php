@@ -4,6 +4,7 @@
     <div class="hidden lg:block my-10">
         <x-running-blog :blogs="$blogs" />
     </div>
-    <x-visi-misi class="block" :misi="$misi" :visi="$visi"/>
+    {{-- {{ $ProfileDesa->program_unggulan }} --}}
+    <x-visi-misi class="block" :progamUnggulan="$ProfileDesa->program_unggulan" :misi="$ProfileDesa->misi" :visi="$ProfileDesa->visi"/>
 </section>
 @endsection

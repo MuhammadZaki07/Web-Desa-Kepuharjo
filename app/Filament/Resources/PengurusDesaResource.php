@@ -27,6 +27,7 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Enums\FiltersLayout;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
 
 class PengurusDesaResource extends Resource
 {
@@ -40,7 +41,17 @@ class PengurusDesaResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Pengurus Desa';
 
-      protected static ?string $navigationGroup = "User Management";
+    protected static ?string $navigationGroup = "User Management";
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::check() && in_array(Auth::user()->jabatan, ['super_admin', 'admin_desa']);
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::check() && in_array(Auth::user()->jabatan, ['super_admin', 'admin_desa']);
+    }
 
     protected static ?int $navigationSort = 3;
 
@@ -202,19 +213,19 @@ class PengurusDesaResource extends Resource
                     ->sortable()
                     ->weight(FontWeight::SemiBold)
                     ->icon('heroicon-o-user')
-                    ->description(fn (PengurusDesa $record): string => $record->user->email ?? ''),
+                    ->description(fn(PengurusDesa $record): string => $record->user->email ?? ''),
 
                 BadgeColumn::make('jabatan_full')
                     ->label('Jabatan')
                     ->sortable(['jabatan', 'is_wakil'])
-                    ->color(fn (string $state): string => match (true) {
+                    ->color(fn(string $state): string => match (true) {
                         str_contains(strtolower($state), 'kepala desa') => 'danger',
                         str_contains(strtolower($state), 'sekretaris') => 'warning',
                         str_contains(strtolower($state), 'bendahara') => 'success',
                         str_contains(strtolower($state), 'wakil') => 'gray',
                         default => 'primary',
                     })
-                    ->icon(fn (string $state): string => match (true) {
+                    ->icon(fn(string $state): string => match (true) {
                         str_contains(strtolower($state), 'kepala desa') => 'heroicon-o-user',
                         str_contains(strtolower($state), 'sekretaris') => 'heroicon-o-document-text',
                         str_contains(strtolower($state), 'bendahara') => 'heroicon-o-banknotes',
@@ -236,7 +247,8 @@ class PengurusDesaResource extends Resource
                     ->badge()
                     ->color('info')
                     ->icon('heroicon-o-calendar-days')
-                    ->tooltip(fn (PengurusDesa $record): string =>
+                    ->tooltip(
+                        fn(PengurusDesa $record): string =>
                         "Durasi: {$record->durasi_jabatan}"
                     ),
 
@@ -244,20 +256,20 @@ class PengurusDesaResource extends Resource
                     ->label('Mulai Jabatan')
                     ->date('d M Y')
                     ->sortable()
-                    ->toggleable( true),
+                    ->toggleable(true),
 
                 TextColumn::make('selesai_jabatan')
                     ->label('Selesai Jabatan')
                     ->date('d M Y')
                     ->placeholder('Masih Aktif')
                     ->sortable()
-                    ->toggleable( true),
+                    ->toggleable(true),
 
                 TextColumn::make('created_at')
                     ->label('Dibuat')
                     ->dateTime('d M Y H:i')
                     ->sortable()
-                    ->toggleable( true),
+                    ->toggleable(true),
             ])
             ->filters([
                 SelectFilter::make('jabatan')
@@ -311,7 +323,7 @@ class PengurusDesaResource extends Resource
                                 ->success()
                                 ->send();
                         })
-                        ->visible(fn (PengurusDesa $record): bool => $record->is_aktif),
+                        ->visible(fn(PengurusDesa $record): bool => $record->is_aktif),
                 ])
             ])
             ->bulkActions([

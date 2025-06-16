@@ -6,12 +6,20 @@ use App\Filament\Resources\PendudukResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class EditPenduduk extends EditRecord
 {
     protected static string $resource = PendudukResource::class;
 
     protected static ?string $title = 'Edit Data Penduduk';
+
+    public static function canAccess(array $parameters = []): bool
+    {
+        $user = Auth::user();
+        return $user?->jabatan === 'super_admin' || $user?->jabatan === "admin_desa";
+    }
+
 
     protected function getUpdatedNotificationTitle(): ?string
     {

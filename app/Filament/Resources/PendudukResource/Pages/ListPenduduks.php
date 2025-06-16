@@ -12,6 +12,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
 use App\Exports\PendudukExport;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -23,25 +24,29 @@ class ListPenduduks extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [
+        $user = Auth::user();
+        if ($user->jabatan === 'super_admin' || $user->jabatan === "admin_desa") {
+            return [
                 Action::make('export')
-                ->label('Export Data')
-                ->icon('heroicon-o-arrow-down-tray')
-                ->action(function (): BinaryFileResponse {
-                    Notification::make()
-                        ->title('Export sedang diproses...')
-                        ->success()
-                        ->send();
-                    return Excel::download(new PendudukExport, 'data_penduduk.xlsx');
-                })
-                ->color('success')
-                ->requiresConfirmation(),
+                    ->label('Export Data')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->action(function (): BinaryFileResponse {
+                        Notification::make()
+                            ->title('Export sedang diproses...')
+                            ->success()
+                            ->send();
+                        return Excel::download(new PendudukExport, 'data_penduduk.xlsx');
+                    })
+                    ->color('success')
+                    ->requiresConfirmation(),
 
-            CreateAction::make()
-                ->label('Tambah Penduduk')
-                ->icon('heroicon-o-plus')
-                ->createAnother(false),
-        ];
+                CreateAction::make()
+                    ->label('Tambah Penduduk')
+                    ->icon('heroicon-o-plus')
+                    ->createAnother(false),
+            ];
+        }
+        return [];
     }
 
     public function getTabs(): array
@@ -52,22 +57,22 @@ class ListPenduduks extends ListRecords
                 ->badgeColor('primary'),
 
             'hidup' => Tab::make('Hidup')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status_nyawa', 'hidup'))
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('status_nyawa', 'hidup'))
                 ->badge(Penduduk::where('status_nyawa', 'hidup')->count())
                 ->badgeColor('success'),
 
             'meninggal' => Tab::make('Meninggal')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status_nyawa', 'meninggal'))
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('status_nyawa', 'meninggal'))
                 ->badge(Penduduk::where('status_nyawa', 'meninggal')->count())
                 ->badgeColor('danger'),
 
             'laki_laki' => Tab::make('Laki-laki')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('jenis_kelamin', 'L'))
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('jenis_kelamin', 'L'))
                 ->badge(Penduduk::where('jenis_kelamin', 'L')->count())
                 ->badgeColor('blue'),
 
             'perempuan' => Tab::make('Perempuan')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('jenis_kelamin', 'P'))
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('jenis_kelamin', 'P'))
                 ->badge(Penduduk::where('jenis_kelamin', 'P')->count())
                 ->badgeColor('pink'),
         ];
@@ -75,8 +80,6 @@ class ListPenduduks extends ListRecords
 
     protected function getHeaderWidgets(): array
     {
-        return [
-
-        ];
+        return [];
     }
 }

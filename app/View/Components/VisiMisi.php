@@ -11,12 +11,11 @@ class VisiMisi extends Component
     /**
      * Create a new component instance.
      */
-    public $class;
-    public $visi;
-    public $misi;
-    public function __construct($class = "", $visi = "", $misi = [])
+    public $class, $visi, $misi, $progamUnggulan;
+    public function __construct($class = "", $visi = "", $misi = [], $progamUnggulan = "")
     {
         $this->class = $class;
+        $this->progamUnggulan = $progamUnggulan;
         $this->misi = $misi;
         $this->visi = $visi;
     }

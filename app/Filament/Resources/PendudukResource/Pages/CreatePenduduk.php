@@ -6,12 +6,19 @@ use App\Filament\Resources\PendudukResource;
 use App\Models\User;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class CreatePenduduk extends CreateRecord
 {
     protected static string $resource = PendudukResource::class;
 
     protected static ?string $title = 'Tambah Data Penduduk';
+
+    public static function canAccess(array $parameters = []): bool
+    {
+        $user = Auth::user();
+        return $user?->jabatan === 'super_admin' || $user?->jabatan === "admin_desa";
+    }
 
     protected function getCreatedNotificationTitle(): ?string
     {

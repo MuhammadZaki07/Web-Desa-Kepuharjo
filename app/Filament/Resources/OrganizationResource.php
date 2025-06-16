@@ -33,11 +33,35 @@ class OrganizationResource extends Resource
                     ->tabs([
                         Forms\Components\Tabs\Tab::make('PKK')
                             ->schema(static::getPkkFormSchema())
-                            ->visible(fn() => !Organization::hasType('pkk')),
+                            ->visible(function ($livewire) {
+                                // Untuk create: tampilkan jika belum ada data PKK
+                                if ($livewire instanceof \Filament\Resources\Pages\CreateRecord) {
+                                    return !Organization::hasType('pkk');
+                                }
+
+                                // Untuk edit: tampilkan jika record yang sedang diedit adalah PKK
+                                if ($livewire instanceof \Filament\Resources\Pages\EditRecord) {
+                                    return $livewire->record->type === 'pkk';
+                                }
+
+                                return false;
+                            }),
 
                         Forms\Components\Tabs\Tab::make('Karang Taruna')
                             ->schema(static::getKarangTarunaFormSchema())
-                            ->visible(fn() => !Organization::hasType('karang_taruna')),
+                            ->visible(function ($livewire) {
+                                // Untuk create: tampilkan jika belum ada data Karang Taruna
+                                if ($livewire instanceof \Filament\Resources\Pages\CreateRecord) {
+                                    return !Organization::hasType('karang_taruna');
+                                }
+
+                                // Untuk edit: tampilkan jika record yang sedang diedit adalah Karang Taruna
+                                if ($livewire instanceof \Filament\Resources\Pages\EditRecord) {
+                                    return $livewire->record->type === 'karang_taruna';
+                                }
+
+                                return false;
+                            }),
                     ])
                     ->columnSpanFull(),
             ]);
@@ -166,55 +190,44 @@ class OrganizationResource extends Resource
                         ->minItems(1),
                 ]),
 
-            Forms\Components\Section::make('Program Unggulan PKK')
+            Forms\Components\Repeater::make('programs')
+                ->label('')
                 ->schema([
-                    Forms\Components\Repeater::make('programs')
-                        ->label('')
-                        ->schema([
-                            Forms\Components\TextInput::make('name')
-                                ->label('Nama Program')
-                                ->placeholder('Contoh: Penghayatan dan Pengamalan Pancasila')
-                                ->required()
-                                ->hiddenLabel(),
-                        ])
-                        ->reorderable()
-                        ->addActionLabel('Tambah Program')
-                        ->deleteAction(
-                            fn(Forms\Components\Actions\Action $action) => $action
-                                ->requiresConfirmation()
-                                ->hidden(
-                                    fn(Forms\Components\Repeater $component): bool =>
-                                    $component->getState() !== null && count($component->getState()) <= 1
-                                )
-                        )
+                    Forms\Components\TextInput::make('name')
+                        ->label('Nama Program')
+                        ->placeholder('Contoh: Pemberdayaan Ekonomi Kreatif Pemuda')
                         ->required()
-                        ->minItems(1),
-                ]),
+                        ->hiddenLabel(),
+                ])
+                ->reorderable()
+                ->addActionLabel('Tambah Program')
+                ->deleteAction(
+                    fn(Forms\Components\Actions\Action $action) => $action
+                        ->requiresConfirmation()
+                )
+                ->required()
+                ->minItems(1)
+                ->default([['name' => '']]),
 
-            Forms\Components\Section::make('Kegiatan Rutin PKK')
+
+            Forms\Components\Repeater::make('activities')
+                ->label('')
                 ->schema([
-                    Forms\Components\Repeater::make('activities')
-                        ->label('')
-                        ->schema([
-                            Forms\Components\TextInput::make('name')
-                                ->label('Nama Kegiatan')
-                                ->placeholder('Contoh: Posyandu Balita dan Lansia setiap bulan')
-                                ->required()
-                                ->hiddenLabel(),
-                        ])
-                        ->reorderable()
-                        ->addActionLabel('Tambah Kegiatan')
-                        ->deleteAction(
-                            fn(Forms\Components\Actions\Action $action) => $action
-                                ->requiresConfirmation()
-                                ->hidden(
-                                    fn(Forms\Components\Repeater $component): bool =>
-                                    $component->getState() !== null && count($component->getState()) <= 1
-                                )
-                        )
+                    Forms\Components\TextInput::make('name')
+                        ->label('Nama Kegiatan')
+                        ->placeholder('Contoh: Kerja bakti setiap minggu')
                         ->required()
-                        ->minItems(1),
-                ]),
+                        ->hiddenLabel(),
+                ])
+                ->reorderable()
+                ->addActionLabel('Tambah Kegiatan')
+                ->deleteAction(
+                    fn(Forms\Components\Actions\Action $action) => $action
+                        ->requiresConfirmation()
+                )
+                ->required()
+                ->minItems(1)
+                ->default([['name' => '']]),
 
             Forms\Components\Section::make('Gallery PKK')
                 ->schema([

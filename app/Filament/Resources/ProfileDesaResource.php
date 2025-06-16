@@ -197,7 +197,8 @@ class ProfileDesaResource extends Resource
                             ->helperText('Motto atau tagline desa'),
 
                         FileUpload::make('image_sejarah')
-                            ->label('Logo')
+                            ->directory('image_sejarah_desa')
+                            ->label('Foto Sejarah')
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                             ->image()
                             ->imageEditor()
