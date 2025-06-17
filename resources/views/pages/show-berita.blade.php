@@ -91,19 +91,20 @@
 
         <div class="lg:py-16 py-10 flex flex-col lg:flex-row gap-10 items-start">
             <div class="flex-1 lg:flex-[3]">
-                <article class="bg-white rounded-xl overflow-hidden" itemscope
-                    itemtype="https://schema.org/NewsArticle">
+                <article class="bg-white rounded-xl overflow-hidden" itemscope itemtype="https://schema.org/NewsArticle">
                     <div class="relative">
                         <img src="{{ $article->featured_image ? asset('storage/' . $article->featured_image) : asset('assets/images/foto_brawijaya 1.png') }}"
-                            alt="{{ $article->title }}" class="w-full h-64 lg:h-96 object-cover rounded-xl overflow-hidden" loading="lazy"
-                            itemprop="image">
+                            alt="{{ $article->title }}" class="w-full h-64 lg:h-96 object-cover rounded-xl overflow-hidden"
+                            loading="lazy" itemprop="image">
 
-                        <div class="absolute top-4 left-4">
-                            <span style="background-color: {{ $article->category->color }}" class="text-white px-3 py-1 rounded-full text-sm font-medium"
-                                itemprop="articleSection">
-                                {{ $article->category->name }}
-                            </span>
-                        </div>
+                        @if ($article->category->name)
+                            <div class="absolute top-4 left-4">
+                                <span style="background-color: {{ $article->category->color }}"
+                                    class="text-white px-3 py-1 rounded-full text-sm font-medium" itemprop="articleSection">
+                                    {{ $article->category->name }}
+                                </span>
+                            </div>
+                        @endif
                     </div>
 
                     <div class="p-6 lg:p-8">

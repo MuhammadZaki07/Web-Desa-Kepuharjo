@@ -6,6 +6,7 @@ use App\Http\Controllers\CustomLoginController;
 use App\Http\Controllers\ProfileDataPendudukController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrganizationsController;
+use App\Http\Controllers\PemerintahController;
 use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\SejarahController;
 use App\Http\Controllers\VisiMisiController;
@@ -19,10 +20,12 @@ Route::post('/comments', [CommentController::class, 'store'])->name('comments.st
 Route::get('/profile-data-penduduk', [ProfileDataPendudukController::class, 'index'])->name('profile-data-penduduk');
 Route::get('/visi-misi', [VisiMisiController::class, 'index'])->name('visi-misi');
 Route::get('/sejarah', [SejarahController::class, 'index'])->name('sejarah');
-Route::get('/pkk', [OrganizationsController::class, 'index']);
-Route::get('/karang-taruna', [OrganizationsController::class, 'halamanKarangtaruna']);
+Route::get('/pkk', [OrganizationsController::class, 'index'])->name('pkk.page');
+Route::get('/karang-taruna', [OrganizationsController::class, 'halamanKarangtaruna'])->name('karangtaruna.page');
 Route::get('/berita', [ArticleController::class, 'index'])->name('articles.index');
 Route::get('/berita/{slug}', [ArticleController::class, 'show'])->name('articles.show');
+Route::get('/pemerintahan', [PemerintahController::class, 'index'])->name('pemerintahan.page');
+
 
 Route::get('/gallery', function () {
     return view('pages.gallery', [
@@ -31,15 +34,6 @@ Route::get('/gallery', function () {
         'format' => 'AM',
         'headlines' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
         'title' => 'Gallery'
-    ]);
-});
-Route::get('/pemerintahan', function () {
-    return view('pages.pemerintahan', [
-        'tanggal' => 'Min, 13 April',
-        'jam' => '11:39:32',
-        'format' => 'AM',
-        'headlines' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
-        'title' => 'Pemerintahan'
     ]);
 });
 

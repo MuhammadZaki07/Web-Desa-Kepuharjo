@@ -8,9 +8,15 @@ use App\Models\Banner;
 use App\Models\Gallery;
 use App\Models\Organization;
 use App\Services\ArticleService;
+use App\Services\BannersService;
 
 class OrganizationsController extends Controller
 {
+
+    protected BannersService $bannersService;
+    public function __construct(BannersService $bannersService){
+        $this->bannersService = $bannersService;
+    }
     public function index()
     {
         return $this->renderOrganizationPage(
@@ -34,7 +40,7 @@ class OrganizationsController extends Controller
         $timeData = $this->getTimeData();
         $headlines = ArticleService::getHeadlines();
         $blogs = ArticleService::getLatestPublishedBlogs();
-        $banner = $this->getBanner($type);
+        $banner = $this->bannersService->getBanner($type);
         $data = $this->getOrganizationData($type);
         $gallery = $this->getGalleryByType($type);
         $articles = ArticleService::getViralBlogs();
@@ -59,7 +65,7 @@ class OrganizationsController extends Controller
                 'banner' => $banner,
                 'ProfileDesa' => $ProfileDesa,
                 'articles' => $articles,
-                'bannerImagePath' => $this->getBannerImagePath($banner),
+                'bannerImagePath' => $this->bannersService->getBannerImagePath($banner),
                 'data' => $dataFormatted,
             ]
         ));
@@ -73,18 +79,6 @@ class OrganizationsController extends Controller
             'jam' => $time['jam'],
             'format' => $time['format'],
         ];
-    }
-
-    private function getBanner($type)
-    {
-        return Banner::where('type', $type)->first();
-    }
-
-    private function getBannerImagePath($banner)
-    {
-        return $banner && $banner->images
-            ? asset('storage/' . $banner->images)
-            : asset('assets/banners/preview-1.png');
     }
 
     private function getGalleryByType($type)
