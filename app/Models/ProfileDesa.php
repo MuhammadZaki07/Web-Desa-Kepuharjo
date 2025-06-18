@@ -20,6 +20,7 @@ class ProfileDesa extends Model
         'no_tlp',
         'website',
         'alamat_kantor',
+        'sambutan_pemerintah',
         'kode_pos',
         'image_sejarah',
         'sambutan_kepala_desa',
@@ -200,7 +201,7 @@ class ProfileDesa extends Model
                 Storage::disk('public')->delete($model->logo_desa);
             }
         });
-        
+
         static::deleted(function ($model) {
             if ($model->image_sejarah) {
                 Storage::disk('public')->delete($model->image_sejarah);

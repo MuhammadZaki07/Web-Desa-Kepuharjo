@@ -228,29 +228,6 @@ class OrganizationResource extends Resource
                 ->required()
                 ->minItems(1)
                 ->default([['name' => '']]),
-
-            Forms\Components\Section::make('Gallery PKK')
-                ->schema([
-                    Forms\Components\FileUpload::make('gallery_photos')
-                        ->label('Upload Foto Kegiatan')
-                        ->image()
-                        ->multiple()
-                        ->directory('organizations/pkk')
-                        ->visibility('public')
-                        ->imageEditor()
-                        ->afterStateUpdated(function ($state, callable $set) {
-                            if ($state) {
-                                foreach ($state as $path) {
-                                    Gallery::create([
-                                        'path' => $path,
-                                        'type' => 'pkk'
-                                    ]);
-                                }
-                            }
-                        })
-                        ->helperText('Pilih satu atau beberapa foto kegiatan PKK'),
-                ])
-                ->collapsible(),
         ];
     }
 
@@ -376,29 +353,6 @@ class OrganizationResource extends Resource
                         ->required()
                         ->minItems(1),
                 ]),
-
-            Forms\Components\Section::make('Gallery Karang Taruna')
-                ->schema([
-                    Forms\Components\FileUpload::make('gallery_photos')
-                        ->label('Upload Foto Kegiatan')
-                        ->image()
-                        ->multiple()
-                        ->directory('organizations/karang_taruna')
-                        ->visibility('public')
-                        ->imageEditor()
-                        ->afterStateUpdated(function ($state, callable $set) {
-                            if ($state) {
-                                foreach ($state as $path) {
-                                    Gallery::create([
-                                        'path' => $path,
-                                        'type' => 'karang_taruna'
-                                    ]);
-                                }
-                            }
-                        })
-                        ->helperText('Pilih satu atau beberapa foto kegiatan Karang Taruna'),
-                ])
-                ->collapsible(),
         ];
     }
 

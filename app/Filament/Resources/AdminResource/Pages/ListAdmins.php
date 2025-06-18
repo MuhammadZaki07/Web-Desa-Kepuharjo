@@ -10,20 +10,29 @@ use Illuminate\Support\Facades\Auth;
 class ListAdmins extends ListRecords
 {
     protected static string $resource = AdminResource::class;
+
     public function getTitle(): string
     {
-        return 'Daftar Admin';
+        return 'Admin Management';
     }
 
+    public function getHeading(): string
+    {
+        return 'Admin Management';
+    }
+
+    public function getSubheading(): ?string
+    {
+        return 'Kelola pengguna admin dan izinnya';
+    }
 
     protected function getHeaderActions(): array
     {
-        if (Auth::user()->jabatan === 'super_admin') {
-            return [
-                Actions\CreateAction::make(),
-            ];
-        }
-
-        return [];
+        return [
+            Actions\CreateAction::make()
+                ->label('Create New Admin')
+                ->icon('heroicon-m-plus')
+                ->visible(fn() => Auth::user()->jabatan === 'super_admin'),
+        ];
     }
 }

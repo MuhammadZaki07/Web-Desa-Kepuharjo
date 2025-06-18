@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ProfileDesaResource\Pages;
 
 use App\Filament\Resources\ProfileDesaResource;
+use App\Models\ProfileDesa;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -14,7 +15,7 @@ class ListProfileDesas extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->visible(fn () => $this->getResource()::canCreate()),
+                ->visible(fn() => $this->getResource()::canCreate()),
         ];
     }
 

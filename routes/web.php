@@ -3,6 +3,7 @@
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CustomLoginController;
+use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\ProfileDataPendudukController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrganizationsController;
@@ -25,17 +26,8 @@ Route::get('/karang-taruna', [OrganizationsController::class, 'halamanKarangtaru
 Route::get('/berita', [ArticleController::class, 'index'])->name('articles.index');
 Route::get('/berita/{slug}', [ArticleController::class, 'show'])->name('articles.show');
 Route::get('/pemerintahan', [PemerintahController::class, 'index'])->name('pemerintahan.page');
+Route::get('/gallery', [GalleryController::class,'index'])->name('gallery.index');
 
-
-Route::get('/gallery', function () {
-    return view('pages.gallery', [
-        'tanggal' => 'Min, 13 April',
-        'jam' => '11:39:32',
-        'format' => 'AM',
-        'headlines' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
-        'title' => 'Gallery'
-    ]);
-});
 
 Route::get('/umkm', function () {
 
@@ -75,12 +67,12 @@ Route::get('/detail-umkm', function () {
         'title' => 'PKK'
     ]);
 });
-// Route::get('/detail-blog/{slug}', function () {
-//     return view('pages.DetailBerita', [
-//         'tanggal' => 'Min, 13 April',
-//         'jam' => '11:39:32',
-//         'format' => 'AM',
-//         'headlines' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
-//         'title' => 'Detail Blogs'
-//     ]);
-// })->name('detail-blog');
+Route::get('/prestasi-desa', function () {
+    return view('pages.PrestasiDesa', [
+        'tanggal' => 'Min, 13 April',
+        'jam' => '11:39:32',
+        'format' => 'AM',
+        'headlines' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
+        'title' => 'Detail Blogs'
+    ]);
+})->name('PrestasiDesa');

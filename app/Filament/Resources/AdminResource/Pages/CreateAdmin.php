@@ -3,83 +3,81 @@
 namespace App\Filament\Resources\AdminResource\Pages;
 
 use App\Filament\Resources\AdminResource;
-use App\Models\Admin;
 use App\Models\User;
-use Filament\Panel;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class CreateAdmin extends CreateRecord
 {
     protected static string $resource = AdminResource::class;
 
-    public static function canAccess(array $parameters = []): bool
+    public function getTitle(): string
     {
-        $user = Auth::user();
-        return $user?->jabatan === 'super_admin';
+        return 'Buat Admin Baru';
     }
 
-    protected function mutateFormDataBeforeCreate(array $data): array
+    public function getHeading(): string
     {
-        if (isset($data['form_mode']) && $data['form_mode'] === 'promote_existing') {
-            if (isset($data['existing_user_id']) && $data['existing_user_id']) {
-                $user = User::find($data['existing_user_id']);
-                if ($user) {
-                    $user->update([
-                        'email' => $data['admin_email'],
-                        'password' => Hash::make($data['admin_password']),
-                        'jabatan' => $data['new_jabatan'],
-                        'photo' => $data['admin_photo'] ?? $user->photo,
-                        'role' => 'admin',
-                    ]);
+        return 'Buat Admin Baru';
+    }
 
-                    $data['user_id'] = $user->id;
+    public function getSubheading(): ?string
+    {
+        return 'pilih penduduk untuk di jadikan admin';
+    }
+
+    protected function authorizeAccess(): void
+    {
+        if (Auth::user()->jabatan !== 'super_admin') {
+            abort(403, 'Only super admin can create new admins.');
+        }
+    }
+
+    protected function handleRecordCreation(array $data): \Illuminate\Database\Eloquent\Model
+    {
+        $createdCount = 0;
+
+        DB::transaction(function () use ($data, &$createdCount) {
+            foreach ($data['admin_details'] as $detail) {
+                $user = User::find($detail['user_id']);
+
+                if ($user && $user->jabatan === 'penduduk') {
+                    $user->update([
+                        'email' => $detail['email'],
+                        'password' => Hash::make($detail['password']),
+                        'jabatan' => 'admin',
+                        'role' => 'admin',
+                        'is_active' => true,
+                        'email_verified_at' => now(),
+                    ]);
+                    $createdCount++;
                 }
             }
-        }
+        });
 
-        return $data;
-    }
+        Notification::make()
+            ->title('Admin Created Successfully')
+            ->body("Successfully created {$createdCount} admin(s)")
+            ->success()
+            ->send();
 
-    protected function handleRecordCreation(array $data): Model
-    {
-        if (isset($data['form_mode']) && $data['form_mode'] === 'create_new') {
-            if (isset($data['user']) && is_array($data['user'])) {
-                $user = User::create([
-                    'name' => $data['user']['name'],
-                    'email' => $data['user']['email'],
-                    'phone' => $data['user']['phone'] ?? null,
-                    'password' => $data['user']['password'],
-                    'jabatan' => $data['user']['jabatan'],
-                    'photo' => $data['user']['photo'] ?? null,
-                    'role' => 'admin',
-                ]);
-
-                return Admin::create([
-                    'user_id' => $user->id,
-                    'position' => $data['position'] ?? null,
-                    'is_active' => $data['is_active'] ?? true,
-                ]);
-            }
-        }
-
-        if (isset($data['form_mode']) && $data['form_mode'] === 'promote_existing') {
-            if (isset($data['user_id'])) {
-                return Admin::create([
-                    'user_id' => $data['user_id'],
-                    'position' => $data['position'] ?? null,
-                    'is_active' => $data['is_active'] ?? true,
-                ]);
-            }
-        }
-
-        throw new \Exception('Invalid form data: Unable to determine creation mode');
+        return new User();
     }
 
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
+    }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        if (empty($data['admin_details'])) {
+            throw new \Exception('No admin details provided');
+        }
+
+        return $data;
     }
 }

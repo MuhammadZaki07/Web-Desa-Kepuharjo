@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-    <x-banner-gallery />
+    <x-banner-gallery :banner="[$banner,$imagesPathBanner]"/>
     <div class="lg:px-20 lg:py-16 px-5 py-10 flex flex-col lg:flex-row gap-10 items-start">
         <div class="lg:flex-1 w-full">
             <div id="bento-grid" class="grid grid-cols-3 gap-4 auto-rows-[150px]">
@@ -44,8 +44,8 @@
         </div>
 
         <div class="lg:w-1/4 w-full flex flex-col gap-5 mt-10 lg:mt-0">
-            <x-youtube />
-            <x-suara-pembaca />
+            <x-category-blogs :categories="$categories"/>
+            <x-latest-blogs :articles="$articles"/>
         </div>
     </div>
     <div id="imageModal" class="fixed inset-0 bg-black/50 bg-opacity-70 flex items-center justify-center z-[9999] hidden">

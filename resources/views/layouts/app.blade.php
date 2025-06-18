@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    
+
     <title>
         {{ isset($article) ? $article->title . ' - Berita Desa Kepuharjo' : $title ?? 'Berita Desa Kepuharjo - Informasi Terkini Desa Kepuharjo Malang' }}
     </title>
@@ -42,7 +42,7 @@
         content="{{ isset($article) ? Str::limit(strip_tags($article->excerpt), 155) : 'Berita terbaru dari Desa Kepuharjo, Malang' }}">
     <meta property="twitter:image"
         content="{{ isset($article) && $article->featured_image ? asset('storage/' . $article->featured_image) : asset('assets/logo/Logo_Kabupaten_Malang.png') }}">
-
+    @stack('meta')
     @if (isset($article))
         <meta property="article:published_time" content="{{ $article->created_at->toISOString() }}">
         <meta property="article:modified_time" content="{{ $article->updated_at->toISOString() }}">
@@ -55,10 +55,10 @@
         @endif
     @endif
 
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/'. $ProfileDesa->logo) }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/'. $ProfileDesa->logo) }}">
-    <link rel="apple-touch-icon" href="{{ asset('assets/'. $ProfileDesa->logo) }}">
-    <link rel="shortcut icon" href="{{ asset('assets/'. $ProfileDesa->logo) }}" type="image/png">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/' . $ProfileDesa->logo) }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/' . $ProfileDesa->logo) }}">
+    <link rel="apple-touch-icon" href="{{ asset('assets/' . $ProfileDesa->logo) }}">
+    <link rel="shortcut icon" href="{{ asset('assets/' . $ProfileDesa->logo) }}" type="image/png">
     @if (isset($article))
         <script type="application/ld+json">
     {

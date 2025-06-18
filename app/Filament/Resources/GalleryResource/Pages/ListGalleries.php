@@ -10,10 +10,27 @@ class ListGalleries extends ListRecords
 {
     protected static string $resource = GalleryResource::class;
 
+    public function getTitle(): string
+    {
+        return 'Galeri Desa';
+    }
+
+    public function getHeading(): string
+    {
+        return 'Galeri Desa';
+    }
+
+    public function getSubheading(): ?string
+    {
+        return 'Kelola foto dan dokumentasi kegiatan desa';
+    }
+
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label('Tambah Galeri')
+                ->icon('heroicon-m-plus'),
         ];
     }
 }

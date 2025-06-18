@@ -41,7 +41,7 @@ class HomeController extends Controller
         }
 
         $ProfileDesa = ProfileDesa::first();
-        $kepalaDesa = PengurusDesa::where('jabatan', 'kepala_desa')->first();
+        $kepalaDesa = PengurusDesa::where('jabatan', 'kepala_desa')->with('user')->first();
 
         $laki = Penduduk::where('jenis_kelamin', 'L')->count();
         $perempuan = Penduduk::where('jenis_kelamin', 'P')->count();
@@ -57,7 +57,6 @@ class HomeController extends Controller
         $misi = $ProfileDesa->misi;
         $sejarah = \Illuminate\Support\Str::limit($ProfileDesa->sejarah_desa, 200);
         $title = 'Beranda';
-        $kepalaDesa = $kepalaDesa->user->name ?? '-';
 
         return view('index', compact(
             'banner',

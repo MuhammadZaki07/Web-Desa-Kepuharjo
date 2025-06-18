@@ -67,7 +67,8 @@ class GalleryResource extends Resource
                                     ->maxLength(255)
                                     ->required()
                                     ->live(onBlur: true)
-                                    ->afterStateUpdated(fn ($state, callable $set) =>
+                                    ->afterStateUpdated(
+                                        fn($state, callable $set) =>
                                         $set('slug', \Illuminate\Support\Str::slug($state))
                                     ),
 
@@ -129,11 +130,10 @@ class GalleryResource extends Resource
                         FileUpload::make('path')
                             ->label('Upload Gambar')
                             ->image()
-                            ->multiple()
                             ->required()
-                            ->maxSize(2048)
-                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
-                            ->directory('galeri')
+                            ->maxSize(1024)
+                            ->acceptedFileTypes(['image/jpeg', 'image/png'])
+                            ->directory(fn() => 'galeri/' . now()->format('Y'))
                             ->visibility('public')
                             ->preserveFilenames()
                             ->imageEditor()
@@ -143,22 +143,14 @@ class GalleryResource extends Resource
                                 '3:2',
                                 '1:1',
                             ])
-                            ->imagePreviewHeight('250')
-                            ->loadingIndicatorPosition('left')
-                            ->panelAspectRatio('2:1')
-                            ->panelLayout('integrated')
-                            ->removeUploadedFileButtonPosition('right')
-                            ->uploadButtonPosition('left')
-                            ->uploadProgressIndicatorPosition('left')
                             ->helperText('
-                                • Maksimal 2MB per gambar
-                                • Format: JPEG, PNG, WebP
+                                • Maksimal 1MB per gambar
+                                • Format: JPEG, PNG
                                 • Resolusi minimal: 800x600px
                                 • Gunakan gambar berkualitas tinggi untuk hasil terbaik
                             ')
                             ->hint('Drag & drop atau klik untuk upload')
                             ->hintIcon('heroicon-o-cloud-arrow-up')
-                            ->columnSpanFull(),
                     ]),
             ]);
     }
@@ -188,7 +180,7 @@ class GalleryResource extends Resource
 
                 BadgeColumn::make('type')
                     ->label('Kategori')
-                    ->formatStateUsing(fn($state) => match($state) {
+                    ->formatStateUsing(fn($state) => match ($state) {
                         'pkk' => 'PKK',
                         'karang_taruna' => 'Karang Taruna',
                         'gallery' => 'Galeri Umum',
@@ -280,7 +272,7 @@ class GalleryResource extends Resource
                     ->query(
                         fn(Builder $query) =>
                         $query->whereMonth('created_at', now()->month)
-                              ->whereYear('created_at', now()->year)
+                            ->whereYear('created_at', now()->year)
                     )
                     ->indicator('Bulan Ini'),
 

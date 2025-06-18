@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <x-banner-pemerintahan>
-        <section class="w-full h-[500px] relative bg-cover bg-center bg-no-repeat"
+        <section class="w-full h-[500px] relative bg-cover bg-center bg-no-repeat hidden lg:block"
             style="background-image: url('{{ $bannerImagePath }}')">
             <div class="absolute bottom-0 left-0 w-full h-full bg-gradient-to-r from-black to-transparent"></div>
             <div

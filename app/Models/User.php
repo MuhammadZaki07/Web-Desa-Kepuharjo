@@ -13,7 +13,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable,HasRoles;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -27,6 +27,10 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
     protected $hidden = [
         'password',
         'remember_token',
@@ -43,11 +47,6 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    public function admin(): HasOne
-    {
-        return $this->hasOne(Admin::class);
     }
 
     public function penduduk(): HasOne

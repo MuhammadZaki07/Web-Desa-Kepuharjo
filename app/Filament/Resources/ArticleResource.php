@@ -252,7 +252,7 @@ class ArticleResource extends Resource
                     Tables\Actions\Action::make('view')
                         ->label('View')
                         ->icon('heroicon-o-eye')
-                        ->url(fn(Article $record): string => route('detail-blog', $record->slug))
+                        ->url(fn(Article $record): string => route('articles.show', $record->slug))
                         ->openUrlInNewTab(),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\Action::make('toggleStatus')

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('email')->unique()->nullable();
             $table->string('phone')->unique()->nullable();
             $table->string('password')->nullable();
+            $table->boolean('is_active')->default(false);
             $table->enum('role', ['admin', 'penduduk'])->default('penduduk');
             $table->string('jabatan')->default('normal');
             $table->timestamp('email_verified_at')->nullable();

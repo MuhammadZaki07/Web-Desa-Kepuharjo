@@ -6,6 +6,7 @@
             'dropdown' => [
                 ['label' => 'Profile Data Penduduk', 'href' => '/profile-data-penduduk'],
                 ['label' => 'Visi & Misi', 'href' => '/visi-misi'],
+                ['label' => 'Prestasi Desa', 'href' => '/prestasi-desa'],
                 ['label' => 'Sejarah Desa', 'href' => '/sejarah'],
                 ['label' => 'PKK', 'href' => '/pkk'],
                 ['label' => 'Karang Taruna', 'href' => '/karang-taruna'],

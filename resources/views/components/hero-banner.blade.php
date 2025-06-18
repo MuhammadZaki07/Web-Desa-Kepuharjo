@@ -5,7 +5,7 @@
             ? asset('storage/' . $bannerImages)
             : asset('assets/banners/preview-1.png');
 @endphp
-<div class="relative w-full h-auto min-h-[560px] bg-cover bg-center overflow-hidden"
+<div class="relative w-full h-auto min-h-[560px] bg-cover bg-center overflow-hidden hidden lg:block"
     style="background-image: url('{{ $bannerImagePath }}');">
     <div class="absolute inset-0 bg-black/45"></div>
     <div

@@ -3,25 +3,43 @@
 namespace App\Filament\Resources\GalleryResource\Pages;
 
 use App\Filament\Resources\GalleryResource;
-use App\Models\Gallery;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Str;
 
 class CreateGallery extends CreateRecord
 {
     protected static string $resource = GalleryResource::class;
-    protected static ?string $title = 'Tambah Gallery Baru';
 
-    protected function handleRecordCreation(array $data): Gallery
+    public function getTitle(): string
     {
-        $records = [];
-        foreach ($data['path'] as $path) {
-            $records[] = Gallery::create([
-                'path' => $path,
-                'type' => $data['type'],
-            ]);
+        return 'Buat Galeri Baru';
+    }
+
+    public function getHeading(): string
+    {
+        return 'Buat Galeri Baru';
+    }
+
+    public function getSubheading(): ?string
+    {
+        return 'Tambahkan galeri foto untuk kegiatan desa';
+    }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        if (empty($data['slug']) && !empty($data['title'])) {
+            $data['slug'] = Str::slug($data['title']);
+
+            $originalSlug = $data['slug'];
+            $counter = 1;
+
+            while (static::getResource()::getModel()::where('slug', $data['slug'])->exists()) {
+                $data['slug'] = $originalSlug . '-' . $counter;
+                $counter++;
+            }
         }
-        return end($records);
+
+        return $data;
     }
 
     protected function getRedirectUrl(): string

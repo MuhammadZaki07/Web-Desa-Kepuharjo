@@ -31,7 +31,7 @@ class ArticleController extends Controller
         $getHeadlinesInPageArticle = ArticleService::getHeadlinesInPageArticle();
         $headlines = ArticleService::getHeadlines();
         $articles = $this->getFilteredArticles($search, $category, $sort, $perPage);
-        $categories = $this->getCategoriesWithCount();
+        $categories = ArticleService::getCategoriesWithCount();
 
 
         return view('pages.berita', compact(
@@ -111,7 +111,7 @@ class ArticleController extends Controller
                 return $item;
             });
 
-        $categories = $this->getCategoriesWithCount();
+        $categories = ArticleService::getCategoriesWithCount();
         $title = $article->title;
 
         return view('pages.show-berita', compact(
@@ -215,16 +215,5 @@ class ArticleController extends Controller
         return $articles;
     }
 
-    private function getCategoriesWithCount()
-    {
-        return Category::query()
-            ->select('id', 'name', 'slug','color')
-            ->where('type', 'blogs')
-            ->withCount(['articles as published_articles_count' => function ($query) {
-                $query->where('status', 'published');
-            }])
-            ->having('published_articles_count', '>', 0)
-            ->orderBy('name')
-            ->get();
-    }
+
 }

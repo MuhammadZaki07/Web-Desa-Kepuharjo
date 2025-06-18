@@ -25,6 +25,7 @@ return new class extends Migration
             $table->longText('sejarah_desa')->nullable();
             $table->binary('image_sejarah')->nullable();
             $table->longText('program_unggulan')->nullable();
+            $table->longText('sambutan_pemerintah')->nullable();
             $table->text('visi')->nullable();
             $table->json('misi')->nullable();
             $table->string('instagram')->nullable();

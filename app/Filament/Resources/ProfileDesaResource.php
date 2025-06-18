@@ -183,18 +183,24 @@ class ProfileDesaResource extends Resource
                     ->collapsed(true)
                     ->collapsible(true)
                     ->schema([
-                        RichEditor::make('sambutan_kepala_desa')
-                            ->label('Sambutan Kepala Desa')
-                            ->toolbarButtons([])
-                            ->placeholder('Tulis sambutan dari kepala desa...')
-                            ->helperText('Sambutan resmi dari kepala desa untuk website'),
-
                         TextInput::make('motto_desa')
                             ->label('Motto Desa')
                             ->maxLength(255)
                             ->placeholder('Contoh: Bersatu Membangun Desa')
                             ->prefixIcon('heroicon-o-star')
                             ->helperText('Motto atau tagline desa'),
+
+                        TextArea::make('sambutan_pemerintah')
+                            ->label('Sambutan Pemerintah')
+                            ->placeholder('Tulis sambutan dari pemerintah desa...')
+                            ->rows(7)
+                            ->helperText('Sambutan resmi dari pemerintah desa untuk website'),
+
+                        TextArea::make('sambutan_kepala_desa')
+                            ->label('Sambutan Kepala Desa')
+                            ->rows(7)
+                            ->placeholder('Tulis sambutan dari kepala desa...')
+                            ->helperText('Sambutan resmi dari kepala desa untuk website'),
 
                         FileUpload::make('image_sejarah')
                             ->directory('image_sejarah_desa')

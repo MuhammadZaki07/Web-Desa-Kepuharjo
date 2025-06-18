@@ -18,12 +18,12 @@
         <div class="lg:px-20 px-0 py-5">
             <x-sambutan id="sambutan" class="tab-content w-full py-3">
                 <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 py-10 px-5">
-                    <div class="w-48 h-48 lg:w-64 lg:h-64 overflow-hidden shadow-lg">
-                        @if ($ProfileDesa->user && $ProfileDesa->user->photo)
-                            <img src="{{ asset('storage/' . $ProfileDesa->user->photo) }}" alt="Foto Kepala Desa"
+                    <div class="w-48 h-48 lg:w-64 lg:h-64 overflow-hidden">
+                        @if ($kepalaDesa->user && $kepalaDesa->user->photo)
+                            <img src="{{ asset('storage/' . $kepalaDesa->user->photo) }}" alt="Foto Kepala Desa"
                                 class="w-full h-full object-cover" />
                         @else
-                            <img src="{{ asset('assets/images/profile.jpg') }}" alt="Foto Kepala Desa (Default)"
+                            <img src="{{ asset('assets/images/user-unkown.png') }}" alt="Foto Kepala Desa (Default)"
                                 class="w-full h-full object-cover" />
                         @endif
 
@@ -37,7 +37,7 @@
                             {{ $ProfileDesa->sambutan_kepala_desa ?? '-' }}
                         </p>
                         <div class="mt-6">
-                            <p class="font-semibold text-black text-xl">{{ $kepalaDesa ?? '-' }}</p>
+                            <p class="font-semibold text-black text-xl">{{ $kepalaDesa->user->name ?? '-' }}</p>
                             <p class="text-sm text-gray-500 font-light">Kepala Desa Kepuharjo</p>
                         </div>
                     </div>

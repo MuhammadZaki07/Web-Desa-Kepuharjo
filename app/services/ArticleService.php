@@ -12,7 +12,7 @@ class ArticleService
     public static function getLatestPublishedBlogs(?string $category = null, int $perPage = 6): LengthAwarePaginator
     {
         $query = Article::query()
-            ->select('id', 'title', 'slug', 'featured_image', 'created_at', 'category_id', 'excerpt', 'viewers','updated_at')
+            ->select('id', 'title', 'slug', 'featured_image', 'created_at', 'category_id', 'excerpt', 'viewers', 'updated_at')
             ->with(['category:id,name,slug'])
             ->where('status', 'published')
             ->whereHas('category', function ($q) {
@@ -32,7 +32,7 @@ class ArticleService
     public static function getViralBlogs(int $limit = 4): \Illuminate\Database\Eloquent\Collection
     {
         return Article::query()
-            ->select('id', 'title', 'slug', 'featured_image', 'viewers', 'created_at', 'category_id','updated_at')
+            ->select('id', 'title', 'slug', 'featured_image', 'viewers', 'created_at', 'category_id', 'updated_at')
             ->with(['category:id,name,slug'])
             ->where('status', 'published')
             ->whereHas('category', function ($query) {
@@ -46,7 +46,7 @@ class ArticleService
     public static function getHeadlinesInPageArticle(int $limit = 2): \Illuminate\Database\Eloquent\Collection
     {
         return Article::query()
-            ->select('id', 'title', 'slug', 'featured_image', 'created_at', 'category_id', 'viewers','updated_at')
+            ->select('id', 'title', 'slug', 'featured_image', 'created_at', 'category_id', 'viewers', 'updated_at')
             ->with(['category:id,name,slug,color'])
             ->where('status', 'published')
             ->whereHas('category', function ($query) {
@@ -65,10 +65,10 @@ class ArticleService
             ->pluck('title');
     }
 
-      public static function getCategoriesWithCount()
+    public static function getCategoriesWithCount()
     {
         return Category::query()
-            ->select('id', 'name', 'slug','color')
+            ->select('id', 'name', 'slug', 'color')
             ->where('type', 'blogs')
             ->withCount(['articles as published_articles_count' => function ($query) {
                 $query->where('status', 'published');
@@ -78,10 +78,11 @@ class ArticleService
             ->get();
     }
 
+
     public static function searchArticles(string $query, ?string $category = null, int $perPage = 6): LengthAwarePaginator
     {
         $articleQuery = Article::query()
-            ->select('id', 'title', 'slug', 'featured_image', 'created_at', 'category_id', 'excerpt', 'viewers','updated_at')
+            ->select('id', 'title', 'slug', 'featured_image', 'created_at', 'category_id', 'excerpt', 'viewers', 'updated_at')
             ->with(['category:id,name,slug'])
             ->where('status', 'published')
             ->whereHas('category', function ($q) {

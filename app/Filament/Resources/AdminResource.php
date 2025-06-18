@@ -3,47 +3,33 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\AdminResource\Pages;
-use App\Models\Admin;
 use App\Models\User;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
+use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Support\Enums\ActionSize;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Database\Eloquent\Builder;
 
 class AdminResource extends Resource
 {
-    protected static ?string $model = Admin::class;
+    protected static ?string $model = User::class;
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
-    protected static ?string $navigationLabel = "Admin";
     protected static ?string $navigationGroup = "User Management";
-    protected static ?int $navigationSort = 1;
-    public static function canAccess(): bool
+    protected static ?string $navigationLabel = 'Admin Management';
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public static function canViewAny(): bool
     {
         return Auth::check() && in_array(Auth::user()->jabatan, ['super_admin', 'admin_desa']);
     }
@@ -53,457 +39,220 @@ class AdminResource extends Resource
         return Auth::check() && in_array(Auth::user()->jabatan, ['super_admin', 'admin_desa']);
     }
 
-
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Hidden::make('form_mode')
-                    ->default('create_new'),
+        return $form->schema([
+            Forms\Components\Section::make('Admin Creation')
+                ->description('Select residents to promote to admin role')
+                ->icon('heroicon-o-user-plus')
+                ->schema([
+                    Forms\Components\Select::make('penduduk_ids')
+                        ->label('Select Residents')
+                        ->helperText('Choose one or more residents to promote to admin')
+                        ->multiple()
+                        ->searchable()
+                        ->preload()
+                        ->options(function () {
+                            return \App\Models\Penduduk::whereHas(
+                                'user',
+                                fn($q) =>
+                                $q->where('role', 'penduduk')
+                            )
+                                ->with('user')
+                                ->get()
+                                ->mapWithKeys(fn($p) => [
+                                    $p->user->id => "{$p->user->name} (NIK: {$p->nik})"
+                                ])
+                                ->toArray();
+                        })
+                        ->required()
+                        ->live()
+                        ->afterStateUpdated(function ($state, callable $set) {
+                            if (empty($state)) {
+                                $set('admin_details', []);
+                                return;
+                            }
 
-                Tabs::make('admin_tabs')
-                    ->tabs([
-                        Tab::make('create_new_user')
-                            ->label('Buat Admin Baru')
-                            ->icon('heroicon-o-plus-circle')
-                            ->schema([
-                                Section::make('Informasi Admin Baru')
-                                    ->description('Buat akun admin baru dengan data lengkap')
-                                    ->icon('heroicon-o-user-plus')
-                                    ->schema([
-                                        Grid::make(2)
-                                            ->schema([
-                                                TextInput::make('user.name')
-                                                    ->label('Nama Lengkap')
-                                                    ->required(fn(Get $get, $operation) => $operation === 'create' && $get('form_mode') === 'create_new')
-                                                    ->maxLength(255)
-                                                    ->placeholder('Masukkan nama lengkap'),
+                            $penduduks = \App\Models\Penduduk::whereHas(
+                                'user',
+                                fn($q) =>
+                                $q->where('role', 'penduduk')
+                            )
+                                ->whereIn('user_id', (array) $state)
+                                ->with('user')
+                                ->get();
 
-                                                TextInput::make('user.email')
-                                                    ->label('Email')
-                                                    ->email()
-                                                    ->required(fn(Get $get, $operation) => $operation === 'create' && $get('form_mode') === 'create_new')
-                                                    ->unique(User::class, 'email', ignoreRecord: true)
-                                                    ->maxLength(255)
-                                                    ->placeholder('admin@example.com'),
+                            $details = $penduduks->map(function ($p) {
+                                return [
+                                    'user_id' => $p->user->id,
+                                    'name' => $p->user->name,
+                                    'nik' => $p->nik,
+                                    'alamat' => $p->alamat,
+                                    'email' => $p->user->email ?? '',
+                                    'password' => '',
+                                ];
+                            })->toArray();
 
-                                                TextInput::make('user.phone')
-                                                    ->label('No. Telepon')
-                                                    ->unique(User::class, 'phone', ignoreRecord: true)
-                                                    ->maxLength(255)
-                                                    ->placeholder('08xxxxxxxxxx'),
+                            $set('admin_details', $details);
+                        }),
 
-                                                TextInput::make('user.password')
-                                                    ->label('Password')
-                                                    ->password()
-                                                    ->required(fn(Get $get, $operation) => $operation === 'create' && $get('form_mode') === 'create_new')
-                                                    ->dehydrateStateUsing(fn($state) => $state ? Hash::make($state) : null)
-                                                    ->dehydrated(fn($state) => filled($state))
-                                                    ->minLength(6)
-                                                    ->maxLength(255)
-                                                    ->placeholder('Minimal 6 karakter'),
-
-                                                Select::make('user.jabatan')
-                                                    ->label('Level Jabatan')
-                                                    ->options([
-                                                        'super_admin' => 'Super Admin',
-                                                        'admin_desa' => 'Admin Desa',
-                                                        'operator' => 'Operator',
-                                                    ])
-                                                    ->default('admin_desa')
-                                                    ->required(fn(Get $get, $operation) => $operation === 'create' && $get('form_mode') === 'create_new')
-                                                    ->searchable(),
-
-                                                FileUpload::make('user.photo')
-                                                    ->label('Foto Profile')
-                                                    ->image()
-                                                    ->directory('admin-photos')
-                                                    ->visibility('private')
-                                                    ->maxSize(2048)
-                                                    ->imageEditor()
-                                                    ->columnSpanFull(),
-                                            ])
-                                    ])
-                            ])
-                            ->extraAttributes([
-                                'x-on:click' => '$wire.set("data.form_mode", "create_new")'
-                            ])
-                            ->visible(fn($operation) => $operation === 'create'),
-
-                        Tab::make('promote_existing_user')
-                            ->label('Promote Penduduk')
-                            ->icon('heroicon-o-arrow-up-circle')
-                            ->schema([
-                                Section::make('Promote Penduduk Menjadi Admin')
-                                    ->description('Pilih penduduk yang akan dipromote menjadi admin dan buatkan akun login')
-                                    ->icon('heroicon-o-user-group')
-                                    ->schema([
-                                        Grid::make(1)
-                                            ->schema([
-                                                Select::make('existing_user_id')
-                                                    ->label('Pilih Penduduk')
-                                                    ->placeholder('Pilih penduduk yang akan dijadikan admin...')
-                                                    ->searchable()
-                                                    ->preload(false) // Disable preloading for better performance
-                                                    ->required(fn(Get $get, $operation) => $operation === 'create' && $get('form_mode') === 'promote_existing')
-                                                    ->options(function () {
-                                                        // Use caching for options
-                                                        return Cache::remember('admin_resource_available_users', 300, function () {
-                                                            return User::where('role', 'penduduk')
-                                                                ->whereDoesntHave('admin')
-                                                                ->orderBy('name')
-                                                                ->limit(50) // Reduced limit for better performance
-                                                                ->pluck('name', 'id')
-                                                                ->toArray();
-                                                        });
-                                                    })
-                                                    ->getSearchResultsUsing(
-                                                        fn(string $search): array =>
-                                                        User::where('role', 'penduduk')
-                                                            ->where(function ($query) use ($search) {
-                                                                $query->where('name', 'like', "%{$search}%")
-                                                                    ->orWhere('nik', 'like', "%{$search}%")
-                                                                    ->orWhere('phone', 'like', "%{$search}%");
-                                                            })
-                                                            ->whereDoesntHave('admin')
-                                                            ->limit(25) // Reduced limit for search results
-                                                            ->pluck('name', 'id')
-                                                            ->toArray()
-                                                    )
-                                                    ->live()
-                                                    ->afterStateUpdated(function ($state, $set) {
-                                                        if ($state) {
-                                                            $user = User::with('penduduk')->find($state); // Use eager loading
-                                                            if ($user) {
-                                                                $set('preview_name', $user->name);
-                                                                $set('preview_nik', $user->penduduk->nik ?? 'N/A');
-                                                                $set('preview_phone', $user->phone);
-                                                                $set('preview_address', $user->penduduk->alamat ?? 'N/A');
-                                                            }
-                                                        } else {
-                                                            $set('preview_name', null);
-                                                            $set('preview_nik', null);
-                                                            $set('preview_phone', null);
-                                                            $set('preview_address', null);
-                                                        }
-                                                    }),
-                                            ]),
-
-                                        Section::make('Preview Data Penduduk')
-                                            ->schema([
-                                                Grid::make(2)
-                                                    ->schema([
-                                                        Placeholder::make('preview_name')
-                                                            ->label('Nama Lengkap')
-                                                            ->content(fn($get) => $get('preview_name') ?: 'Belum dipilih'),
-
-                                                        Placeholder::make('preview_nik')
-                                                            ->label('NIK')
-                                                            ->content(fn($get) => $get('preview_nik') ?: 'Belum dipilih'),
-
-                                                        Placeholder::make('preview_phone')
-                                                            ->label('No. Telepon')
-                                                            ->content(fn($get) => $get('preview_phone') ?: 'Belum dipilih'),
-
-                                                        Placeholder::make('preview_address')
-                                                            ->label('Alamat')
-                                                            ->content(fn($get) => $get('preview_address') ?: 'Belum dipilih'),
-                                                    ])
-                                            ])
-                                            ->visible(fn($get) => filled($get('existing_user_id')))
-                                            ->collapsible()
-                                            ->collapsed(false),
-
-                                        Section::make('Data Login Admin')
-                                            ->description('Buatkan email dan password untuk login admin')
-                                            ->schema([
-                                                Grid::make(2)
-                                                    ->schema([
-                                                        TextInput::make('admin_email')
-                                                            ->label('Email Admin')
-                                                            ->email()
-                                                            ->required(fn(Get $get, $operation) => $operation === 'create' && $get('form_mode') === 'promote_existing')
-                                                            ->unique(User::class, 'email', ignoreRecord: true)
-                                                            ->placeholder('admin@desa.com')
-                                                            ->helperText('Email untuk login ke sistem'),
-
-                                                        TextInput::make('admin_password')
-                                                            ->label('Password')
-                                                            ->password()
-                                                            ->required(fn(Get $get, $operation) => $operation === 'create' && $get('form_mode') === 'promote_existing')
-                                                            ->minLength(6)
-                                                            ->placeholder('Minimal 6 karakter')
-                                                            ->helperText('Password untuk login ke sistem'),
-
-                                                        Select::make('new_jabatan')
-                                                            ->label('Level Jabatan')
-                                                            ->options([
-                                                                'super_admin' => 'Super Admin',
-                                                                'admin_desa' => 'Admin Desa',
-                                                                'operator' => 'Operator',
-                                                            ])
-                                                            ->default('admin_desa')
-                                                            ->required(fn(Get $get, $operation) => $operation === 'create' && $get('form_mode') === 'promote_existing')
-                                                            ->searchable(),
-
-                                                        FileUpload::make('admin_photo')
-                                                            ->label('Update Foto (Opsional)')
-                                                            ->image()
-                                                            ->directory('admin-photos')
-                                                            ->visibility('private')
-                                                            ->maxSize(2048)
-                                                            ->imageEditor()
-                                                            ->helperText('Kosongkan jika tidak ingin mengubah foto'),
-                                                    ])
-                                            ])
-                                            ->visible(fn($get) => filled($get('existing_user_id'))),
-                                    ]),
-                            ])
-                            ->extraAttributes([
-                                'x-on:click' => '$wire.set("data.form_mode", "promote_existing")'
-                            ])
-                            ->visible(fn($operation) => $operation === 'create'),
-                    ])
-                    ->columnSpanFull()
-                    ->visible(fn($operation) => $operation === 'create'),
-
-                Section::make('Edit Data Admin')
-                    ->description('Update informasi admin')
-                    ->icon('heroicon-o-user-circle')
-                    ->schema([
-                        Grid::make(2)
-                            ->schema([
-                                TextInput::make('user.name')
-                                    ->label('Nama Lengkap')
-                                    ->required()
-                                    ->maxLength(255),
-
-                                TextInput::make('user.email')
-                                    ->label('Email')
-                                    ->email()
-                                    ->required()
-                                    ->unique(User::class, 'email',  fn($record) => $record?->user)
-                                    ->maxLength(255),
-
-                                TextInput::make('user.phone')
-                                    ->label('No. Telepon')
-                                    ->unique(User::class, 'phone',  fn($record) => $record?->user)
-                                    ->maxLength(255),
-
-                                TextInput::make('user.password')
-                                    ->label('Password Baru')
-                                    ->password()
-                                    ->dehydrateStateUsing(fn($state) => $state ? Hash::make($state) : null)
-                                    ->dehydrated(fn($state) => filled($state))
-                                    ->minLength(6)
-                                    ->maxLength(255)
-                                    ->placeholder('Kosongkan jika tidak ingin mengubah')
-                                    ->helperText('Kosongkan jika tidak ingin mengubah password'),
-
-                                Select::make('user.jabatan')
-                                    ->label('Level Jabatan')
-                                    ->options([
-                                        'super_admin' => 'Super Admin',
-                                        'admin_desa' => 'Admin Desa',
-                                        'operator' => 'Operator',
-                                    ])
-                                    ->required()
-                                    ->searchable(),
-
-                                FileUpload::make('user.photo')
-                                    ->label('Foto Profile')
-                                    ->image()
-                                    ->directory('admin-photos')
-                                    ->visibility('private')
-                                    ->maxSize(2048)
-                                    ->imageEditor()
-                                    ->columnSpanFull(),
-                            ])
-                    ])
-                    ->visible(fn($operation) => $operation === 'edit'),
-
-                Section::make('Informasi Tambahan')
-                    ->description('Detail posisi dan status admin')
-                    ->icon('heroicon-o-information-circle')
-                    ->schema([
-                        Grid::make(2)
-                            ->schema([
-                                TextInput::make('position')
-                                    ->label('Posisi/Jabatan Detail')
-                                    ->maxLength(255)
-                                    ->placeholder('Contoh: Sekretaris Desa, Kepala Desa, dll')
-                                    ->helperText('Posisi spesifik dalam struktur organisasi'),
-
-                                Toggle::make('is_active')
-                                    ->label('Status Aktif')
-                                    ->default(true)
-                                    ->helperText('Admin aktif dapat mengakses sistem'),
-                            ])
-                    ]),
-            ]);
+                    Forms\Components\Repeater::make('admin_details')
+                        ->label('Admin Details')
+                        ->schema([
+                            Forms\Components\Grid::make(2)
+                                ->schema([
+                                    Forms\Components\TextInput::make('name')
+                                        ->label('Full Name')
+                                        ->disabled()
+                                        ->dehydrated(false),
+                                    Forms\Components\TextInput::make('nik')
+                                        ->label('NIK')
+                                        ->disabled()
+                                        ->dehydrated(false),
+                                    Forms\Components\TextInput::make('alamat')
+                                        ->label('Address')
+                                        ->disabled()
+                                        ->columnSpanFull()
+                                        ->dehydrated(false),
+                                    Forms\Components\TextInput::make('email')
+                                        ->label('Email Address')
+                                        ->email()
+                                        ->required()
+                                        ->unique('users', 'email')
+                                        ->placeholder('Enter admin email'),
+                                    Forms\Components\TextInput::make('password')
+                                        ->label('Password')
+                                        ->password()
+                                        ->required()
+                                        ->minLength(8)
+                                        ->placeholder('Minimum 8 characters'),
+                                    Forms\Components\Hidden::make('user_id'),
+                                ])
+                        ])
+                        ->addable(false)
+                        ->deletable(false)
+                        ->reorderable(false)
+                        ->visible(fn($get) => !empty($get('penduduk_ids')))
+                        ->columns(1)
+                        ->itemLabel(fn(array $state): ?string => $state['name'] ?? null),
+                ])
+                ->collapsible()
+                ->persistCollapsed()
+        ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->query(User::where('role', 'admin')->with(['penduduk']))
             ->columns([
-                ImageColumn::make('user.photo')
-                    ->label('Foto')
-                    ->circular()
-                    ->size(60)
-                    ->defaultImageUrl(fn() => 'https://ui-avatars.com/api/?name=' . urlencode('Admin') . '&color=7F9CF5&background=EBF4FF'),
-
-                TextColumn::make('user.name')
-                    ->label('Nama Lengkap')
+                TextColumn::make('name')
+                    ->label('Full Name')
                     ->searchable()
                     ->sortable()
-                    ->weight('bold')
-                    ->size('sm'),
+                    ->weight('medium')
+                    ->icon('heroicon-m-user'),
 
-                TextColumn::make('user.email')
+                TextColumn::make('email')
                     ->label('Email')
                     ->searchable()
                     ->sortable()
                     ->copyable()
-                    ->icon('heroicon-o-envelope')
-                    ->iconColor('gray')
-                    ->size('sm'),
+                    ->icon('heroicon-m-envelope'),
 
-                TextColumn::make('user.phone')
-                    ->label('Telepon')
+                TextColumn::make('nik')
+                    ->label('NIK')
                     ->searchable()
                     ->copyable()
-                    ->icon('heroicon-o-phone')
-                    ->iconColor('gray')
-                    ->size('sm'),
+                    ->icon('heroicon-m-identification'),
 
-                TextColumn::make('user.jabatan')
-                    ->label('Level Jabatan')
-                    ->searchable()
-                    ->sortable()
+                TextColumn::make('jabatan')
+                    ->label('Position')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
                         'super_admin' => 'danger',
-                        'admin_desa' => 'success',
-                        'operator' => 'warning',
+                        'admin' => 'success',
+                        'admin_desa' => 'warning',
                         default => 'gray',
-                    })
-                    ->formatStateUsing(fn(string $state): string => match ($state) {
-                        'super_admin' => 'Super Admin',
-                        'admin_desa' => 'Admin Desa',
-                        'operator' => 'Operator',
-                        default => ucfirst($state),
                     }),
 
-                TextColumn::make('is_active')
+                IconColumn::make('is_active')
                     ->label('Status')
-                    ->formatStateUsing(fn($state) => $state ? 'Aktif' : 'Non Aktif')
-                    ->badge()
-                    ->color(fn($state) => $state ? 'success' : 'danger')
-                    ->icon(fn($state) => $state ? 'heroicon-o-check-circle' : 'heroicon-o-x-circle')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-badge')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger')
                     ->sortable(),
 
                 TextColumn::make('created_at')
-                    ->label('Dibuat')
-                    ->dateTime('d M Y')
+                    ->label('Created')
+                    ->dateTime('M j, Y')
                     ->sortable()
-                    ->toggleable(true),
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->defaultSort('created_at', 'desc')
-            ->striped()
             ->filters([
-                SelectFilter::make('is_active')
+                TernaryFilter::make('is_active')
                     ->label('Status')
-                    ->options([
-                        1 => 'Aktif',
-                        0 => 'Non Aktif',
-                    ]),
-                SelectFilter::make('jabatan')
-                    ->label('Level Jabatan')
-                    ->options([
-                        'super_admin' => 'Super Admin',
-                        'admin_desa' => 'Admin Desa',
-                        'operator' => 'Operator',
-                    ])
-                    ->query(function ($query, array $data) {
-                        if (!empty($data['value'])) {
-                            $query->whereHas('user', function ($q) use ($data) {
-                                $q->where('jabatan', $data['value']);
-                            });
-                        }
-                    }),
+                    ->trueLabel('Active')
+                    ->falseLabel('Inactive')
+                    ->placeholder('All Status'),
             ])
             ->actions([
                 ActionGroup::make([
                     EditAction::make()
-                        ->icon('heroicon-o-pencil')
+                        ->visible(fn() => Auth::user()->jabatan === 'super_admin')
                         ->color('warning')
-                        ->visible(fn() => Auth::user()?->jabatan === 'super_admin'), // 👈 Tambahkan ini
+                        ->icon('heroicon-m-pencil-square'),
 
                     Action::make('toggle_status')
-                        ->label(fn(Admin $record) => $record->is_active ? 'Nonaktifkan' : 'Aktifkan')
-                        ->icon(fn(Admin $record) => $record->is_active ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle')
-                        ->color(fn(Admin $record) => $record->is_active ? 'danger' : 'success')
-                        ->action(function (Admin $record) {
-                            $record->update(['is_active' => !$record->is_active]);
-                            Cache::forget('admin_navigation_badge_count');
+                        ->label(fn($record) => $record->is_active ? 'Deactivate' : 'Activate')
+                        ->action(function ($record) {
+                            $record->update([
+                                'is_active' => !$record->is_active,
+                                'jabatan' => $record->is_active ? 'penduduk' : 'admin',
+                            ]);
                         })
+                        ->visible(fn() => Auth::user()->jabatan === 'super_admin')
                         ->requiresConfirmation()
-                        ->modalDescription('Apakah Anda yakin ingin mengubah status admin ini?')
-                        ->visible(fn() => Auth::user()?->jabatan === 'super_admin'), // 👈 Tambahkan ini
+                        ->modalHeading(fn($record) => ($record->is_active ? 'Deactivate' : 'Activate') . ' Admin')
+                        ->modalDescription(fn($record) => $record->is_active
+                            ? 'This will deactivate the admin and convert them back to resident status.'
+                            : 'This will activate the admin and restore their admin privileges.')
+                        ->color(fn($record) => $record->is_active ? 'danger' : 'success')
+                        ->icon(fn($record) => $record->is_active ? 'heroicon-m-x-circle' : 'heroicon-m-check-circle'),
 
                     DeleteAction::make()
-                        ->icon('heroicon-o-trash')
-                        ->color('danger')
-                        ->visible(fn() => Auth::user()?->jabatan === 'super_admin') // 👈 Sudah benar
-                        ->action(function (Admin $record) {
-                            // ... (logika delete)
-                        })
+                        ->visible(fn() => Auth::user()->jabatan === 'super_admin')
                         ->requiresConfirmation()
-                        ->modalHeading('Hapus Admin')
-                        ->modalDescription('Apakah Anda yakin ingin menghapus admin ini? Tindakan ini tidak dapat dibatalkan.')
-                        ->modalSubmitActionLabel('Ya, Hapus'),
+                        ->modalHeading('Delete Admin')
+                        ->modalDescription('Are you sure you want to delete this admin? This action cannot be undone.')
+                        ->color('danger')
+                        ->icon('heroicon-m-trash'),
                 ])
-                    ->label('Aksi')
+                    ->label('Actions')
                     ->icon('heroicon-m-ellipsis-vertical')
-                    ->size(ActionSize::Small)
+                    ->size('sm')
                     ->color('gray')
-                    ->button()
+                    ->button(),
             ])
             ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->visible(fn() => Auth::user()?->jabatan === 'super_admin')
-                        ->action(function ($records) {}),
-
-                    BulkAction::make('activate')
-                        ->label('Aktifkan')
-                        ->icon('heroicon-o-check-circle')
-                        ->color('success')
-                        ->visible(fn() => Auth::user()?->jabatan === 'super_admin')
-                        ->action(function ($records) {
-                            $records->each->update(['is_active' => true]);
-                            Cache::forget('admin_navigation_badge_count');
-                        }),
-
-                    BulkAction::make('deactivate')
-                        ->label('Nonaktifkan')
-                        ->icon('heroicon-o-x-circle')
-                        ->color('danger')
-                        ->visible(fn() => Auth::user()?->jabatan === 'super_admin')
-                        ->action(function ($records) {}),
-                ]),
+                DeleteBulkAction::make()
+                    ->visible(fn() => Auth::user()->jabatan === 'super_admin')
+                    ->requiresConfirmation()
+                    ->modalHeading('Delete Selected Admins')
+                    ->modalDescription('Are you sure you want to delete the selected admins? This action cannot be undone.'),
             ])
-            ->emptyStateHeading('Belum ada data admin')
-            ->emptyStateDescription('Mulai dengan membuat admin pertama untuk mengelola sistem.')
-            ->emptyStateIcon('heroicon-o-shield-check');
+            ->emptyStateHeading('No Admins Found')
+            ->emptyStateDescription('No admin users have been created yet.')
+            ->emptyStateIcon('heroicon-o-shield-exclamation')
+            ->striped()
+            ->paginated([10, 25, 50, 100]);
     }
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
@@ -517,13 +266,20 @@ class AdminResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return Cache::remember('admin_navigation_badge_count', 300, function () {
-            return static::getModel()::where('is_active', true)->count();
+        return Cache::remember('active_admin_count', 300, function () {
+            return User::where('jabatan', 'admin')
+                ->where('is_active', true)
+                ->count();
         });
     }
 
     public static function getNavigationBadgeColor(): ?string
     {
         return 'success';
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('role', 'admin');
     }
 }
