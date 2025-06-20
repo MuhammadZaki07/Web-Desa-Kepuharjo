@@ -14,10 +14,14 @@
 <body>
     <div class="absolute top-5 lg:top-4 left-3 lg:left-5 flex gap-4 items-center" data-aos="fade-down"
         data-aos-duration="1000">
-        <img src="{{ asset('assets/logo/Logo_Kabupaten_Malang.png') }}" alt="Logo Kabupaten Malang"
-            class="w-11 lg:w-14 h-auto" />
+        <a href="/">
+            <img src="{{ asset('assets/logo/Logo_Kabupaten_Malang.png') }}" alt="Logo Kabupaten Malang"
+                class="w-11 lg:w-14 h-auto" />
+        </a>
         <div class="flex flex-col">
-            <h1 class="font-bold text-xl lg:text-lg text-green-800">Desa Kepuharjo</h1>
+            <a href="/">
+                <h1 class="font-bold text-xl lg:text-lg text-green-800">Desa Kepuharjo</h1>
+            </a>
             <div class="lg:text-xs text-[11px] text-slate-600 flex gap-2 sm:flex-row sm:items-center sm:gap-3">
                 <span class="flex items-center gap-1">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -55,7 +59,7 @@
             <form class="max-w-md md:ml-auto w-full" method="POST" action="{{ route('custom.login') }}"
                 data-aos="fade-up" data-aos-duration="1000" data-aos-delay="400">
                 @csrf
-                <a href="/" class="font-medium text-lg hover:text-gray-800"><i class="bi bi-arrow-left"></i> Kembali</a>
+                <a href="/" class="font-medium text-lg text-green-700 hover:text-green-800 hidden lg:block"><i class="bi bi-arrow-left"></i> Kembali</a>
                 <div class="space-y-3 text-left py-3" data-aos="fade-right" data-aos-duration="1000"
                     data-aos-delay="200">
                     <h2 class="lg:text-5xl text-4xl font-bold lg:leading-[57px] text-green-700">

@@ -11,9 +11,8 @@
     </div>
     <div class="overflow-hidden whitespace-nowrap w-full relative">
         <div class="animate-marquee inline-block">
-            {{-- {{ dd($blogs) }} --}}
             @forelse ($blogs as $blog)
-                <a href="{{ $blog['url'] }}"
+                <a href="{{ route('articles.show', $blog->slug) }}"
                     class="inline-flex items-center space-x-2 px-4 text-gray-800 hover:underline hover:animate-bounce-stop">
                     <img src="{{ $blog['featured_image'] ? asset('storage/' . $blog['featured_image']) : asset('assets/images/default-thumbnail.jpg') }}"
                         class="w-full h-8 mt-1 object-cover rounded" alt="thumbnail">

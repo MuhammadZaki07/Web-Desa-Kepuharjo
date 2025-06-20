@@ -12,7 +12,7 @@ class ArticleService
     public static function getLatestPublishedBlogs(?string $category = null, int $perPage = 6): LengthAwarePaginator
     {
         $query = Article::query()
-            ->select('id', 'title', 'slug', 'featured_image', 'created_at', 'category_id', 'excerpt', 'viewers', 'updated_at')
+            ->select('id', 'title', 'slug', 'featured_image', 'created_at', 'category_id', 'excerpt', 'viewers', 'updated_at','published_at')
             ->with(['category:id,name,slug'])
             ->where('status', 'published')
             ->whereHas('category', function ($q) {

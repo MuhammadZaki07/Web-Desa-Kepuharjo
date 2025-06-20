@@ -6,16 +6,15 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
     <title>
-        {{ isset($article) ? $article->title . ' - Berita Desa Kepuharjo' : $title ?? 'Berita Desa Kepuharjo - Informasi Terkini Desa Kepuharjo Malang' }}
+        {{ isset($article) ? $article->title . ' - Berita Desa Kepuharjo' : $title ?? 'Desa Kepuharjo - Informasi Terkini Desa Kepuharjo Malang' }}
     </title>
     <meta name="title"
-        content="{{ isset($article) ? $article->title . ' - Berita Desa Kepuharjo' : $title ?? 'Berita Desa Kepuharjo - Informasi Terkini Desa Kepuharjo Malang' }}">
+        content="{{ isset($article) ? $article->title . ' - Berita Desa Kepuharjo' : $title ?? 'Desa Kepuharjo - Informasi Terkini Desa Kepuharjo Malang' }}">
     <meta name="description"
-        content="{{ isset($article) ? Str::limit(strip_tags($article->excerpt), 155) : 'Berita terbaru dan informasi penting dari Desa Kepuharjo, Malang, Jawa Timur. Dapatkan update kegiatan desa, pengumuman, dan berita viral terkini.' }}">
+        content="{{ isset($article) ? Str::limit(strip_tags($article->excerpt), 155) : 'terbaru dan informasi penting dari Desa Kepuharjo, Malang, Jawa Timur. Dapatkan update kegiatan desa, pengumuman, dan berita viral terkini.' }}">
     <meta name="keywords"
-        content="berita desa kepuharjo, desa kepuharjo malang, berita malang, jawa timur, indonesia, viral, news, kegiatan desa{{ isset($article) ? ', ' . $article->category->name : '' }}{{ isset($article->tags) ? ', ' . implode(', ', $article->tags->pluck('name')->toArray()) : '' }}">
+        content="Desa kepuharjo,web desa, kepuh, desa kepuharjo malang, berita malang, jawa timur, indonesia, viral, news, kegiatan desa{{ isset($article) ? ', ' . $article->category->name : '' }}{{ isset($article->tags) ? ', ' . implode(', ', $article->tags->pluck('name')->toArray()) : '' }}">
     <meta name="author" content="Kepuharjo News">
     <meta name="robots"
         content="{{ request()->has('search') || request()->has('category') ? 'noindex, follow' : 'index, follow' }}">
@@ -25,24 +24,25 @@
     <meta property="og:type" content="{{ isset($article) ? 'article' : 'website' }}">
     <meta property="og:url" content="{{ request()->url() }}">
     <meta property="og:title"
-        content="{{ isset($article) ? $article->title : $title ?? 'Berita Desa Kepuharjo - Informasi Terkini' }}">
+        content="{{ isset($article) ? $article->title : $title ?? 'Desa Kepuharjo - Informasi Terkini' }}">
     <meta property="og:description"
         content="{{ isset($article) ? Str::limit(strip_tags($article->excerpt), 155) : 'Berita terbaru dan informasi penting dari Desa Kepuharjo, Malang, Jawa Timur.' }}">
     <meta property="og:image"
         content="{{ isset($article) && $article->featured_image ? asset('storage/' . $article->featured_image) : asset('assets/logo/Logo_Kabupaten_Malang.png') }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:site_name" content="Berita Desa Kepuharjo">
+    <meta property="og:site_name" content="Desa Kepuharjo">
     <meta property="og:locale" content="id_ID">
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ request()->url() }}">
-    <meta property="twitter:title"
-        content="{{ isset($article) ? $article->title : $title ?? 'Berita Desa Kepuharjo' }}">
+    <meta property="twitter:title" content="{{ isset($article) ? $article->title : $title ?? 'Desa Kepuharjo' }}">
     <meta property="twitter:description"
-        content="{{ isset($article) ? Str::limit(strip_tags($article->excerpt), 155) : 'Berita terbaru dari Desa Kepuharjo, Malang' }}">
+        content="{{ isset($article) ? Str::limit(strip_tags($article->excerpt), 155) : 'Desa Kepuharjo, Malang' }}">
     <meta property="twitter:image"
         content="{{ isset($article) && $article->featured_image ? asset('storage/' . $article->featured_image) : asset('assets/logo/Logo_Kabupaten_Malang.png') }}">
     @stack('meta')
+    @stack('structured_data')
+    @stack('head')
     @if (isset($article))
         <meta property="article:published_time" content="{{ $article->created_at->toISOString() }}">
         <meta property="article:modified_time" content="{{ $article->updated_at->toISOString() }}">
@@ -54,11 +54,10 @@
             @endforeach
         @endif
     @endif
-
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/' . $ProfileDesa->logo) }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/' . $ProfileDesa->logo) }}">
-    <link rel="apple-touch-icon" href="{{ asset('assets/' . $ProfileDesa->logo) }}">
-    <link rel="shortcut icon" href="{{ asset('assets/' . $ProfileDesa->logo) }}" type="image/png">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/' . $ProfileDesa->logo) }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/' . $ProfileDesa->logo) }}">
+        <link rel="apple-touch-icon" href="{{ asset('assets/' . $ProfileDesa->logo) }}">
+        <link rel="shortcut icon" href="{{ asset('assets/' . $ProfileDesa->logo) }}" type="image/png">
     @if (isset($article))
         <script type="application/ld+json">
     {

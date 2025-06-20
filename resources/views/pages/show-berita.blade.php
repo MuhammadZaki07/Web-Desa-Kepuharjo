@@ -60,7 +60,7 @@
 
 @section('content')
     <div class="lg:px-20 px-5">
-        <nav class="flex py-4 text-sm" aria-label="Breadcrumb">
+        <nav class="flex py-5 text-sm" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1 md:space-x-3">
                 <li class="inline-flex items-center">
                     <a href="{{ route('home') }}" class="text-gray-700 hover:text-green-600">
@@ -89,7 +89,7 @@
             </ol>
         </nav>
 
-        <div class="lg:py-16 py-10 flex flex-col lg:flex-row gap-10 items-start">
+        <div class="py-5 flex flex-col lg:flex-row gap-10 items-start">
             <div class="flex-1 lg:flex-[3]">
                 <article class="bg-white rounded-xl overflow-hidden" itemscope itemtype="https://schema.org/NewsArticle">
                     <div class="relative">

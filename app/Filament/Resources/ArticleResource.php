@@ -130,8 +130,9 @@ class ArticleResource extends Resource
                         Forms\Components\FileUpload::make('featured_image')
                             ->label('Featured Image')
                             ->image()
+                            ->preserveFilenames()
                             ->disk('public')
-                            ->directory('articles/images')
+                            ->directory(fn() => 'articles/' . now()->format('Y'))
                             ->visibility('public')
                             ->imageEditor()
                             ->imageEditorAspectRatios([
