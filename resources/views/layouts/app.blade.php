@@ -6,11 +6,18 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('storage/' . $ProfileDesa->logo_desa) }}?v={{ time() }}">
-    <link rel="shortcut icon" sizes="32x32" href="{{ asset('storage/' . $ProfileDesa->logo_desa) }}" type="image/png">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('storage/' . $ProfileDesa->logo_desa) }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('storage/' . $ProfileDesa->logo_desa) }}">
-    <link rel="apple-touch-icon" href="{{ asset('storage/' . $ProfileDesa->logo_desa) }}">
+    @if ($ProfileDesa && $ProfileDesa->logo_desa)
+        <link rel="icon" type="image/png" sizes="32x32"
+            href="{{ asset('storage/' . $ProfileDesa->logo_desa) }}?v={{ time() }}">
+        <link rel="shortcut icon" sizes="32x32" href="{{ asset('storage/' . $ProfileDesa->logo_desa) }}"
+            type="image/png">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('storage/' . $ProfileDesa->logo_desa) }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('storage/' . $ProfileDesa->logo_desa) }}">
+        <link rel="apple-touch-icon" href="{{ asset('storage/' . $ProfileDesa->logo_desa) }}">
+    @else
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/logo/Logo_Kabupaten_Malang.png') }}">
+    @endif
+
     <title>
         {{ isset($article) ? $article->title . ' - Berita Desa Kepuharjo' : $title ?? 'Desa Kepuharjo - Informasi Terkini Desa Kepuharjo Malang' }}
     </title>

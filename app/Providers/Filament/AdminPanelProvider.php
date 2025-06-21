@@ -39,7 +39,7 @@ class AdminPanelProvider extends PanelProvider
             ->userMenuItems([
                 'logout' => MenuItem::make()->label('Log Out')
             ])
-            ->favicon(asset('storage/' . ProfileDesa::GetProfileDesa()->logo_desa))
+            ->favicon(isset(ProfileDesa::GetProfileDesa()->logo_desa) ? asset('storage/' .  ProfileDesa::GetProfileDesa()->logo_desa) : asset('assets/logo/Logo_Kabupaten_Malang.png'))
             ->default()
             ->id('admin')
             ->path('admin')

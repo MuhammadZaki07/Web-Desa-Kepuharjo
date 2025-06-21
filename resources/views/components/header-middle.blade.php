@@ -26,7 +26,7 @@ $dataDesa = \App\Models\ProfileDesa::first();
             <h1 class="text-3xl lg:text-3xl font-bold text-center text-green-700 uppercase">
                 {{ strtoupper($dataDesa?->kecamatan ?? 'KARANGPLOSO') }}
                 <span class="hidden lg:inline">|</span>
-                DESA {{ strtoupper($dataDesa?->name ?? 'KEPUHARJO') }}
+                DESA {{ strtoupper($dataDesa?->name ?? ' Nama Desa') }}
             </h1>
             <h1 class="text-sm font-medium text-center text-gray-400 hidden lg:block">
                 {{ $dataDesa?->motto_desa ?? "Website resmi desa kepuharjo kab.Malang"}}
@@ -34,7 +34,7 @@ $dataDesa = \App\Models\ProfileDesa::first();
         </div>
 
         <h1 class="text-sm text-slate-500 hidden lg:block">
-            {{ $dataDesa?->email ?? 'kepuharjo@gmail.com' }}
+            {{ $dataDesa?->email ?? 'Email Desa' }}
         </h1>
 
         <div class="w-full h-0.5 bg-green-900 mt-3 rounded"></div>

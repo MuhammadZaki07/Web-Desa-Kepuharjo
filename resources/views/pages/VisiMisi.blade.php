@@ -5,6 +5,6 @@
         <x-running-blog :blogs="$blogs" />
     </div>
     {{-- {{ $ProfileDesa->program_unggulan }} --}}
-    <x-visi-misi class="block" :progamUnggulan="$ProfileDesa->program_unggulan" :misi="$ProfileDesa->misi" :visi="$ProfileDesa->visi"/>
+    <x-visi-misi class="block" :progamUnggulan="$ProfileDesa->program_unggulan ?? ''" :misi="$ProfileDesa->misi ?? ['tidak ada data']" :visi="$ProfileDesa->visi ?? '-' "/>
 </section>
 @endsection

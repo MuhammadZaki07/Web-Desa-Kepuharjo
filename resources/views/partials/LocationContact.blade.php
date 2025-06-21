@@ -26,7 +26,7 @@
                     </div>
                     <div class="flex flex-col gap-1">
                         <h1 class="font-semibold text-lg">Nomor Telephone</h1>
-                        <p class="text-slate-500 text-sm">{{ $ProfileDesa->no_tlp }}</p>
+                        <p class="text-slate-500 text-sm">{{ $ProfileDesa->no_tlp ?? "No Tlp Desa" }}</p>
                     </div>
                 </div>
                 <p class="text-slate-500 text-sm mt-5">Hubungi kami untuk informasi lebih lanjut tentang
@@ -40,7 +40,7 @@
                     </div>
                     <div class="flex flex-col gap-1">
                         <h1 class="font-semibold text-lg">Email</h1>
-                        <p class="text-slate-500 text-sm">{{ $ProfileDesa->email }}</p>
+                        <p class="text-slate-500 text-sm">{{ $ProfileDesa->email ?? "Email Desa"}}</p>
                     </div>
                 </div>
                 <p class="text-slate-500 text-sm mt-5">Kirim email untuk pertaanyaan, saran, atau keperluan
@@ -53,7 +53,7 @@
                     </div>
                     <div class="flex flex-col gap-1">
                         <h1 class="font-semibold text-lg">Location</h1>
-                        <p class="text-slate-500 text-sm">{{ $ProfileDesa->alamat_kantor }}</p>
+                        <p class="text-slate-500 text-sm">{{ $ProfileDesa->alamat_kantor ?? "Alamat Kantor Desa" }}</p>
                     </div>
                 </div>
                 <p class="text-slate-500 text-sm mt-5">

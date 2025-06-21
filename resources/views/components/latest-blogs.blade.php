@@ -2,7 +2,7 @@
     <h2 class="text-green-600 text-xl font-semibold mb-4">Berita Terbaru</h2>
 
     <div class="space-y-4">
-        @foreach ($articles as $index => $article)
+        @forelse ($articles as $index => $article)
             <div class="flex gap-2">
                 <span class="text-slate-400">#{{ $index + 1 }}</span>
                 <div class="flex gap-1 flex-col">
@@ -16,6 +16,8 @@
                     </p>
                 </div>
             </div>
-        @endforeach
+        @empty
+            <p class="text-slate-400 italic">Tidak ada data berita.</p>
+        @endforelse
     </div>
 </div>

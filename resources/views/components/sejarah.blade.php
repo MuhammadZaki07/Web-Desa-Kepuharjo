@@ -21,7 +21,7 @@
                     Sejarah <span class="text-green-600">Desa Kepuharjo</span>
                 </h2>
                 <div class="text-slate-500 text-base leading-relaxed max-w-2xl">
-                    {!! Str::limit($sejarah->sejarah_desa, 200) ?? 'No Data' !!}
+                    {!! Str::limit($sejarah->sejarah_desa ?? "No data", 200) !!}
                 </div>
             </div>
 

@@ -1,9 +1,7 @@
 @php
-    $bannerImages = $banner->images;
-    $bannerImagePath =
-        !empty($bannerImages) && isset($bannerImages)
-            ? asset('storage/' . $bannerImages)
-            : asset('assets/banners/preview-1.png');
+    $bannerImagePath = !empty($banner?->images)
+    ? asset('storage/' . $banner->images)
+    : asset('assets/banners/preview-1.png');
 @endphp
 <div class="relative w-full h-auto min-h-[560px] bg-cover bg-center overflow-hidden hidden lg:block"
     style="background-image: url('{{ $bannerImagePath }}');">
@@ -16,7 +14,7 @@
                     data-aos="fade-right" data-aos-delay="200">
                     {{ !empty($banner->title[0]) ? $banner->title[0] : 'Title Banner' }}</h1>
                 <p class="text-base sm:text-lg lg:text-3xl text-center lg:text-left font-medium" data-aos="fade-right"
-                    data-aos-delay="400">{{ $banner->description ?? "No Data" }}</p>
+                    data-aos-delay="400">{{ $banner->description ?? 'No Data' }}</p>
             </div>
 
             <div class="lg:flex justify-center sm:flex-row gap-4 mt-6 items-center sm:items-start sm:justify-start hidden"

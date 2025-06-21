@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ProfileDesa;
 use Filament\Facades\Filament;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,7 +11,8 @@ class CustomLoginController extends Controller
 {
     public function index()
     {
-        return view('auth.auth');
+        $ProfileDesa = ProfileDesa::GetProfileDesa();
+        return view('auth.auth',compact('ProfileDesa'));
     }
 
     public function login(Request $request)

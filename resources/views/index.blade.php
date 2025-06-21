@@ -19,11 +19,11 @@
             <x-sambutan id="sambutan" class="tab-content w-full py-3">
                 <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 py-10 px-5">
                     <div class="w-48 h-48 lg:w-64 lg:h-64 overflow-hidden">
-                        @if ($kepalaDesa->user && $kepalaDesa->user->photo)
+                        @if ($kepalaDesa && $kepalaDesa->user && $kepalaDesa->user->photo)
                             <img src="{{ asset('storage/' . $kepalaDesa->user->photo) }}" alt="Foto Kepala Desa"
                                 class="w-full h-full object-cover" />
                         @else
-                            <img src="{{ asset('assets/images/user-unkown.png') }}" alt="Foto Kepala Desa (Default)"
+                            <img src="{{ asset('assets/images/profile.jpg') }}" alt="Foto Kepala Desa (Default)"
                                 class="w-full h-full object-cover" />
                         @endif
 

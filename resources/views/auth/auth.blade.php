@@ -15,12 +15,17 @@
     <div class="absolute top-5 lg:top-4 left-3 lg:left-5 flex gap-4 items-center" data-aos="fade-down"
         data-aos-duration="1000">
         <a href="/">
-            <img src="{{ asset('assets/logo/Logo_Kabupaten_Malang.png') }}" alt="Logo Kabupaten Malang"
-                class="w-11 lg:w-14 h-auto" />
+            @if ($ProfileDesa && $ProfileDesa->logo_desa)
+                <img src="{{ asset('storage/' . $ProfileDesa->logo_desa) }}" alt="Logo Kabupaten Malang"
+                    class="w-11 lg:w-14 h-auto" />
+            @else
+                <img src="{{ asset('assets/logo/Logo_Kabupaten_Malang.png') }}" alt="Logo Kabupaten Malang (Default)"
+                    class="w-11 lg:w-14 h-auto" />
+            @endif
         </a>
         <div class="flex flex-col">
             <a href="/">
-                <h1 class="font-bold text-xl lg:text-lg text-green-800">Desa Kepuharjo</h1>
+                <h1 class="font-bold text-xl lg:text-lg text-green-800">{{ $ProfileDesa->name ?? "Nama Desa" }}</h1>
             </a>
             <div class="lg:text-xs text-[11px] text-slate-600 flex gap-2 sm:flex-row sm:items-center sm:gap-3">
                 <span class="flex items-center gap-1">
@@ -59,7 +64,8 @@
             <form class="max-w-md md:ml-auto w-full" method="POST" action="{{ route('custom.login') }}"
                 data-aos="fade-up" data-aos-duration="1000" data-aos-delay="400">
                 @csrf
-                <a href="/" class="font-medium text-lg text-green-700 hover:text-green-800 hidden lg:block"><i class="bi bi-arrow-left"></i> Kembali</a>
+                <a href="/" class="font-medium text-lg text-green-700 hover:text-green-800 hidden lg:block"><i
+                        class="bi bi-arrow-left"></i> Kembali</a>
                 <div class="space-y-3 text-left py-3" data-aos="fade-right" data-aos-duration="1000"
                     data-aos-delay="200">
                     <h2 class="lg:text-5xl text-4xl font-bold lg:leading-[57px] text-green-700">

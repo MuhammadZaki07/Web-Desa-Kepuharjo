@@ -9,10 +9,15 @@
             <x-flex-one>
                 <x-content>
                     <div class="overflow-hidden rounded-xl w-full">
-                        @if ($ProfileDesa->image_sejarah)
-                            <img src="{{ asset('storage/' . $ProfileDesa->image_sejarah) }}" alt="Kantor Desa Kepuharjo | {{ $ProfileDesa->name }}"
+                        @if ($ProfileDesa && $ProfileDesa->image_sejarah)
+                            <img src="{{ asset('storage/' . $ProfileDesa->image_sejarah) }}"
+                                alt="Kantor Desa Kepuharjo | {{ $ProfileDesa->name ?? 'Desa' }}"
                                 class="w-full h-[350px] object-cover">
+                        @else
+                            <img src="{{ asset('assets/banners/preview_sejarah.png') }}" alt="Foto tidak tersedia"
+                                class="w-full h-[350px] object-cover grayscale">
                         @endif
+
                     </div>
                     <div class="flex flex-col gap-3 py-3 mt-5">
                         <h1 class="font-bold text-4xl text-gray-800">Sejarah Desa Kepuharjo</h1>
@@ -26,8 +31,8 @@
                 <x-comment />
             </x-flex-one>
             <x-flex-two>
-                <x-latest-blogs :articles="$viralBlogs"/>
-                <x-category-blogs :categories="$categories"/>
+                <x-latest-blogs :articles="$viralBlogs" />
+                <x-category-blogs :categories="$categories" />
             </x-flex-two>
         </x-layouts-blogs>
     </section>
