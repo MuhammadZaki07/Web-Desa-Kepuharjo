@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('description');
-            $table->decimal('price', 12, 2);
+            $table->string('price');
             $table->string('location');
             $table->json('images')->nullable();
             $table->string('whatsapp_number');

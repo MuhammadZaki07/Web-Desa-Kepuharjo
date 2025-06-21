@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Dashboard as PagesDashboard;
 use App\Filament\Resources\CommentResource;
+use App\Helpers\ProfileDesa;
 use App\Http\Middleware\CheckAdminRole;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
@@ -30,7 +31,7 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->brandName('DESA KEPUHARJO')
+            ->brandName('PANEL ADMIN')
             ->sidebarCollapsibleOnDesktop()
             ->databaseNotifications()
             ->databaseNotificationsPolling('10s')
@@ -38,6 +39,7 @@ class AdminPanelProvider extends PanelProvider
             ->userMenuItems([
                 'logout' => MenuItem::make()->label('Log Out')
             ])
+            ->favicon(asset('storage/' . ProfileDesa::GetProfileDesa()->logo_desa))
             ->default()
             ->id('admin')
             ->path('admin')

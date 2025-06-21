@@ -204,9 +204,11 @@ class UmkmProductResource extends Resource
                                     ->label('Gambar')
                                     ->image()
                                     ->multiple()
-                                    ->directory('umkm-products')
+                                    ->imageEditor()
                                     ->maxFiles(5)
                                     ->reorderable()
+                                    ->directory('umkm-products/' . now()->year)
+                                    ->maxSize(1020)
                                     ->imageResizeMode('cover')
                                     ->imageCropAspectRatio('16:9')
                                     ->imageResizeTargetWidth('1024')
@@ -249,7 +251,11 @@ class UmkmProductResource extends Resource
                 Tables\Columns\TextColumn::make('category.name')
                     ->label('Kategori')
                     ->badge()
-                    ->color(fn($record) => $record->category?->color ?? 'gray')
+                    ->color(fn(string $state): string => match ($state) {
+                        'Minuman' => 'gray',
+                        'Makanan' => 'warning',
+                        default => 'secondary'
+                    })
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('price')
@@ -258,15 +264,6 @@ class UmkmProductResource extends Resource
                     ->sortable()
                     ->weight(FontWeight::SemiBold)
                     ->color('success'),
-
-                Tables\Columns\TextColumn::make('location')
-                    ->label('Lokasi')
-                    ->searchable()
-                    ->limit(20)
-                    ->tooltip(function (Tables\Columns\TextColumn $column): ?string {
-                        $state = $column->getState();
-                        return strlen($state) > 20 ? $state : null;
-                    }),
 
                 Tables\Columns\IconColumn::make('is_active')
                     ->label('Status')
@@ -422,22 +419,22 @@ class UmkmProductResource extends Resource
                         TextEntry::make('product_info')
                             ->label('Informasi Produk')
                             ->listWithLineBreaks()
-                            ->formatStateUsing(
-                                fn($state) =>
-                                collect($state)->map(
-                                    fn($item) => ($item['label'] ?? '') . ': ' . ($item['value'] ?? '')
-                                )->implode("\n")
-                            ),
+                            ->formatStateUsing(function ($state) {
+                                return ($state['label'] ?? 'N/A') . ': ' . ($state['value'] ?? 'N/A');
+                            }),
 
                         TextEntry::make('suitable_for')
                             ->label('Cocok Untuk')
                             ->listWithLineBreaks()
-                            ->formatStateUsing(
-                                fn($state) =>
-                                collect($state)->pluck('description')->implode("\n")
-                            ),
-                    ])->columns(2)
-                    ->visible(fn($record) => !empty($record->product_info) || !empty($record->suitable_for)),
+                            ->formatStateUsing(function ($state) {
+                                return is_array($state)
+                                    ? collect($state)->implode("\n")
+                                    : $state;
+                            }),
+
+                    ])
+                    ->columns(2)
+                    ->visible(fn($record): bool => !empty($record->product_info) || !empty($record->suitable_for)),
             ]);
     }
 

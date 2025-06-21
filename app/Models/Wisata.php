@@ -185,6 +185,10 @@ class Wisata extends Model
             return null;
         }
 
+        $number = preg_replace('/\D/', '', $this->whatsapp);
+
+        $number = preg_replace('/^0/', '62', $number);
+
         $message = $customMessage ?:
             "Halo! Saya tertarik untuk berkunjung ke {$this->name}.\n\n" .
             "Mohon informasi lebih lanjut mengenai:\n" .
@@ -193,8 +197,9 @@ class Wisata extends Model
             "- Informasi tambahan\n\n" .
             "Terima kasih!";
 
-        return "https://wa.me/{$this->whatsapp}?text=" . urlencode($message);
+        return "https://wa.me/{$number}?text=" . urlencode($message);
     }
+
 
     public function getGoogleMapsUrl()
     {

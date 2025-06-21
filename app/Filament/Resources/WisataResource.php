@@ -13,9 +13,6 @@ use Filament\Tables\Table;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\HtmlString;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 
 class WisataResource extends Resource
 {
@@ -31,7 +28,7 @@ class WisataResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-     protected static ?string $navigationGroup = 'Sektor Ekonomi';
+    protected static ?string $navigationGroup = 'Sektor Ekonomi';
 
     public static function form(Form $form): Form
     {
@@ -46,7 +43,8 @@ class WisataResource extends Resource
                                     ->required()
                                     ->maxLength(255)
                                     ->live(onBlur: true)
-                                    ->afterStateUpdated(fn (string $context, $state, Forms\Set $set) =>
+                                    ->afterStateUpdated(
+                                        fn(string $context, $state, Forms\Set $set) =>
                                         $context === 'create' ? $set('slug', \Illuminate\Support\Str::slug($state)) : null
                                     ),
 
@@ -64,7 +62,11 @@ class WisataResource extends Resource
                             ->schema([
                                 Forms\Components\Select::make('category_id')
                                     ->label('Kategori')
-                                    ->relationship('category', 'name')
+                                    ->relationship(
+                                        name: 'category',
+                                        titleAttribute: 'name',
+                                        modifyQueryUsing: fn($query) => $query->where('type', 'wisata')
+                                    )
                                     ->required()
                                     ->searchable()
                                     ->preload()
@@ -74,7 +76,8 @@ class WisataResource extends Resource
                                             ->required()
                                             ->maxLength(255)
                                             ->live(onBlur: true)
-                                            ->afterStateUpdated(fn (string $context, $state, Forms\Set $set) =>
+                                            ->afterStateUpdated(
+                                                fn(string $context, $state, Forms\Set $set) =>
                                                 $context === 'create' ? $set('slug', \Illuminate\Support\Str::slug($state)) : null
                                             ),
                                         Forms\Components\TextInput::make('slug')
@@ -89,10 +92,13 @@ class WisataResource extends Resource
                                         Forms\Components\Toggle::make('is_active')
                                             ->label('Status Aktif')
                                             ->default(true),
+                                        Forms\Components\Hidden::make('type')
+                                            ->default('wisata'),
                                     ])
                                     ->createOptionUsing(function (array $data): int {
                                         return Category::create($data)->getKey();
-                                    }),
+                                    })
+                                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->name),
 
                                 Forms\Components\TextInput::make('location')
                                     ->label('Lokasi')
@@ -203,25 +209,26 @@ class WisataResource extends Resource
                             ->image()
                             ->directory('wisata/main')
                             ->disk('public')
+                            ->maxSize(1020)
                             ->imageEditor()
                             ->imageEditorAspectRatios([
                                 '16:9',
                                 '4:3',
                                 '1:1',
                             ])
-                            ->maxSize(2048)
-                            ->helperText('Ukuran maksimal 2MB. Rasio yang disarankan 16:9'),
+                            ->helperText('Ukuran maksimal 1MB. Rasio yang disarankan 16:9'),
 
                         Forms\Components\FileUpload::make('gallery_images')
                             ->label('Galeri Gambar')
                             ->image()
                             ->multiple()
+                            ->imageEditor()
                             ->directory('wisata/gallery')
                             ->disk('public')
                             ->reorderable()
                             ->maxFiles(10)
-                            ->maxSize(2048)
-                            ->helperText('Maksimal 10 gambar, masing-masing 2MB'),
+                           ->maxSize(1020)
+                            ->helperText('Maksimal 10 gambar, masing-masing 1MB'),
                     ]),
 
                 Forms\Components\Section::make('Kontak & Media Sosial')
@@ -300,7 +307,7 @@ class WisataResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->weight('bold')
-                    ->description(fn (Wisata $record): string => $record->location),
+                    ->description(fn(Wisata $record): string => $record->location),
 
                 Tables\Columns\TextColumn::make('category.name')
                     ->label('Kategori')
@@ -310,18 +317,19 @@ class WisataResource extends Resource
 
                 Tables\Columns\TextColumn::make('price')
                     ->label('Harga')
-                    ->formatStateUsing(fn (string $state): string =>
+                    ->formatStateUsing(
+                        fn(string $state): string =>
                         $state == 0 ? 'Gratis' : 'Rp ' . number_format($state, 0, ',', '.')
                     )
                     ->sortable()
-                    ->color(fn (string $state): string => $state == 0 ? 'success' : 'primary'),
+                    ->color(fn(string $state): string => $state == 0 ? 'success' : 'primary'),
 
                 Tables\Columns\IconColumn::make('is_featured')
                     ->label('Unggulan')
                     ->boolean()
                     ->trueIcon('heroicon-o-star')
                     ->falseIcon('heroicon-o-star')
-                    ->trueColor('amber')
+                    ->trueColor('warning')
                     ->falseColor('gray'),
 
                 Tables\Columns\IconColumn::make('is_active')
@@ -353,12 +361,12 @@ class WisataResource extends Resource
 
                 Tables\Filters\Filter::make('is_featured')
                     ->label('Wisata Unggulan')
-                    ->query(fn (Builder $query): Builder => $query->where('is_featured', true))
+                    ->query(fn(Builder $query): Builder => $query->where('is_featured', true))
                     ->toggle(),
 
                 Tables\Filters\Filter::make('is_active')
                     ->label('Status Aktif')
-                    ->query(fn (Builder $query): Builder => $query->where('is_active', true))
+                    ->query(fn(Builder $query): Builder => $query->where('is_active', true))
                     ->toggle(),
 
                 Tables\Filters\Filter::make('price')
@@ -403,21 +411,21 @@ class WisataResource extends Resource
                         ->label('Aktifkan')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
-                        ->action(fn ($records) => $records->each->update(['is_active' => true]))
+                        ->action(fn($records) => $records->each->update(['is_active' => true]))
                         ->deselectRecordsAfterCompletion(),
 
                     Tables\Actions\BulkAction::make('deactivate')
                         ->label('Nonaktifkan')
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
-                        ->action(fn ($records) => $records->each->update(['is_active' => false]))
+                        ->action(fn($records) => $records->each->update(['is_active' => false]))
                         ->deselectRecordsAfterCompletion(),
 
                     Tables\Actions\BulkAction::make('feature')
                         ->label('Jadikan Unggulan')
                         ->icon('heroicon-o-star')
                         ->color('amber')
-                        ->action(fn ($records) => $records->each->update(['is_featured' => true]))
+                        ->action(fn($records) => $records->each->update(['is_featured' => true]))
                         ->deselectRecordsAfterCompletion(),
                 ]),
             ])

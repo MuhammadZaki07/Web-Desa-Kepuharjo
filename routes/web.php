@@ -12,7 +12,9 @@ use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\PrestasiDesaController;
 use App\Http\Controllers\SejarahController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\UmkmController;
 use App\Http\Controllers\VisiMisiController;
+use App\Http\Controllers\WisataController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -30,42 +32,8 @@ Route::get('/berita/{slug}', [ArticleController::class, 'show'])->name('articles
 Route::get('/pemerintahan', [PemerintahController::class, 'index'])->name('pemerintahan.page');
 Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
 Route::get('/gallery/{gallery}/download', [GalleryController::class, 'download'])->name('gallery.download');
+Route::get('/umkm', [UmkmController::class,'index'])->name('umkm.page');
+Route::get('/umkm/{slug}', [UmkmController::class, 'show'])->name('umkm.show');
+Route::get('/wisata', [WisataController::class,'index'])->name('wisata.page');
+Route::get('/wisata/{slug}/detail-wisata', [WisataController::class,'show'])->name('wisata.show');
 
-Route::get('/umkm', function () {
-
-    return view('pages.umkm', [
-        'tanggal' => 'Min, 13 April',
-        'jam' => '11:39:32',
-        'format' => 'AM',
-        'headlines' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
-        'title' => 'UMKM'
-    ]);
-});
-
-Route::get('/wisata', function () {
-    return view('pages.wisata', [
-        'tanggal' => 'Min, 13 April',
-        'jam' => '11:39:32',
-        'format' => 'AM',
-        'headlines' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
-        'title' => 'PKK'
-    ]);
-});
-Route::get('/wisata/detail-wisata', function () {
-    return view('pages.DetailWIsata', [
-        'tanggal' => 'Min, 13 April',
-        'jam' => '11:39:32',
-        'format' => 'AM',
-        'headlines' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
-        'title' => 'PKK'
-    ]);
-});
-Route::get('/detail-umkm', function () {
-    return view('pages.DetailUmkm', [
-        'tanggal' => 'Min, 13 April',
-        'jam' => '11:39:32',
-        'format' => 'AM',
-        'headlines' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, perspiciatis.',
-        'title' => 'PKK'
-    ]);
-});

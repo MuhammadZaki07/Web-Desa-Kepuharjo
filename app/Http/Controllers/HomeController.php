@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ProfileDesa as HelpersProfileDesa;
 use App\Helpers\TimeHelper;
 use App\Models\Banner;
 use Illuminate\Http\Request;
@@ -40,7 +41,7 @@ class HomeController extends Controller
             $viralBlogs = collect();
         }
 
-        $ProfileDesa = ProfileDesa::first();
+        $ProfileDesa = HelpersProfileDesa::GetProfileDesa();
         $kepalaDesa = PengurusDesa::where('jabatan', 'kepala_desa')->with('user')->first();
 
         $laki = Penduduk::where('jenis_kelamin', 'L')->count();

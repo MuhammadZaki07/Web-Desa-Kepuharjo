@@ -2,7 +2,7 @@
     $bannerData = $banner[0];
 @endphp
 
-<section class="w-full h-[500px] relative bg-cover bg-center bg-no-repeat"
+<section class="w-full h-[500px] relative bg-cover bg-center bg-no-repeat hidden lg:block"
     style="background-image: url('{{ $banner[1] }}')">
     <div class="absolute bottom-0 left-0 w-full h-full bg-gradient-to-t from-black to-transparent"></div>
     <div

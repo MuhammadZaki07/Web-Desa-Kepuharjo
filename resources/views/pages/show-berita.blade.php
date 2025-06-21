@@ -149,7 +149,7 @@
                             </p>
                         @endif
 
-                        <div class="prose prose-lg max-w-none" itemprop="articleBody">
+                        <div class="prose prose-lg max-w-none [&_ul]:list-disc [&_ol]:list-decimal [&_li]:ml-6" itemprop="articleBody">
                             {!! $article->content !!}
                         </div>
 

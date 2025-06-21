@@ -166,7 +166,7 @@ class ArticleResource extends Resource
                     ->sortable()
                     ->weight(FontWeight::Bold)
                     ->wrap()
-                    ->limit(30), // Batasi 30 karakter, tambahkan elipsis (...)
+                    ->limit(30),
 
                 TextColumn::make('category.name')
                     ->badge()

@@ -28,7 +28,8 @@ class UmkmProduct extends Model
         'product_info' => 'array',
         'suitable_for' => 'array',
         'is_active' => 'boolean',
-        'price' => 'decimal:2',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     protected static function boot()
@@ -66,5 +67,23 @@ class UmkmProduct extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    public function getFirstImageUrlAttribute()
+    {
+        if ($this->images && is_array($this->images) && count($this->images) > 0) {
+            return asset('storage/' . $this->images[0]);
+        }
+        return asset('assets/banners/preview-1.png');
+    }
+
+    public function getFormattedWhatsappAttribute()
+    {
+        $number = preg_replace('/[^0-9]/', '', $this->whatsapp_number);
+        if (substr($number, 0, 1) === '0') {
+            $number = '62' . substr($number, 1);
+        }
+
+        return $number;
     }
 }

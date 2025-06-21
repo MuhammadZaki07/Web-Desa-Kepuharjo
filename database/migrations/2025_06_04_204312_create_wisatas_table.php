@@ -40,8 +40,6 @@ return new class extends Migration
             $table->boolean('is_featured')->default(false);
             $table->integer('views')->default(0);
             $table->timestamps();
-
-            // Indexes
             $table->index(['category_id', 'is_active']);
             $table->index(['is_featured', 'is_active']);
             $table->index('price');

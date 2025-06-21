@@ -2,9 +2,9 @@
 @section('content')
     <x-banner-gallery :banner="[$banner, $imagesPathBanner]" />
 
-    <div class="lg:px-20 lg:py-16 px-5 py-10 flex flex-col lg:flex-row gap-10 items-start">
+    <div class="lg:px-20 lg:py-16 px-5 py-2 flex flex-col lg:flex-row gap-10 items-start">
         <div class="lg:flex-1 w-full">
-            <div class="mb-8 border-b border-b-slate-300 p-6">
+            <div class="mb-8 border-b border-b-slate-300 p-3">
                 <div class="flex flex-col md:flex-row gap-4">
                     <div class="flex-1">
                         <input type="text" id="searchInput" placeholder="Cari gallery..."
