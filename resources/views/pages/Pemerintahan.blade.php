@@ -37,8 +37,8 @@
     <x-sambutan class="bg-slate-50 w-full py-24 px-5 lg:px-20" id="">
         <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 py-10">
             <div class="w-48 h-48 lg:w-64 lg:h-64 overflow-hidden mx-auto">
-                @if ($ProfileDesa && $ProfileDesa->user && $ProfileDesa->user->photo)
-                    <img src="{{ asset('storage/' . $ProfileDesa->user->photo) }}" alt="Foto Kepala Desa"
+                @if ($kepalaDesa && $kepalaDesa->user && $kepalaDesa->user->photo)
+                    <img src="{{ asset('storage/' . $kepalaDesa->user->photo) }}" alt="Foto Kepala Desa"
                         class="w-full h-full object-cover" />
                 @else
                     <img src="{{ asset('assets/images/user-unkown.png') }}" alt="Foto Kepala Desa (Default)"
@@ -57,7 +57,7 @@
                     {{ $ProfileDesa->sambutan_kepala_desa ?? '-' }}
                 </p>
                 <div class="mt-6 text-center lg:text-left">
-                    <p class="font-semibold text-black text-xl">{{ $kepalaDesa ?? '-' }}</p>
+                    <p class="font-semibold text-black text-xl">{{ $namaKepalaDesa  ?? '-' }}</p>
                     <p class="text-sm text-gray-500 font-light">Kepala Desa Kepuharjo</p>
                 </div>
             </div>

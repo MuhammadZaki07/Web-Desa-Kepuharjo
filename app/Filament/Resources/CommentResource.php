@@ -98,6 +98,11 @@ class CommentResource extends Resource
         return parent::getEloquentQuery()->withoutGlobalScopes();
     }
 
+       public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
     public static function getRelations(): array
     {
         return [];

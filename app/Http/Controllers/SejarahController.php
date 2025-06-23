@@ -18,19 +18,23 @@ class SejarahController extends Controller
 
         $headlines = ArticleService::getHeadlines();
         $blogs = ArticleService::getLatestPublishedBlogs();
-          $viralBlogs = ArticleService::getViralBlogs(5);
+        $viralBlogs = ArticleService::getViralBlogs(5);
         $ProfileDesa = ProfileDesa::first();
         $categories = ArticleService::getCategoriesWithCount();
 
         $menus = Banner::where('type', 'sejarah')
-            ->select('title', 'images')
+            ->select('title_sejarah', 'images')
             ->get()
-            ->map(function ($banner) {
-                return [
-                    'title' => $banner->title,
-                    'image' => $banner->image,
-                ];
+            ->flatMap(function ($banner) {
+                return collect($banner->title_sejarah)
+                    ->map(function ($title, $i) use ($banner) {
+                        return [
+                            'title' => $title,
+                            'image' => $banner->images[$i] ?? null,
+                        ];
+                    });
             })
+            ->values()
             ->toArray();
 
         $dummyMenus = [

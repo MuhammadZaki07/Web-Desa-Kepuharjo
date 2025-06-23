@@ -4,7 +4,7 @@
         <div class="mb-8">
             <div class="border-b-2 py-5 border-gray-300">
                 <form method="GET" action="{{ route('umkm.page') }}" class="flex flex-col lg:flex-row gap-4 items-end">
-                    <div class="flex-1">
+                    <div class="w-full">
                         <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                             <i class="bi bi-search text-green-500"></i>
                             Cari Produk
@@ -19,7 +19,7 @@
                         </div>
                     </div>
 
-                    <div class="lg:w-64 w-full">
+                    <div class="w-full">
                         <label
                             class="text-sm cursor-pointer font-semibold text-gray-700 mb-2 flex items-center gap-2 outline-none">
                             <i class="bi bi-grid text-blue-500"></i>
@@ -37,7 +37,7 @@
                         </select>
                     </div>
 
-                    <div class="lg:w-64 w-full">
+                    <div class="w-full">
                         <label class="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                             <i class="bi bi-sort-down text-purple-500"></i>
                             Urutkan

@@ -160,12 +160,6 @@ class AdminResource extends Resource
                     ->copyable()
                     ->icon('heroicon-m-envelope'),
 
-                TextColumn::make('nik')
-                    ->label('NIK')
-                    ->searchable()
-                    ->copyable()
-                    ->icon('heroicon-m-identification'),
-
                 TextColumn::make('jabatan')
                     ->label('Position')
                     ->badge()

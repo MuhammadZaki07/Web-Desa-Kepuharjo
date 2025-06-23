@@ -17,7 +17,6 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 
 class BannerResource extends Resource
@@ -27,19 +26,17 @@ class BannerResource extends Resource
 
     protected static ?string $model = Banner::class;
 
-    // OPTIMASI 1: Query optimization
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->select(['id', 'title', 'title_sejarah', 'images', 'type', 'description']) // Select specific columns
-            ->orderBy('id'); // Consistent ordering
+            ->select(['id', 'title', 'title_sejarah', 'images', 'type', 'description'])
+            ->orderBy('id');
     }
 
-    // DISABLED: Navigation badge untuk performa
-    // public static function getNavigationBadge(): ?string
-    // {
-    //     return static::getModel()::count();
-    // }
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     public static function canCreate(): bool
     {
@@ -62,41 +59,95 @@ class BannerResource extends Resource
                     ->maxWidth(1440)
                     ->imagePreviewHeight('250')
                     ->required()
+                    ->imageEditor()
                     ->hint(
                         fn($record) =>
                         $record?->type === 'sejarah'
                             ? new HtmlString('<span class="text-red-500">Wajib upload tepat 5 gambar</span>')
                             : null
                     )
+                    ->helperText('Geser gambar untuk atur urutan tampil.')
                     ->columnSpan(2),
 
                 Repeater::make('title_sejarah')
                     ->label('Judul Gambar')
                     ->visible(fn($record) => $record?->type === 'sejarah')
                     ->minItems(5)
+                    ->reorderable(false)
                     ->maxItems(5)
                     ->columns(1)
                     ->deletable(false)
+                    ->addable(false)
                     ->schema([
-                        TextInput::make('value')->label('Judul Gambar')->required(),
+                        TextInput::make('value')
+                            ->label('Judul Gambar')
+                            ->required(),
                     ])
                     ->columnSpan(2)
-                    ->afterStateHydrated(function ($component, $state) {
-                        if (is_array($state) && !empty($state) && is_string($state[0])) {
-                            $newState = array_map(fn($item) => ['value' => $item], $state);
-                            $component->state($newState);
+                    ->default(function () {
+                        return array_fill(0, 5, ['value' => '']);
+                    })
+                    ->afterStateHydrated(function ($component, $state, $record) {
+                        if (!$state || !is_array($state)) {
+                            $component->state(array_fill(0, 5, ['value' => '']));
+                            return;
                         }
+                        if (isset($state[0]) && is_string($state[0])) {
+                            $newState = [];
+                            for ($i = 0; $i < 5; $i++) {
+                                $newState[] = ['value' => $state[$i] ?? ''];
+                            }
+                            $component->state($newState);
+                            return;
+                        }
+
+                        $newState = [];
+                        for ($i = 0; $i < 5; $i++) {
+                            $newState[] = [
+                                'value' => isset($state[$i]['value']) ? (string) $state[$i]['value'] : ''
+                            ];
+                        }
+                        $component->state($newState);
+                    })
+                    ->mutateDehydratedStateUsing(function ($state) {
+                        if (!is_array($state)) {
+                            return array_fill(0, 5, '');
+                        }
+
+                        $result = [];
+                        foreach ($state as $item) {
+                            if (is_array($item) && isset($item['value'])) {
+                                $result[] = (string) $item['value'];
+                            } elseif (is_string($item)) {
+                                $result[] = $item;
+                            } else {
+                                $result[] = '';
+                            }
+                        }
+
+                        while (count($result) < 5) {
+                            $result[] = '';
+                        }
+
+                        return array_slice($result, 0, 5);
                     }),
 
                 TextInput::make('title')
                     ->label('Judul Banner')
                     ->required()
                     ->visible(fn($record) => $record?->type !== 'sejarah')
-                    ->formatStateUsing(fn($state) => is_array($state) ? ($state[0] ?? '') : $state)
-                    ->afterStateHydrated(fn($component, $state) => $component->state(
-                        is_array($state) ? ($state[0] ?? '') : $state
-                    ))
-                    ->dehydrateStateUsing(fn($state) => [$state]),
+                    ->afterStateHydrated(function ($component, $state) {
+                        if (is_array($state)) {
+                            $component->state($state[0] ?? '');
+                        } elseif (!is_string($state)) {
+                            $component->state('');
+                        } else {
+                            $component->state($state);
+                        }
+                    })
+                    ->mutateDehydratedStateUsing(function ($state) {
+                        return [(string) $state];
+                    }),
 
                 TextInput::make('type')->readOnly(),
                 Textarea::make('description')
@@ -111,25 +162,20 @@ class BannerResource extends Resource
     {
         return $table
             ->columns([
-                // OPTIMASI 2: Simplified image column
                 ImageColumn::make('images')
                     ->label('Gambar')
                     ->circular()
-                    ->size(50) // Smaller size for better performance
+                    ->size(50)
                     ->getStateUsing(function ($record) {
-                        // Optimized image handling
                         $images = $record->images;
-                        if (is_array($images) && !empty($images)) {
-                            return $images[0];
-                        }
-                        return $images;
+                        return is_array($images) && !empty($images) ? $images[0] : $images;
                     })
                     ->defaultImageUrl(asset('assets/banners/preview-1.png'))
-                    ->checkFileExistence(false), // Skip file existence check
+                    ->checkFileExistence(false),
 
                 TextColumn::make('formatted_title')
                     ->label('Judul')
-                    ->limit(30) // Reduced limit for better performance
+                    ->limit(30)
                     ->tooltip(function ($record) {
                         return $record->formatted_title;
                     }),
@@ -142,28 +188,44 @@ class BannerResource extends Resource
                 ViewAction::make(),
                 EditAction::make()
                     ->using(function (Banner $record, array $data): Banner {
-                        // Simplified logic
                         $updateData = [];
 
                         if ($record->type === 'sejarah') {
-                            $updateData['title_sejarah'] = $data['title_sejarah'] ?? [];
+                            // Handle title_sejarah
+                            if (isset($data['title_sejarah']) && is_array($data['title_sejarah'])) {
+                                $titles = [];
+                                foreach ($data['title_sejarah'] as $item) {
+                                    if (is_array($item) && isset($item['value'])) {
+                                        $titles[] = (string) $item['value'];
+                                    } elseif (is_string($item)) {
+                                        $titles[] = $item;
+                                    } else {
+                                        $titles[] = '';
+                                    }
+                                }
+                                $updateData['title_sejarah'] = $titles;
+                            }
                         } else {
-                            $updateData['title'] = $data['title'] ?? [];
+                            // Handle regular title
+                            $updateData['title'] = is_array($data['title'])
+                                ? [(string) ($data['title'][0] ?? '')]
+                                : [(string) ($data['title'] ?? '')];
                         }
 
                         if (isset($data['images'])) {
-                            $updateData['images'] = is_array($data['images']) ? $data['images'] : [$data['images']];
+                            $updateData['images'] = is_array($data['images'])
+                                ? $data['images']
+                                : [(string) $data['images']];
                         }
 
                         if (isset($data['description'])) {
-                            $updateData['description'] = $data['description'];
+                            $updateData['description'] = (string) $data['description'];
                         }
 
                         $record->update($updateData);
                         return $record;
                     }),
             ])
-            // OPTIMASI 3: Enable pagination with small number
             ->paginated([5, 10, 25])
             ->defaultPaginationPageOption(10)
             ->bulkActions([]);
@@ -171,9 +233,7 @@ class BannerResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

@@ -33,7 +33,8 @@ class PemerintahController extends Controller
         $banner = $this->bannersService->getBanner("pemerintahan");
         $imagesPathBanner = $this->bannersService->getBannerImagePath($banner);
         $kepalaDesa = PengurusDesa::where('jabatan', 'kepala_desa')->with('user')->first();
-        $kepalaDesa = $kepalaDesa->user->name ?? '-';
+        $namaKepalaDesa = $kepalaDesa->user->name ?? '-';
+
         $pengurusDesa = PengurusDesa::where('is_aktif', true)->get();
         $headlines = ArticleService::getHeadlines();
         $pengurus = [];
@@ -46,7 +47,7 @@ class PemerintahController extends Controller
             ];
         }
 
-        return view('pages.pemerintahan', compact('ProfileDesa', 'jam', 'tanggal', 'format', 'headlines', 'banner', 'imagesPathBanner', 'kepalaDesa', 'pengurus'));
+        return view('pages.pemerintahan', compact('ProfileDesa','namaKepalaDesa', 'jam', 'tanggal', 'format', 'headlines', 'banner', 'imagesPathBanner', 'kepalaDesa', 'pengurus'));
     }
 
     private function getImage($data): string

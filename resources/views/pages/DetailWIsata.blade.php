@@ -152,7 +152,7 @@
             </div>
 
             <div class="lg:col-span-1">
-                <div class="bg-white rounded-xl p-6 shadow-sm mb-6 sticky top-4">
+                <div class="bg-white rounded-xl p-6 shadow-sm mb-6 lg:sticky top-4">
                     <div class="text-center mb-6">
                         <p class="text-sm text-gray-600 mb-1">Harga Tiket Masuk</p>
                         <p class="text-3xl font-bold">

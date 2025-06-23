@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
@@ -29,20 +28,39 @@ class Banner extends Model
 
     public function getFormattedTitleAttribute(): string
     {
-        if ($this->type === 'sejarah') {
-            $titles = $this->title_sejarah;
-        } else {
-            $titles = $this->title;
-        }
+        $titles = $this->type === 'sejarah' ? $this->title_sejarah : $this->title;
 
-        if (!is_array($titles)) {
-            return (string) $titles;
-        }
+        if (!is_array($titles)) return (string) $titles;
 
         if (isset($titles[0]) && is_array($titles[0]) && array_key_exists('value', $titles[0])) {
             return implode(', ', array_map(fn($item) => $item['value'], $titles));
         }
 
         return implode(', ', $titles);
+    }
+
+    protected static function booted()
+    {
+        // Saat model dihapus
+        static::deleted(function (Banner $banner) {
+            foreach ((array) $banner->images as $image) {
+                if (Storage::exists($image)) {
+                    Storage::delete($image);
+                }
+            }
+        });
+
+        static::updating(function (Banner $banner) {
+            $originalImages = (array) $banner->getOriginal('images');
+            $newImages = (array) $banner->images;
+
+            $deletedImages = array_diff($originalImages, $newImages);
+
+            foreach ($deletedImages as $image) {
+                if (Storage::exists($image)) {
+                    Storage::delete($image);
+                }
+            }
+        });
     }
 }

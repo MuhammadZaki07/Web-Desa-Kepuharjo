@@ -605,4 +605,9 @@ class WisataResource extends Resource
             'Lokasi' => $record->location,
         ];
     }
+    
+       public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 }

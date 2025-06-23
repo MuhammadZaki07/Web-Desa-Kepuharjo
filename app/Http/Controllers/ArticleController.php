@@ -24,7 +24,7 @@ class ArticleController extends Controller
         $search = $request->get('search');
         $category = $request->get('category');
         $sort = $request->get('sort', 'terbaru');
-        $perPage = 8;
+        $perPage = 6;
         $ProfileDesa = ModelsProfileDesa::first();
 
 
