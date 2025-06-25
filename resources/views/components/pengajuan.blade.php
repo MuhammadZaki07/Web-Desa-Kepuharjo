@@ -171,6 +171,7 @@
         const form = document.getElementById("form");
         const phoneInput = document.getElementById("no_tlp");
         const phoneError = document.getElementById("phoneError");
+        const no_tlp = {{ $profileDesa->no_tlp }}
 
         if (phoneInput) {
             phoneInput.addEventListener('input', function(e) {
@@ -224,7 +225,7 @@
 
         if (csBtn) {
             csBtn.addEventListener("click", () => {
-                window.open('https://wa.me/6285649729895', '_blank');
+                window.open(`https://wa.me/${no_tlp}`, '_blank');
             });
         }
 

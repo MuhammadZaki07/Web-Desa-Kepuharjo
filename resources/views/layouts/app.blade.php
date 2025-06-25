@@ -146,9 +146,8 @@
         @yield('content')
     </main>
 
+    <x-pengajuan :profileDesa="$ProfileDesa"/>
     @include('partials.footer')
-    <x-pengajuan />
-
     @stack('js')
 
     <script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>

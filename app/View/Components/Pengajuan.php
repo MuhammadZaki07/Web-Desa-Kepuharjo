@@ -11,10 +11,13 @@ class Pengajuan extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct()
+
+    public $profileDesa;
+    public function __construct($profileDesa)
     {
-        //
+        $this->profileDesa = $profileDesa;
     }
+
 
     /**
      * Get the view / contents that represent the component.

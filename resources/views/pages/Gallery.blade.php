@@ -164,7 +164,7 @@
 
 @push('js')
     <script>
-        const galleries = @json($galleries);
+       const galleries = @json($galleries->items());
         const APP_URL = @json(config('app.url'));
 
         function openModal(galleryId) {
