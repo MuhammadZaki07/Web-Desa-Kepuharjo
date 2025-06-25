@@ -8,6 +8,8 @@ class ProfileDesa
 {
     public static function GetProfileDesa()
     {
-        return ModelsProfileDesa::first();
+        return cache()->remember('profile_desa', 3600, function () {
+            return ModelsProfileDesa::first();
+        });
     }
 }

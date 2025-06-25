@@ -7,9 +7,9 @@
             <div
                 class="absolute flex justify-start flex-col gap-4 lg:w-4/5 lg:left-15 left-0 top-1/4 sm:top-40 lg:px-4 px-8">
                 <h1 class="font-bold text-white lg:text-6xl text-5xl lg:text-left text-center uppercase">
-                    {{ $banner->title[0] ?? 'title'}}</h1>
+                    {{ $banner->title[0] ?? 'title' }}</h1>
                 <p class="lg:text-left text-center lg:text-lg text-sm text-white font-normal lg:w-2/3">
-                    {{ $banner->description ?? "description" }}
+                    {{ $banner->description ?? 'description' }}
                 </p>
             </div>
         </section>
@@ -50,21 +50,34 @@
                             PKK</h2>
                         <ul class="list-decimal pl-6 text-gray-700 space-y-2 mb-8">
                             @foreach ($data['programs'] as $program)
-                                <li>{{ $program }}</li>
+                                <li>
+                                    @if (is_array($program))
+                                        {{ $program['name'] ?? $program }}
+                                    @else
+                                        {{ $program }}
+                                    @endif
+                                </li>
                             @endforeach
                         </ul>
                     @endif
 
                     @if (!empty($data['activities']))
-                        <h2 class="text-xl font-semibold text-gray-800 mb-3">{{ count($data['activities']) }} Kegiatan Rutin PKK</h2>
+                        <h2 class="text-xl font-semibold text-gray-800 mb-3">{{ count($data['activities']) }} Kegiatan Rutin
+                            PKK</h2>
                         <ul class="list-disc pl-6 text-gray-700 space-y-2 mb-8">
                             @foreach ($data['activities'] as $activity)
-                                <li>{{ $activity }}</li>
+                                <li>
+                                    @if (is_array($activity))
+                                        {{ $activity['name'] ?? $activity }}
+                                    @else
+                                        {{ $activity }}
+                                    @endif
+                                </li>
                             @endforeach
                         </ul>
                     @endif
 
-                      <h2 class="text-xl font-semibold text-gray-800 mb-3">Hubungi Kami</h2>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-3">Hubungi Kami</h2>
                     <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $data['contact_phone']) }}" target="_blank"
                         class="inline-flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">
                         <i class="bi bi-whatsapp text-lg"></i>
@@ -79,8 +92,8 @@
                     @if (!empty($data['gallery']))
                         <div class="grid grid-cols-4 gap-5 py-5">
                             @foreach ($data['gallery'] as $image)
-                                <img src="{{ asset($image) }}"
-                                    class="hover:scale-105 duration-200 transition ease-in-out w-full" alt="">
+                                <img src="{{ asset('storage/' . $image) }}"
+                                    class="hover:scale-105 duration-200 transition ease-in-out w-full" alt="gambar pkk">
                             @endforeach
                         </div>
                     @else
@@ -88,9 +101,8 @@
                     @endif
                 </div>
             </x-flex-one>
-
             <x-flex-two>
-                <x-latest-blogs :articles="$articles"/>
+                <x-latest-blogs :articles="$articles" />
             </x-flex-two>
         </x-layouts-blogs>
     </div>

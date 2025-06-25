@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ProfileDesa;
 use App\Helpers\TimeHelper;
-use App\Models\Banner;
 use App\Models\Gallery;
 use App\Models\Organization;
 use App\Services\ArticleService;
@@ -14,7 +13,8 @@ class OrganizationsController extends Controller
 {
 
     protected BannersService $bannersService;
-    public function __construct(BannersService $bannersService){
+    public function __construct(BannersService $bannersService)
+    {
         $this->bannersService = $bannersService;
     }
     public function index()
@@ -46,11 +46,36 @@ class OrganizationsController extends Controller
         $articles = ArticleService::getViralBlogs();
         $ProfileDesa = ProfileDesa::GetProfileDesa();
         $galleryImages = $gallery->pluck('path')->toArray();
+
+        $normalizeToStringArray = function ($fieldData, $defaultData = []) {
+            if (empty($fieldData)) {
+                return $defaultData;
+            }
+
+            if (is_array($fieldData) && isset($fieldData[0]) && is_string($fieldData[0])) {
+                return $fieldData;
+            }
+
+            if (is_array($fieldData)) {
+                return array_map(function ($item) {
+                    if (is_array($item) && isset($item['name'])) {
+                        return $item['name'];
+                    } elseif (is_string($item)) {
+                        return $item;
+                    } else {
+                        return (string) $item;
+                    }
+                }, $fieldData);
+            }
+
+            return $defaultData;
+        };
+
         $dataFormatted = [
             'content' => $data->content ?? $this->getDummyData($type)['content'],
             'structure' => $data->structure ?? $this->getDummyData($type)['structure'],
-            'programs' => $data->programs ?? $this->getDummyData($type)['programs'],
-            'activities' => $data->activities ?? $this->getDummyData($type)['activities'],
+            'programs' => $normalizeToStringArray($data->programs, $this->getDummyData($type)['programs']),
+            'activities' => $normalizeToStringArray($data->activities, $this->getDummyData($type)['activities']),
             'contact_phone' => $data->contact_phone ?? $this->getDummyData($type)['contact_phone'],
             'gallery' => $galleryImages,
             'updated_at' => optional($data)->updated_at?->translatedFormat('d F Y') ?? $this->getDummyData($type)['updated_at'],
@@ -67,6 +92,7 @@ class OrganizationsController extends Controller
                 'articles' => $articles,
                 'bannerImagePath' => $this->bannersService->getBannerImagePath($banner),
                 'data' => $dataFormatted,
+                'gallery' => $gallery
             ]
         ));
     }

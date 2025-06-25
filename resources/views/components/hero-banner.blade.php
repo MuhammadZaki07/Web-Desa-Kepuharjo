@@ -1,7 +1,7 @@
 @php
     $bannerImagePath = !empty($banner?->images)
-    ? asset('storage/' . $banner->images)
-    : asset('assets/banners/preview-1.png');
+        ? asset('storage/' . $banner->images)
+        : asset('assets/banners/preview-1.png');
 @endphp
 <div class="relative w-full h-auto min-h-[560px] bg-cover bg-center overflow-hidden hidden lg:block"
     style="background-image: url('{{ $bannerImagePath }}');">
@@ -62,19 +62,20 @@
                     </div>
                 </a>
 
-                <a href="/pemerintahan#prestasi">
+                <a href="/gallery">
                     <div class="flex items-center gap-3 bg-white/20 p-3 rounded-md cursor-pointer hover:bg-white/40"
                         data-aos="zoom-in" data-aos-delay="600">
                         <div
                             class="text-white text-2xl sm:text-3xl font-bold w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-green-700 flex justify-center items-center">
-                            <i class="bi bi-trophy"></i>
+                            <i class="bi bi-images"></i>
                         </div>
                         <div>
-                            <p class="font-medium">Prestasi Desa</p>
-                            <p class="text-sm text-gray-200">Berbagai Prestasi Desa</p>
+                            <p class="font-semibold">Galeri Desa</p>
+                            <p class="text-sm text-gray-200">Dokumentasi kegiatan dan potensi desa</p>
                         </div>
                     </div>
                 </a>
+
             </div>
         </div>
     </div>

@@ -5,89 +5,136 @@ namespace App\Services;
 use App\Models\Article;
 use App\Models\Category;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class ArticleService
 {
+    protected static $cachedCategories;
+
+    /**
+     * Ambil dan cache kategori berdasarkan ID.
+     */
+    public static function getCategories(array $ids): Collection
+    {
+        if (!self::$cachedCategories) {
+            self::$cachedCategories = Category::whereIn('id', $ids)
+                ->select('id', 'name', 'slug')
+                ->get()
+                ->keyBy('id');
+        }
+
+        return self::$cachedCategories->only($ids);
+    }
+
+    /**
+     * Blog terbaru.
+     */
     public static function getLatestPublishedBlogs(?string $category = null, int $perPage = 6): LengthAwarePaginator
     {
         $query = Article::query()
-            ->select('id', 'title', 'slug', 'featured_image', 'created_at', 'category_id', 'excerpt', 'viewers', 'updated_at','published_at')
-            ->with(['category:id,name,slug'])
+            ->select([
+                'id',
+                'title',
+                'slug',
+                'featured_image',
+                'created_at',
+                'category_id',
+                'excerpt',
+                'viewers',
+                'updated_at',
+                'published_at'
+            ])
             ->where('status', 'published')
-            ->whereHas('category', function ($q) {
-                $q->where('type', 'blogs');
-            })
-            ->orderByDesc('created_at');
+            ->whereHas('category', fn($q) => $q->where('type', 'blogs'))
+            ->latest();
 
         if ($category) {
-            $query->whereHas('category', function ($q) use ($category) {
-                $q->where('slug', $category);
-            });
+            $query->whereHas('category', fn($q) => $q->where('slug', $category));
         }
 
-        return $query->paginate($perPage);
+        $articles = $query->paginate($perPage);
+        $categoryIds = $articles->pluck('category_id')->unique()->toArray();
+        self::getCategories($categoryIds);
+
+        return $articles;
     }
 
-    public static function getViralBlogs(int $limit = 4): \Illuminate\Database\Eloquent\Collection
+    /**
+     * Artikel viral.
+     */
+    public static function getViralBlogs(int $limit = 4): Collection
     {
-        return Article::query()
+        $articles = Article::query()
             ->select('id', 'title', 'slug', 'featured_image', 'viewers', 'created_at', 'category_id', 'updated_at')
-            ->with(['category:id,name,slug'])
             ->where('status', 'published')
-            ->whereHas('category', function ($query) {
-                $query->where('type', 'blogs');
-            })
+            ->whereHas('category', fn($q) => $q->where('type', 'blogs'))
             ->orderByDesc('viewers')
             ->take($limit)
             ->get();
+
+        $categoryIds = $articles->pluck('category_id')->unique()->toArray();
+        self::getCategories($categoryIds);
+
+        return $articles;
     }
 
-    public static function getHeadlinesInPageArticle(int $limit = 2): \Illuminate\Database\Eloquent\Collection
+    /**
+     * Headline di halaman artikel.
+     */
+    public static function getHeadlinesInPageArticle(int $limit = 2): Collection
     {
-        return Article::query()
+        $articles = Article::query()
             ->select('id', 'title', 'slug', 'featured_image', 'created_at', 'category_id', 'viewers', 'updated_at')
-            ->with(['category:id,name,slug,color'])
             ->where('status', 'published')
-            ->whereHas('category', function ($query) {
-                $query->where('type', 'blogs');
-            })
+            ->whereHas('category', fn($q) => $q->where('type', 'blogs'))
             ->orderByDesc('viewers')
             ->take($limit)
             ->get();
+
+        $categoryIds = $articles->pluck('category_id')->unique()->toArray();
+        self::getCategories($categoryIds);
+
+        return $articles;
     }
 
-    public static function getHeadlines($limit = 5)
+    /**
+     * Headline pendek untuk homepage.
+     */
+    public static function getHeadlines(int $limit = 5): Collection
     {
         return Article::where('status', 'published')
+            ->select('id', 'title')
             ->latest()
             ->take($limit)
-            ->pluck('title');
+            ->get();
     }
 
-    public static function getCategoriesWithCount()
+    /**
+     * Semua kategori blog yang punya artikel.
+     */
+    public static function getCategoriesWithCount(): Collection
     {
         return Category::query()
             ->select('id', 'name', 'slug', 'color')
             ->where('type', 'blogs')
-            ->withCount(['articles as published_articles_count' => function ($query) {
-                $query->where('status', 'published');
-            }])
+            ->withCount([
+                'articles as published_articles_count' => fn($q) =>
+                $q->where('status', 'published')
+            ])
             ->having('published_articles_count', '>', 0)
             ->orderBy('name')
             ->get();
     }
 
-
+    /**
+     * Pencarian artikel.
+     */
     public static function searchArticles(string $query, ?string $category = null, int $perPage = 6): LengthAwarePaginator
     {
         $articleQuery = Article::query()
             ->select('id', 'title', 'slug', 'featured_image', 'created_at', 'category_id', 'excerpt', 'viewers', 'updated_at')
-            ->with(['category:id,name,slug'])
             ->where('status', 'published')
-            ->whereHas('category', function ($q) {
-                $q->where('type', 'blogs');
-            })
+            ->whereHas('category', fn($q) => $q->where('type', 'blogs'))
             ->where(function ($q) use ($query) {
                 $q->where('title', 'LIKE', "%{$query}%")
                     ->orWhere('excerpt', 'LIKE', "%{$query}%")
@@ -95,11 +142,14 @@ class ArticleService
             });
 
         if ($category) {
-            $articleQuery->whereHas('category', function ($q) use ($category) {
-                $q->where('slug', $category);
-            });
+            $articleQuery->whereHas('category', fn($q) => $q->where('slug', $category));
         }
 
-        return $articleQuery->orderByDesc('created_at')->paginate($perPage);
+        $articles = $articleQuery->orderByDesc('created_at')->paginate($perPage);
+
+        $categoryIds = $articles->pluck('category_id')->unique()->toArray();
+        self::getCategories($categoryIds);
+
+        return $articles;
     }
 }

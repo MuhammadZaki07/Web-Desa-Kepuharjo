@@ -38,6 +38,7 @@ class Organization extends Model
         return static::where('type', $type)->exists();
     }
 
+
     public function scopeByType($query, string $type)
     {
         return $query->where('type', $type);

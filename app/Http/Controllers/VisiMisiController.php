@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ProfileDesa;
 use App\Helpers\TimeHelper;
-use App\Models\ProfileDesa;
 use App\Services\ArticleService;
 
 class VisiMisiController extends Controller
@@ -18,7 +18,7 @@ class VisiMisiController extends Controller
         $headlines = ArticleService::getHeadlines();
         $blogs = ArticleService::getLatestPublishedBlogs();
 
-        $ProfileDesa = ProfileDesa::first();
+        $ProfileDesa = ProfileDesa::GetProfileDesa();
         $title = 'Visi Misi';
 
         return view('pages.VisiMisi', compact(
@@ -32,4 +32,3 @@ class VisiMisiController extends Controller
         ));
     }
 }
-?>

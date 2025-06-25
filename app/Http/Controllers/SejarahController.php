@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ProfileDesa;
 use App\Helpers\TimeHelper;
 use App\Models\Banner;
-use App\Models\ProfileDesa;
+
 use App\Services\ArticleService;
 
 class SejarahController extends Controller
@@ -19,7 +20,7 @@ class SejarahController extends Controller
         $headlines = ArticleService::getHeadlines();
         $blogs = ArticleService::getLatestPublishedBlogs();
         $viralBlogs = ArticleService::getViralBlogs(5);
-        $ProfileDesa = ProfileDesa::first();
+        $ProfileDesa = ProfileDesa::GetProfileDesa();
         $categories = ArticleService::getCategoriesWithCount();
 
         $menus = Banner::where('type', 'sejarah')

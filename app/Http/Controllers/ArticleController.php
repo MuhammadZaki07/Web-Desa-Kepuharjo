@@ -6,7 +6,6 @@ use App\Helpers\ProfileDesa;
 use App\Helpers\TimeHelper;
 use App\Models\Article;
 use App\Models\Category;
-use App\Models\ProfileDesa as ModelsProfileDesa;
 use App\Services\ArticleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -25,7 +24,7 @@ class ArticleController extends Controller
         $category = $request->get('category');
         $sort = $request->get('sort', 'terbaru');
         $perPage = 6;
-        $ProfileDesa = ModelsProfileDesa::first();
+        $ProfileDesa = ProfileDesa::GetProfileDesa();
 
 
         $getHeadlinesInPageArticle = ArticleService::getHeadlinesInPageArticle();
@@ -57,7 +56,7 @@ class ArticleController extends Controller
         $jam = $timeData['jam'];
         $format = $timeData['format'];
         $headlines = ArticleService::getHeadlines();
-        $ProfileDesa = ModelsProfileDesa::first();
+        $ProfileDesa = ProfileDesa::GetProfileDesa();
 
 
         $article = Article::query()

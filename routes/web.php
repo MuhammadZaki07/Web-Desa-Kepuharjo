@@ -31,7 +31,6 @@ Route::get('/berita', [ArticleController::class, 'index'])->name('articles.index
 Route::get('/berita/{slug}', [ArticleController::class, 'show'])->name('articles.show');
 Route::get('/pemerintahan', [PemerintahController::class, 'index'])->name('pemerintahan.page');
 Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
-Route::get('/gallery/{gallery}/download', [GalleryController::class, 'download'])->name('gallery.download');
 Route::get('/umkm', [UmkmController::class,'index'])->name('umkm.page');
 Route::get('/umkm/{slug}', [UmkmController::class, 'show'])->name('umkm.show');
 Route::get('/wisata', [WisataController::class,'index'])->name('wisata.page');

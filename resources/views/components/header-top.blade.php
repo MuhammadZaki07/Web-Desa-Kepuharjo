@@ -7,18 +7,20 @@
 
         <div class="flex gap-5 items-center justify-center lg:justify-normal mt-2 lg:mt-0">
             <div class="relative overflow-hidden">
-                <a href="#">
-                    <h1
-                        x-text="currentHeadline"
-                        class="text-[10px] lg:text-xs text-white font-medium whitespace-nowrap transition-all ease-out duration-300"
-                        x-transition:enter="transform transition ease-out duration-300"
-                        x-transition:enter-start="translate-y-5 opacity-0"
-                        x-transition:enter-end="translate-y-0 opacity-100"
-                        x-transition:leave="transform transition ease-in duration-300"
-                        x-transition:leave-start="translate-y-0 opacity-100"
-                        x-transition:leave-end="translate-y-[-20px] opacity-0">
-                    </h1>
-                </a>
+                <template x-if="currentHeadline">
+                    <a :href="`/berita/${currentHeadline.id}`">
+                        <h1
+                            x-text="currentHeadline.title"
+                            class="text-[10px] lg:text-xs text-white font-medium whitespace-nowrap transition-all ease-out duration-300"
+                            x-transition:enter="transform transition ease-out duration-300"
+                            x-transition:enter-start="translate-y-5 opacity-0"
+                            x-transition:enter-end="translate-y-0 opacity-100"
+                            x-transition:leave="transform transition ease-in duration-300"
+                            x-transition:leave-start="translate-y-0 opacity-100"
+                            x-transition:leave-end="translate-y-[-20px] opacity-0">
+                        </h1>
+                    </a>
+                </template>
             </div>
             <div class="flex gap-1 text-white">
                 <button @click="prev" class="hover:text-green-300 cursor-pointer text-xs sm:text-sm" aria-label="Sebelumnya">&lt;</button>
@@ -32,7 +34,7 @@
 <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('headlineSlider', () => ({
-            headlines: @json($headlines),
+            headlines: @json($headlines->map(fn($item) => ['id' => $item->id, 'title' => $item->title])),
             currentIndex: 0,
             init() {
                 setInterval(() => {
@@ -40,7 +42,7 @@
                 }, 3000);
             },
             get currentHeadline() {
-                return this.headlines.length > 0 ? this.headlines[this.currentIndex] : '';
+                return this.headlines.length > 0 ? this.headlines[this.currentIndex] : null;
             },
             next() {
                 this.currentIndex = (this.currentIndex + 1) % this.headlines.length;
