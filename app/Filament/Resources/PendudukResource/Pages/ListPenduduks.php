@@ -25,7 +25,7 @@ class ListPenduduks extends ListRecords
     protected function getHeaderActions(): array
     {
         $user = Auth::user();
-        if ($user->jabatan === 'super_admin' || $user->jabatan === "admin_desa") {
+        if ($user->role === 'super_admin' || $user->role === "admin") {
             return [
                 Action::make('export')
                     ->label('Export Data')

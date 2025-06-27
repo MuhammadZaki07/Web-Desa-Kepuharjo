@@ -34,7 +34,7 @@ class CustomLoginController extends Controller
         if (Filament::auth()->attempt($credentials, $remember)) {
             $user = Auth::user();
 
-            if ($user->role !== 'admin') {
+            if ($user->role !== 'admin' && $user->role !== 'super_admin') {
                 Filament::auth()->logout();
                 return back()->withErrors([
                     'email' => 'Akses hanya diperbolehkan untuk admin.',

@@ -263,6 +263,7 @@
             </div>
         </div>
     </article>
+    <x-social-media-share />
 
     @push('js')
         <script defer>
@@ -308,7 +309,6 @@
                     updateCarousel();
                 }
 
-                // Event listeners
                 nextBtn?.addEventListener('click', nextSlide);
                 prevBtn?.addEventListener('click', prevSlide);
 
@@ -320,13 +320,11 @@
                     thumb.addEventListener('click', () => goToSlide(idx));
                 });
 
-                // Keyboard navigation
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'ArrowLeft') prevSlide();
                     if (e.key === 'ArrowRight') nextSlide();
                 });
 
-                // Auto-slide
                 if (totalSlides > 1) {
                     setInterval(nextSlide, 5000);
                 }

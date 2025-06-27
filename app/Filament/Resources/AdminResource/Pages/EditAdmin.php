@@ -31,7 +31,7 @@ class EditAdmin extends EditRecord
 
     protected function authorizeAccess(): void
     {
-        if (Auth::user()->jabatan !== 'super_admin') {
+        if (Auth::user()->role !== 'super_admin') {
             abort(403, 'Only super admin can edit admin users.');
         }
     }
@@ -56,16 +56,11 @@ class EditAdmin extends EditRecord
                             ->unique('users', 'email', ignoreRecord: true)
                             ->maxLength(255),
 
-                        Forms\Components\TextInput::make('nik')
-                            ->label('NIK')
-                            ->disabled()
-                            ->dehydrated(false),
-
-                        Forms\Components\Select::make('jabatan')
+                        Forms\Components\Select::make('role')
                             ->label('Position')
                             ->options([
+                                'super_admin' => 'Super admin',
                                 'admin' => 'Admin',
-                                'admin_desa' => 'Admin Desa',
                             ])
                             ->required(),
 
@@ -94,7 +89,7 @@ class EditAdmin extends EditRecord
                 ->requiresConfirmation()
                 ->modalHeading('Delete Admin')
                 ->modalDescription('Are you sure you want to delete this admin? This action cannot be undone.')
-                ->visible(fn () => Auth::user()->jabatan === 'super_admin'),
+                ->visible(fn () => Auth::user()->role === 'super_admin'),
         ];
     }
 
@@ -106,8 +101,7 @@ class EditAdmin extends EditRecord
     protected function mutateFormDataBeforeSave(array $data): array
     {
         if (!$data['is_active']) {
-            $data['jabatan'] = 'penduduk';
-            $data['role'] = 'user';
+            $data['role'] = 'penduduk';
         } else {
             $data['role'] = 'admin';
         }

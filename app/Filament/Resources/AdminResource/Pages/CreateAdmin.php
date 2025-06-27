@@ -26,12 +26,12 @@ class CreateAdmin extends CreateRecord
 
     public function getSubheading(): ?string
     {
-        return 'pilih penduduk untuk di jadikan admin';
+        return 'Pilih penduduk untuk dijadikan admin dan tentukan jabatannya';
     }
 
     protected function authorizeAccess(): void
     {
-        if (Auth::user()->jabatan !== 'super_admin') {
+        if (Auth::user()->role !== 'super_admin') {
             abort(403, 'Only super admin can create new admins.');
         }
     }
@@ -44,12 +44,11 @@ class CreateAdmin extends CreateRecord
             foreach ($data['admin_details'] as $detail) {
                 $user = User::find($detail['user_id']);
 
-                if ($user && $user->jabatan === 'penduduk') {
+                if ($user && $user->role === 'penduduk') {
                     $user->update([
                         'email' => $detail['email'],
                         'password' => Hash::make($detail['password']),
-                        'jabatan' => 'admin',
-                        'role' => 'admin',
+                        'role' => $this->mapJabatanToRole($detail['role']),
                         'is_active' => true,
                         'email_verified_at' => now(),
                     ]);
@@ -60,11 +59,23 @@ class CreateAdmin extends CreateRecord
 
         Notification::make()
             ->title('Admin Created Successfully')
-            ->body("Successfully created {$createdCount} admin(s)")
+            ->body("Successfully created {$createdCount} admin(s) with their respective positions")
             ->success()
             ->send();
 
         return new User();
+    }
+
+    /**
+     * Map jabatan to role for backward compatibility
+     */
+    private function mapJabatanToRole(string $jabatan): string
+    {
+        return match ($jabatan) {
+            'super_admin' => 'super_admin',
+            'admin' => 'admin',
+            default => 'admin',
+        };
     }
 
     protected function getRedirectUrl(): string
@@ -76,6 +87,16 @@ class CreateAdmin extends CreateRecord
     {
         if (empty($data['admin_details'])) {
             throw new \Exception('No admin details provided');
+        }
+
+        foreach ($data['admin_details'] as $detail) {
+            if (empty($detail['role'])) {
+                throw new \Exception('Jabatan must be selected for all admins');
+            }
+
+            if ($detail['role'] === 'super_admin' && Auth::user()->jabatan !== 'super_admin') {
+                throw new \Exception('Only super admin can create another super admin');
+            }
         }
 
         return $data;

@@ -32,7 +32,7 @@ class ListAdmins extends ListRecords
             Actions\CreateAction::make()
                 ->label('Create New Admin')
                 ->icon('heroicon-m-plus')
-                ->visible(fn() => Auth::user()->jabatan === 'super_admin'),
+                ->visible(fn() => Auth::user()->role === 'super_admin'),
         ];
     }
 }

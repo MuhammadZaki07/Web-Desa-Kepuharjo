@@ -328,7 +328,7 @@
             </div>
         @endif
     </div>
-
+    <x-social-media-share />
     @push('js')
         <script>
             document.addEventListener('DOMContentLoaded', function() {

@@ -136,8 +136,7 @@ class UmkmProductResource extends Resource
                                     ->required()
                                     ->numeric()
                                     ->prefix('Rp')
-                                    ->step(1000)
-                                    ->minValue(0),
+                                    ->placeholder("Masukan harga, harga harus angka")
                             ])->columns(2),
 
                         Forms\Components\Section::make('Kontak & Lokasi')
@@ -260,10 +259,11 @@ class UmkmProductResource extends Resource
 
                 Tables\Columns\TextColumn::make('price')
                     ->label('Harga')
-                    ->money('IDR')
+                    ->formatStateUsing(fn($state) => 'Rp' . number_format($state, 0, ',', '.'))
                     ->sortable()
                     ->weight(FontWeight::SemiBold)
                     ->color('success'),
+
 
                 Tables\Columns\IconColumn::make('is_active')
                     ->label('Status')

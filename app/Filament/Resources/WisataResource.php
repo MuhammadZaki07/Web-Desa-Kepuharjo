@@ -286,7 +286,7 @@ class WisataResource extends Resource
                                 Forms\Components\Toggle::make('is_featured')
                                     ->label('Wisata Unggulan')
                                     ->default(false)
-                                    ->helperText('Wisata akan tampil di halaman depan'),
+                                    ->helperText('Wisata akan di beri tanda bintang'),
                             ]),
                     ]),
             ]);
@@ -605,7 +605,7 @@ class WisataResource extends Resource
             'Lokasi' => $record->location,
         ];
     }
-    
+
        public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();

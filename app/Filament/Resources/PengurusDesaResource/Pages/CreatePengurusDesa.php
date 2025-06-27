@@ -50,17 +50,14 @@ class CreatePengurusDesa extends CreateRecord
                 return $data;
             }
 
-            // 2. Pastikan is_wakil ada nilainya
             $isWakil = isset($data['is_wakil']) ? (bool) $data['is_wakil'] : false;
-            $data['is_wakil'] = $isWakil; // Ensure it's explicitly set
+            $data['is_wakil'] = $isWakil;
 
-            // Debug: Log the position being checked
             Log::info('Checking position conflict:', [
                 'jabatan' => $data['jabatan'],
                 'is_wakil' => $isWakil,
             ]);
 
-            // 3. Validasi jabatan sudah terisi
             $conflictExists = PengurusDesa::where('jabatan', $data['jabatan'])
                 ->where('is_wakil', $isWakil)
                 ->where('is_aktif', true)
@@ -87,7 +84,6 @@ class CreatePengurusDesa extends CreateRecord
                 return $data;
             }
 
-            // 4. Validasi untuk wakil - pastikan jabatan utama sudah ada
             if ($isWakil) {
                 $utamaExists = PengurusDesa::where('jabatan', $data['jabatan'])
                     ->where('is_wakil', false)
@@ -109,7 +105,6 @@ class CreatePengurusDesa extends CreateRecord
                 }
             }
 
-            // 5. Validasi tanggal
             if (!empty($data['selesai_jabatan']) && !empty($data['mulai_jabatan'])) {
                 $mulai = \Carbon\Carbon::parse($data['mulai_jabatan']);
                 $selesai = \Carbon\Carbon::parse($data['selesai_jabatan']);
@@ -127,7 +122,6 @@ class CreatePengurusDesa extends CreateRecord
                 }
             }
 
-            // 6. Auto-set tanggal selesai jika non-aktif
             $isAktif = $data['is_aktif'] ?? true;
             if (!$isAktif && empty($data['selesai_jabatan'])) {
                 $data['selesai_jabatan'] = now()->toDateString();

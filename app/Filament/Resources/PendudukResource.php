@@ -53,12 +53,12 @@ class PendudukResource extends Resource
     protected static ?int $navigationSort = 2;
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::check() && in_array(Auth::user()->jabatan, ['super_admin', 'admin_desa']);
+        return Auth::check() && in_array(Auth::user()->role, ['super_admin']);
     }
 
     public static function canAccess(): bool
     {
-        return Auth::check() && in_array(Auth::user()->jabatan, ['super_admin', 'admin_desa']);
+        return Auth::check() && in_array(Auth::user()->role, ['super_admin']);
     }
 
     public static function form(Form $form): Form
@@ -285,7 +285,7 @@ class PendudukResource extends Resource
                     ->label('Import Excel')
                     ->icon('heroicon-o-arrow-up-tray')
                     ->color('success')
-                    ->visible(fn() => in_array(Auth::user()->jabatan, ['super_admin', 'admin_desa']))
+                    ->visible(fn() => in_array(Auth::user()->role, ['super_admin','admin']))
                     ->form([
                         Section::make('Upload File Excel')
                             ->description('Pilih file Excel yang berisi data penduduk')
@@ -365,7 +365,7 @@ class PendudukResource extends Resource
                     ->label('Template Excel')
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('info')
-                    ->visible(fn() => in_array(Auth::user()->jabatan, ['super_admin', 'admin_desa'])) // 👈 di sini juga
+                    ->visible(fn() => in_array(Auth::user()->role, ['super_admin','admin']))
                     ->action(function () {
                         return response()->streamDownload(function () {
                             $headers = [

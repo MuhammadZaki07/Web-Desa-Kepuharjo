@@ -45,12 +45,12 @@ class PengurusDesaResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::check() && in_array(Auth::user()->jabatan, ['super_admin', 'admin_desa']);
+        return Auth::check() && in_array(Auth::user()->role, ['super_admin']);
     }
 
     public static function canAccess(): bool
     {
-        return Auth::check() && in_array(Auth::user()->jabatan, ['super_admin', 'admin_desa']);
+        return Auth::check() && in_array(Auth::user()->role, ['super_admin']);
     }
 
     protected static ?int $navigationSort = 3;
@@ -99,7 +99,6 @@ class PengurusDesaResource extends Resource
                                     ->searchable()
                                     ->live()
                                     ->afterStateUpdated(function ($state, callable $set, $get) {
-                                        // Auto-check availability
                                         if ($state && $get('is_wakil') !== null) {
                                             $isWakil = $get('is_wakil');
                                             if (!PengurusDesa::validateJabatanUnik($state, $isWakil)) {

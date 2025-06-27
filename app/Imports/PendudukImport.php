@@ -21,8 +21,7 @@ class PendudukImport implements ToModel, WithHeadingRow, WithValidation, WithBat
             // 'email' => $row['email'] ?? strtolower(str_replace(' ', '.', $row['nama_lengkap'])) . '@example.com',
             'phone' => $row['no_telepon'] ?? null,
             // 'password' => Hash::make($row['password'] ?? 'password123'),
-            'role' => 'penduduk',
-            'jabatan' => 'normal',
+            'role' => 'penduduk'
         ]);
 
         return new Penduduk([

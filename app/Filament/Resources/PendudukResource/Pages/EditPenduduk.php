@@ -17,7 +17,7 @@ class EditPenduduk extends EditRecord
     public static function canAccess(array $parameters = []): bool
     {
         $user = Auth::user();
-        return $user?->jabatan === 'super_admin' || $user?->jabatan === "admin_desa";
+        return $user?->role === 'super_admin';
     }
 
 
@@ -56,12 +56,6 @@ class EditPenduduk extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('view_profile')
-                ->label('Lihat Profil')
-                ->icon('heroicon-o-eye')
-                ->color('info')
-                ->url(fn() => PendudukResource::getUrl('index')),
-
             Actions\Action::make('toggle_status')
                 ->label(fn() => $this->record->status_nyawa === 'hidup' ? 'Tandai Meninggal' : 'Tandai Hidup')
                 ->icon(fn() => $this->record->status_nyawa === 'hidup' ? 'heroicon-o-x-circle' : 'heroicon-o-heart')

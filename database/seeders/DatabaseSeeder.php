@@ -22,10 +22,9 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Super Administrator',
                 'email' => 'superadmin@gmail.com',
                 'password' => Hash::make('password'),
-                'role' => 'admin',
+                'role' => 'super_admin',
                 'is_active' => true,
                 'phone' => '083846871126',
-                'jabatan' => 'super_admin',
             ],
             [
                 'nik' => '327101' . rand(100000000, 999999999),

@@ -35,7 +35,6 @@ class EditPengurusDesa extends EditRecord
 
                         return redirect($this->getResource()::getUrl('index'));
                     } catch (QueryException $e) {
-                        // Handle database constraint errors
                         if ($e->getCode() === '23000') {
                             Notification::make()
                                 ->title('Tidak Dapat Menghapus')

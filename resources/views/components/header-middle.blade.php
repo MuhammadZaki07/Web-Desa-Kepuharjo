@@ -3,8 +3,8 @@
 @endphp
 
 <div class="pt-10 px-6 lg:px-20">
-    <div class="flex justify-between items-center flex-wrap gap-y-4">
-        <div class="flex gap-3 text-lg text-slate-800 mx-auto lg:m-0">
+    <div class="flex lg:justify-between justify-center items-center flex-wrap gap-y-4">
+        <div class="gap-3 text-lg text-slate-800 mx-auto lg:m-0 hidden lg:flex">
             @if ($dataDesa?->instagram)
                 <a href="https://instagram.com/{{ ltrim($dataDesa->instagram, '@') }}" target="_blank"
                     rel="noopener noreferrer">

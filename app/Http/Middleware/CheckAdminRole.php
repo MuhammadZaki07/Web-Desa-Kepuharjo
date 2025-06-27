@@ -13,7 +13,7 @@ class CheckAdminRole
     {
         if (Auth::check()) {
             $user = Auth::user();
-            if ($user->role !== 'admin') {
+            if ($user->role !== 'admin' && $user->role !== "super_admin") {
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();

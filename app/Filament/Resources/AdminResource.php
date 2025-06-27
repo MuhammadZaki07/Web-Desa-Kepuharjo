@@ -31,12 +31,12 @@ class AdminResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return Auth::check() && in_array(Auth::user()->jabatan, ['super_admin', 'admin_desa']);
+        return Auth::check() && in_array(Auth::user()->role, ['super_admin']);
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::check() && in_array(Auth::user()->jabatan, ['super_admin', 'admin_desa']);
+        return Auth::check() && in_array(Auth::user()->role, ['super_admin']);
     }
 
     public static function form(Form $form): Form
@@ -90,6 +90,7 @@ class AdminResource extends Resource
                                     'alamat' => $p->alamat,
                                     'email' => $p->user->email ?? '',
                                     'password' => '',
+                                    'role' => 'admin',
                                 ];
                             })->toArray();
 
@@ -103,10 +104,6 @@ class AdminResource extends Resource
                                 ->schema([
                                     Forms\Components\TextInput::make('name')
                                         ->label('Full Name')
-                                        ->disabled()
-                                        ->dehydrated(false),
-                                    Forms\Components\TextInput::make('nik')
-                                        ->label('NIK')
                                         ->disabled()
                                         ->dehydrated(false),
                                     Forms\Components\TextInput::make('alamat')
@@ -126,6 +123,16 @@ class AdminResource extends Resource
                                         ->required()
                                         ->minLength(8)
                                         ->placeholder('Minimum 8 characters'),
+                                    Forms\Components\Select::make('role')
+                                        ->label('Position/Role')
+                                        ->required()
+                                        ->options([
+                                            'super_admin' => 'Super Admin',
+                                            'admin' => 'Admin',
+                                        ])
+                                        ->default('admin')
+                                        ->helperText('Select the role for this admin')
+                                        ->searchable(),
                                     Forms\Components\Hidden::make('user_id'),
                                 ])
                         ])
@@ -144,7 +151,7 @@ class AdminResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->query(User::where('role', 'admin')->with(['penduduk']))
+            ->query(User::whereIn('role', ['super_admin', 'admin'])->with('penduduk'))
             ->columns([
                 TextColumn::make('name')
                     ->label('Full Name')
@@ -160,13 +167,12 @@ class AdminResource extends Resource
                     ->copyable()
                     ->icon('heroicon-m-envelope'),
 
-                TextColumn::make('jabatan')
+                TextColumn::make('role')
                     ->label('Position')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
                         'super_admin' => 'danger',
                         'admin' => 'success',
-                        'admin_desa' => 'warning',
                         default => 'gray',
                     }),
 
@@ -195,7 +201,7 @@ class AdminResource extends Resource
             ->actions([
                 ActionGroup::make([
                     EditAction::make()
-                        ->visible(fn() => Auth::user()->jabatan === 'super_admin')
+                        ->visible(fn() => Auth::user()->role === 'super_admin')
                         ->color('warning')
                         ->icon('heroicon-m-pencil-square'),
 
@@ -204,10 +210,12 @@ class AdminResource extends Resource
                         ->action(function ($record) {
                             $record->update([
                                 'is_active' => !$record->is_active,
-                                'jabatan' => $record->is_active ? 'penduduk' : 'admin',
+                                'role' => $record->is_active ? 'penduduk' : 'admin',
+                                'email' => null,
+                                'password' => null
                             ]);
                         })
-                        ->visible(fn() => Auth::user()->jabatan === 'super_admin')
+                        ->visible(fn() => Auth::user()->role === 'super_admin')
                         ->requiresConfirmation()
                         ->modalHeading(fn($record) => ($record->is_active ? 'Deactivate' : 'Activate') . ' Admin')
                         ->modalDescription(fn($record) => $record->is_active
@@ -217,7 +225,7 @@ class AdminResource extends Resource
                         ->icon(fn($record) => $record->is_active ? 'heroicon-m-x-circle' : 'heroicon-m-check-circle'),
 
                     DeleteAction::make()
-                        ->visible(fn() => Auth::user()->jabatan === 'super_admin')
+                        ->visible(fn() => Auth::user()->role === 'super_admin')
                         ->requiresConfirmation()
                         ->modalHeading('Delete Admin')
                         ->modalDescription('Are you sure you want to delete this admin? This action cannot be undone.')
@@ -232,7 +240,7 @@ class AdminResource extends Resource
             ])
             ->bulkActions([
                 DeleteBulkAction::make()
-                    ->visible(fn() => Auth::user()->jabatan === 'super_admin')
+                    ->visible(fn() => Auth::user()->role === 'super_admin')
                     ->requiresConfirmation()
                     ->modalHeading('Delete Selected Admins')
                     ->modalDescription('Are you sure you want to delete the selected admins? This action cannot be undone.'),
@@ -261,7 +269,7 @@ class AdminResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         return Cache::remember('active_admin_count', 300, function () {
-            return User::where('jabatan', 'admin')
+            return User::where('role', 'admin')
                 ->where('is_active', true)
                 ->count();
         });
@@ -274,6 +282,6 @@ class AdminResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->where('role', 'admin');
+        return parent::getEloquentQuery()->whereIn('role', ['super_admin', 'admin']);
     }
 }

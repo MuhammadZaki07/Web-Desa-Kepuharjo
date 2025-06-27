@@ -80,13 +80,13 @@
                     <article class="bg-white rounded-xl overflow-hidden border border-slate-300 transition-all duration-300 group">
                         <a href="{{ route('wisata.show', $wisata->slug) }}" class="block">
                             <div class="relative">
-                                <span style="background-color: {{ $wisata->category->color_code ?? '#3B82F6' }}; color: white;"
+                                <span title="kategori wisata" style="background-color: {{ $wisata->category->color_code ?? '#3B82F6' }}; color: white;"
                                     class="absolute top-4 left-4 text-xs font-medium px-3 py-1 rounded-full z-10">
                                     {{ $wisata->category->name }}
                                 </span>
 
                                 @if ($wisata->is_featured)
-                                    <span class="absolute top-4 right-4 bg-yellow-500 text-white text-xs font-medium px-2 py-1 rounded-full z-10">
+                                    <span title="wisata unggulan" class="absolute top-4 right-4 bg-yellow-500 text-white text-xs font-medium px-2 py-1 rounded-full z-10">
                                         <i class="bi bi-star-fill"></i>
                                     </span>
                                 @endif
@@ -97,7 +97,7 @@
 
                             <div class="p-5">
                                 <div class="flex items-center mb-3">
-                                    <span style="background-color: {{ $wisata->category->color_code ?? '#DBEAFE' }}; color: {{ $wisata->category->color_code ?? '#1E40AF' }};"
+                                    <span title="kategori wisata" style="background-color: {{ $wisata->category->color_code ?? '#DBEAFE' }}; color: {{ $wisata->category->color_code ?? '#1E40AF' }};"
                                         class="text-xs font-medium px-2.5 py-0.5 rounded">
                                         {{ $wisata->category->name }}
                                     </span>

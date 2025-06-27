@@ -19,8 +19,7 @@ return new class extends Migration
             $table->string('phone')->unique()->nullable();
             $table->string('password')->nullable();
             $table->boolean('is_active')->default(false);
-            $table->enum('role', ['admin', 'penduduk'])->default('penduduk');
-            $table->string('jabatan')->default('normal');
+            $table->enum('role', ['admin', 'penduduk','super_admin'])->default('penduduk');
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

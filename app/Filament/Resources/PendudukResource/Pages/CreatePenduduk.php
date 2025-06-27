@@ -17,7 +17,7 @@ class CreatePenduduk extends CreateRecord
     public static function canAccess(array $parameters = []): bool
     {
         $user = Auth::user();
-        return $user?->jabatan === 'super_admin' || $user?->jabatan === "admin_desa";
+        return $user?->role === 'super_admin';
     }
 
     protected function getCreatedNotificationTitle(): ?string
