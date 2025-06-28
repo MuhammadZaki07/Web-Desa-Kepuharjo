@@ -14,7 +14,6 @@ class Category extends Model
     protected $fillable = [
         'name',
         'slug',
-        'description',
         'color',
         'type'
     ];
@@ -44,11 +43,6 @@ class Category extends Model
     public function publishedArticles(): HasMany
     {
         return $this->hasMany(Article::class)->where('status', 'published');
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
     }
 
     public function scopeWisata($query)

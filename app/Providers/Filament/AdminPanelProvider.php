@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Dashboard as PagesDashboard;
+use App\Filament\Pages\Profile;
 use App\Filament\Resources\CommentResource;
 use App\Helpers\ProfileDesa;
 use App\Http\Middleware\CheckAdminRole;
@@ -37,7 +38,11 @@ class AdminPanelProvider extends PanelProvider
             ->databaseNotificationsPolling('10s')
             ->globalSearch(false)
             ->userMenuItems([
-                'logout' => MenuItem::make()->label('Log Out')
+                'logout' => MenuItem::make()->label('Log Out'),
+                'profile' => MenuItem::make()
+                    ->label('Profile')
+                    ->url(fn(): string => Profile::getUrl())
+                    ->icon('heroicon-o-user-circle'),
             ])
             ->favicon(isset(ProfileDesa::GetProfileDesa()->logo_desa) ? asset('storage/' .  ProfileDesa::GetProfileDesa()->logo_desa) : asset('assets/logo/Logo_Kabupaten_Malang.png'))
             ->default()
@@ -45,6 +50,9 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->colors([
                 'primary' => Color::Green,
+            ])
+            ->pages([
+                Profile::class,
             ])
             ->navigationGroups([
                 NavigationGroup::make()

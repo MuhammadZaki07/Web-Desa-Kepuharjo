@@ -9,18 +9,20 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::create('categories', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('slug')->unique();
-            $table->text('description')->nullable();
-            $table->string('color', 7)->default('#3B82F6');
-            $table->enum('type',['umkm','wisata','blogs'])->nullable();
-            $table->timestamps();
-        });
-    }
+  public function up(): void
+{
+    Schema::create('categories', function (Blueprint $table) {
+        $table->id();
+        $table->string('name');
+        $table->string('slug');
+        $table->enum('type', ['umkm', 'wisata', 'blogs'])->nullable();
+        $table->string('color', 7)->default('#3B82F6');
+        $table->timestamps();
+
+        $table->unique(['slug', 'type']);
+    });
+}
+
 
     /**
      * Reverse the migrations.

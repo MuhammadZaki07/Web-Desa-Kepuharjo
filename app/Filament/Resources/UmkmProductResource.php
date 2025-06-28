@@ -19,6 +19,7 @@ use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Support\Enums\FontWeight;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class UmkmProductResource extends Resource
 {
@@ -114,13 +115,14 @@ class UmkmProductResource extends Resource
                                             ->label('Slug')
                                             ->required()
                                             ->maxLength(255)
-                                            ->unique(Category::class, 'slug')
                                             ->disabled()
+                                            ->rules([
+                                                'alpha_dash',
+                                                Rule::unique('categories')
+                                                    ->where(fn($query) => $query->where('type', 'umkm'))
+                                            ])
                                             ->dehydrated(),
 
-                                        Forms\Components\Textarea::make('description')
-                                            ->label('Deskripsi')
-                                            ->rows(3),
 
                                         Forms\Components\ColorPicker::make('color')
                                             ->label('Warna')

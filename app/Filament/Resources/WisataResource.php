@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\Rule;
 
 class WisataResource extends Resource
 {
@@ -84,11 +85,11 @@ class WisataResource extends Resource
                                             ->label('Slug')
                                             ->required()
                                             ->maxLength(255)
-                                            ->unique(Category::class, 'slug')
-                                            ->rules(['alpha_dash']),
-                                        Forms\Components\Textarea::make('description')
-                                            ->label('Deskripsi')
-                                            ->maxLength(500),
+                                            ->rules([
+                                                'alpha_dash',
+                                                Rule::unique('categories')
+                                                    ->where(fn($query) => $query->where('type', 'wisata')),
+                                            ]),
                                         Forms\Components\Toggle::make('is_active')
                                             ->label('Status Aktif')
                                             ->default(true),
@@ -98,7 +99,7 @@ class WisataResource extends Resource
                                     ->createOptionUsing(function (array $data): int {
                                         return Category::create($data)->getKey();
                                     })
-                                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->name),
+                                    ->getOptionLabelFromRecordUsing(fn($record) => $record->name),
 
                                 Forms\Components\TextInput::make('location')
                                     ->label('Lokasi')
@@ -227,7 +228,7 @@ class WisataResource extends Resource
                             ->disk('public')
                             ->reorderable()
                             ->maxFiles(10)
-                           ->maxSize(1020)
+                            ->maxSize(1020)
                             ->helperText('Maksimal 10 gambar, masing-masing 1MB'),
                     ]),
 
@@ -606,7 +607,7 @@ class WisataResource extends Resource
         ];
     }
 
-       public static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
     }

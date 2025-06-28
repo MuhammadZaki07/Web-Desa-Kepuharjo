@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Section;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Support\Enums\FontWeight;
+use Illuminate\Validation\Rule;
+use Filament\Notifications\Notification;
 
 class CategoryResource extends Resource
 {
@@ -39,6 +41,7 @@ class CategoryResource extends Resource
                         Forms\Components\Grid::make(2)
                             ->schema([
                                 Forms\Components\TextInput::make('name')
+                                    ->label('Name')
                                     ->required()
                                     ->maxLength(255)
                                     ->live(onBlur: true)
@@ -48,21 +51,43 @@ class CategoryResource extends Resource
                                         }
                                     })
                                     ->columnSpan(1),
+
+                                Forms\Components\TextInput::make('slug')
+                                    ->label('Slug')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->disabled()
+                                    ->rules(function (callable $get, ?Category $record) {
+                                        return [
+                                            'alpha_dash',
+                                            Rule::unique('categories', 'slug')
+                                                ->where(fn($query) => $query->where('type', $get('type')))
+                                                ->ignore($record),
+                                        ];
+                                    })
+                                    ->columnSpan(1),
                             ]),
 
-                        Forms\Components\Select::make('type')
-                            ->required()
-                            ->options([
-                                'blogs' => 'Blogs',
-                                'umkm' => 'UMKM',
-                                'wisata' => 'Wisata',
-                            ])
-                            ->native(false)
-                            ->helperText('Select the content type this category belongs to'),
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\Select::make('type')
+                                    ->label('Content Type')
+                                    ->required()
+                                    ->options([
+                                        'blogs' => 'Blogs',
+                                        'umkm' => 'UMKM',
+                                        'wisata' => 'Wisata',
+                                    ])
+                                    ->native(false)
+                                    ->helperText('Select the content type this category belongs to')
+                                    ->columnSpan(1),
 
-                        Forms\Components\ColorPicker::make('color')
-                            ->default('#3B82F6')
-                            ->helperText('Color used for visual identification'),
+                                Forms\Components\ColorPicker::make('color')
+                                    ->label('Color')
+                                    ->default('#3B82F6')
+                                    ->helperText('Color used for visual identification')
+                                    ->columnSpan(1),
+                            ]),
                     ])
                     ->columns(1),
             ]);
@@ -97,6 +122,16 @@ class CategoryResource extends Resource
                     ->label('Articles')
                     ->badge()
                     ->color('gray'),
+                Tables\Columns\TextColumn::make('umkm_products_count')
+                    ->counts('umkmProducts')
+                    ->label('Umkm')
+                    ->badge()
+                    ->color('gray'),
+                Tables\Columns\TextColumn::make('wisata_count')
+                    ->counts('wisata')
+                    ->label('Wisata')
+                    ->badge()
+                    ->color('gray'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -120,12 +155,60 @@ class CategoryResource extends Resource
                     ->requiresConfirmation()
                     ->modalHeading('Delete Category')
                     ->modalDescription('Are you sure you want to delete this category? This action cannot be undone.')
-                    ->modalSubmitActionLabel('Yes, delete it'),
+                    ->modalSubmitActionLabel('Yes, delete it')
+                    ->before(function (Category $record) {
+                        if ($record->articles()->exists()) {
+                            Notification::make()
+                                ->title('Cannot Delete Category')
+                                ->body('This category is being used by articles and cannot be deleted.')
+                                ->danger()
+                                ->send();
+
+                            return false;
+                        }
+
+                        if ($record->umkmProducts()->exists()) {
+                            Notification::make()
+                                ->title('Cannot Delete Category')
+                                ->body('This category is being used by UMKM products and cannot be deleted.')
+                                ->danger()
+                                ->send();
+
+                            return false;
+                        }
+
+                        if ($record->wisata()->exists()) {
+                            Notification::make()
+                                ->title('Cannot Delete Category')
+                                ->body('This category is being used by tourism data and cannot be deleted.')
+                                ->danger()
+                                ->send();
+
+                            return false;
+                        }
+                    })
+                    ->visible(fn (Category $record) => self::canDeleteCategory($record)),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->requiresConfirmation(),
+                        ->requiresConfirmation()
+                        ->before(function ($records) {
+                            foreach ($records as $record) {
+                                if ($record->articles()->exists() ||
+                                    $record->umkmProducts()->exists() ||
+                                    $record->wisata()->exists()) {
+
+                                    Notification::make()
+                                        ->title('Cannot Delete Categories')
+                                        ->body("Category '{$record->name}' is being used and cannot be deleted. Please remove all related content first.")
+                                        ->danger()
+                                        ->send();
+
+                                    return false;
+                                }
+                            }
+                        }),
                 ]),
             ])
             ->defaultSort('created_at', 'desc')
@@ -136,6 +219,13 @@ class CategoryResource extends Resource
                     ->label('Create Category')
                     ->icon('heroicon-o-plus'),
             ]);
+    }
+
+    public static function canDeleteCategory(Category $record): bool
+    {
+        return $record->articles()->count() === 0 &&
+            $record->umkmProducts()->count() === 0 &&
+            $record->wisata()->count() === 0;
     }
 
     public static function getRelations(): array

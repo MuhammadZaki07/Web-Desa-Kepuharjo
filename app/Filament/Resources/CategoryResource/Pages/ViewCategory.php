@@ -9,6 +9,7 @@ use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ColorEntry;
+use Filament\Notifications\Notification;
 
 class ViewCategory extends ViewRecord
 {
@@ -19,7 +20,42 @@ class ViewCategory extends ViewRecord
         return [
             Actions\EditAction::make(),
             Actions\DeleteAction::make()
-                ->requiresConfirmation(),
+                ->requiresConfirmation()
+                ->modalHeading('Delete Category')
+                ->modalDescription('Are you sure you want to delete this category? This action cannot be undone.')
+                ->modalSubmitActionLabel('Yes, delete it')
+                ->before(function () {
+                    if ($this->record->articles()->exists()) {
+                        Notification::make()
+                            ->title('Cannot Delete Category')
+                            ->body('This category is being used by articles and cannot be deleted.')
+                            ->danger()
+                            ->send();
+
+                        return false;
+                    }
+
+                    if ($this->record->umkmProducts()->exists()) {
+                        Notification::make()
+                            ->title('Cannot Delete Category')
+                            ->body('This category is being used by UMKM products and cannot be deleted.')
+                            ->danger()
+                            ->send();
+
+                        return false;
+                    }
+
+                    if ($this->record->wisata()->exists()) {
+                        Notification::make()
+                            ->title('Cannot Delete Category')
+                            ->body('This category is being used by tourism data and cannot be deleted.')
+                            ->danger()
+                            ->send();
+
+                        return false;
+                    }
+                })
+                ->visible(fn() => CategoryResource::canDeleteCategory($this->record)), // Hide if cannot delete
         ];
     }
 
@@ -37,12 +73,12 @@ class ViewCategory extends ViewRecord
 
                         TextEntry::make('articles_count')
                             ->label('Total Articles')
-                            ->state(fn ($record) => $record->articles()->count())
+                            ->state(fn($record) => $record->articles()->count())
                             ->badge(),
 
                         TextEntry::make('published_articles_count')
                             ->label('Published Articles')
-                            ->state(fn ($record) => $record->publishedArticles()->count())
+                            ->state(fn($record) => $record->publishedArticles()->count())
                             ->badge()
                             ->color('success'),
 
