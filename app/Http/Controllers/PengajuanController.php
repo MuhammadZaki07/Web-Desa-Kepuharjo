@@ -114,8 +114,6 @@ class PengajuanController extends Controller
                     ->body(Str::limit($request->description, 100))
                     ->success()
                     ->sendToDatabase($adminUsers);
-
-                Log::info('Notifikasi berhasil dikirim ke ' . $adminUsers->count() . ' admin');
             } else {
                 Log::warning('Tidak ada admin yang ditemukan untuk mengirim notifikasi');
             }

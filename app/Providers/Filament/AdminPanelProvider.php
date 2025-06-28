@@ -51,9 +51,6 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Green,
             ])
-            ->pages([
-                Profile::class,
-            ])
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label('Profile Desa')
