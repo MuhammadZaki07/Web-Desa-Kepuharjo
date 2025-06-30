@@ -2,7 +2,6 @@
 @section('content')
     @push('blog-running')
         <section class="lg:px-20 px-5">
-            <x-running-blog :blogs="$blogs" />
             <x-chart.mixed-chart
                 id="pendudukChart"
                 :series1-data="$series1Data"
@@ -12,7 +11,6 @@
                 series2-name="Perempuan"
                 y-axis-title="Jumlah Penduduk"
             />
-            {{-- {{ dd($ProfileDesa) }} --}}
             <x-card.data-penduduk class="w-full py-3" id="#" :dataPenduduk="$dataPenduduk" />
             <div class="flex flex-col lg:flex-row gap-15 items-center py-10">
                 <div class="lg:flex-8">

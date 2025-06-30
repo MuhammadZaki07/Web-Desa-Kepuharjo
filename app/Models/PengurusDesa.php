@@ -138,20 +138,15 @@ class PengurusDesa extends Model
     {
         static::saving(function ($model) {
             try {
-                // Hanya jalankan logika ini jika record yang disimpan adalah aktif
                 if ($model->is_aktif) {
-                    // PERBAIKAN: Tambahkan kondisi untuk menghindari konflik saat update
                     $query = self::where('user_id', $model->user_id)
                         ->where('is_aktif', true);
 
-                    // Jika ini adalah update, exclude record yang sedang diupdate
                     if ($model->exists) {
                         $query->where('id', '!=', $model->id);
                     }
 
                     $existingActivePositions = $query->get();
-
-                    // Nonaktifkan jabatan aktif lainnya dari user yang sama
                     foreach ($existingActivePositions as $existingPosition) {
                         $existingPosition->update([
                             'is_aktif' => false,
@@ -169,16 +164,11 @@ class PengurusDesa extends Model
                     'jabatan' => $model->jabatan ?? null,
                     'trace' => $e->getTraceAsString()
                 ]);
-
-                // Tidak throw exception agar tidak mengganggu proses save
-                // Tapi log error untuk investigation
             }
         });
 
-        // TAMBAHAN: Event untuk validasi sebelum save
         static::saving(function ($model) {
             try {
-                // Validasi tanggal
                 if ($model->mulai_jabatan && $model->selesai_jabatan) {
                     $mulai = Carbon::parse($model->mulai_jabatan);
                     $selesai = Carbon::parse($model->selesai_jabatan);
@@ -188,13 +178,11 @@ class PengurusDesa extends Model
                     }
                 }
 
-                // Auto-set selesai_jabatan jika status non-aktif tapi belum ada tanggal selesai
                 if (!$model->is_aktif && !$model->selesai_jabatan) {
                     $model->selesai_jabatan = now()->toDateString();
                     $model->keterangan = ($model->keterangan ? $model->keterangan . ' | ' : '') . 'Tanggal selesai diset otomatis karena status non-aktif';
                 }
 
-                // Auto-set non-aktif jika tanggal selesai sudah lewat
                 if ($model->is_aktif && $model->selesai_jabatan) {
                     $selesai = Carbon::parse($model->selesai_jabatan);
                     if ($selesai->isPast()) {
@@ -204,7 +192,7 @@ class PengurusDesa extends Model
                 }
             } catch (Exception $e) {
                 Log::error('Error in PengurusDesa validation: ' . $e->getMessage());
-                throw $e; // Throw error untuk validation errors
+                throw $e;
             }
         });
     }
@@ -291,7 +279,6 @@ class PengurusDesa extends Model
             return !$query->exists();
         } catch (Exception $e) {
             Log::error('Error validating jabatan unique: ' . $e->getMessage());
-            // Return false to be safe - don't allow if we can't validate
             return false;
         }
     }
@@ -321,7 +308,6 @@ class PengurusDesa extends Model
     public static function validateJabatanWithMessage($jabatan, $isWakil = false, $userId = null, $excludeId = null)
     {
         try {
-            // Check if position is already occupied
             $existingPengurus = self::aktif()
                 ->byJabatan($jabatan)
                 ->where('is_wakil', $isWakil)
@@ -340,7 +326,6 @@ class PengurusDesa extends Model
                 ];
             }
 
-            // Check if user already has active position
             if ($userId) {
                 $userActivePengurus = self::where('user_id', $userId)
                     ->where('is_aktif', true)
@@ -394,7 +379,6 @@ class PengurusDesa extends Model
     public function aktifkanKembali($keterangan = null)
     {
         try {
-            // Check if position is available
             $validation = self::validateJabatanWithMessage(
                 $this->jabatan,
                 $this->is_wakil,
@@ -416,7 +400,7 @@ class PengurusDesa extends Model
             throw new Exception('Gagal mengaktifkan pengurus karena kesalahan database');
         } catch (Exception $e) {
             Log::error('Error in aktifkanKembali: ' . $e->getMessage());
-            throw $e; // Re-throw to preserve the specific error message
+            throw $e;
         }
     }
 
@@ -426,9 +410,6 @@ class PengurusDesa extends Model
     public function safeDelete()
     {
         try {
-            // Check if this pengurus has any related data that would prevent deletion
-            // You can add more checks here based on your relationships
-
             return $this->delete();
         } catch (QueryException $e) {
             Log::error('Database error in safeDelete: ' . $e->getMessage());
@@ -486,7 +467,6 @@ class PengurusDesa extends Model
             $userId = $newData['user_id'] ?? $this->user_id;
             $isAktif = $newData['is_aktif'] ?? $this->is_aktif;
 
-            // Only validate if the record will be active
             if (!$isAktif) {
                 return ['can_update' => true, 'message' => 'OK'];
             }

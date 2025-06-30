@@ -47,7 +47,7 @@
                         </li>
                         <li class="hover:text-green-500 cursor-pointer">
                             <a href="/berita" class="flex items-center gap-2">
-                                <span class="text-emerald-600">●</span> Berita
+                                <span class="text-emerald-600">●</span> Artikel
                             </a>
                         </li>
                         <li class="hover:text-green-500 cursor-pointer">
@@ -85,7 +85,7 @@
                         </li>
                         <li class="hover:text-green-500 cursor-pointer">
                             <a href="/umkm" class="flex items-center gap-2">
-                                <span class="text-emerald-600">●</span> UMKM
+                                <span class="text-emerald-600">●</span> Usaha Mikro, Kecil, dan Menengah
                             </a>
                         </li>
                     </ul>

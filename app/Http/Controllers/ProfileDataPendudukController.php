@@ -12,14 +12,6 @@ class ProfileDataPendudukController extends Controller
 {
     public function index()
     {
-        $timeData = TimeHelper::getFormattedTime();
-        $tanggal = $timeData['tanggal'];
-        $jam = $timeData['jam'];
-        $format = $timeData['format'];
-
-        $headlines = ArticleService::getHeadlines();
-        $blogs = ArticleService::getLatestPublishedBlogs();
-
         $laki = Penduduk::where('jenis_kelamin', 'L')->count();
         $perempuan = Penduduk::where('jenis_kelamin', 'P')->count();
         $total = $laki + $perempuan;
@@ -48,20 +40,13 @@ class ProfileDataPendudukController extends Controller
             $series1Data[$data->bulan - 1] = (int) $data->laki;
             $series2Data[$data->bulan - 1] = (int) $data->perempuan;
         }
-
-        $ProfileDesa = ProfileDesa::GetProfileDesa();
+        
         $viralBlogs = ArticleService::getViralBlogs(5);
         $title = 'Profile Data Penduduk';
 
         return view('pages.profile-data-penduduk', compact(
-            'tanggal',
-            'jam',
-            'format',
-            'headlines',
             'viralBlogs',
-            'blogs',
             'dataPenduduk',
-            'ProfileDesa',
             'title',
             'series1Data',
             'series2Data',

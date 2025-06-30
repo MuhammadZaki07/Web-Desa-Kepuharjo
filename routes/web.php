@@ -27,8 +27,8 @@ Route::get('/visi-misi', [VisiMisiController::class, 'index'])->name('visi-misi'
 Route::get('/sejarah', [SejarahController::class, 'index'])->name('sejarah');
 Route::get('/pkk', [OrganizationsController::class, 'index'])->name('pkk.page');
 Route::get('/karang-taruna', [OrganizationsController::class, 'halamanKarangtaruna'])->name('karangtaruna.page');
-Route::get('/berita', [ArticleController::class, 'index'])->name('articles.index');
-Route::get('/berita/{slug}', [ArticleController::class, 'show'])->name('articles.show');
+Route::get('/artikel', [ArticleController::class, 'index'])->name('articles.index');
+Route::get('/artikel/{slug}', [ArticleController::class, 'show'])->name('articles.show');
 Route::get('/pemerintahan', [PemerintahController::class, 'index'])->name('pemerintahan.page');
 Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
 Route::get('/umkm', [UmkmController::class,'index'])->name('umkm.page');

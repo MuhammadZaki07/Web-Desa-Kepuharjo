@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\ProfileDesa;
-use App\Helpers\TimeHelper;
-use App\Services\ArticleService;
 use App\Models\Wisata;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -13,65 +10,47 @@ class WisataController extends Controller
 {
     public function index(Request $request)
     {
-        $timeData = TimeHelper::getFormattedTime();
-        $tanggal = $timeData['tanggal'];
-        $jam = $timeData['jam'];
-        $format = $timeData['format'];
-        $headlines = ArticleService::getHeadlines();
-        $ProfileDesa = ProfileDesa::GetProfileDesa();
+        $search     = $request->input('search');
+        $category   = $request->input('category');
+        $priceMin   = $request->input('price_min');
+        $priceMax   = $request->input('price_max');
+        $sortBy     = $request->input('sort', 'newest');
+
         $categories = Category::where('type', "wisata")->get();
         $query = Wisata::with('category')->active();
-        if ($request->filled('search')) {
-            $query->search($request->search);
+
+        if ($search) {
+            $query->search($search);
         }
-        if ($request->filled('category')) {
-            $query->byCategory($request->category);
+
+        if ($category) {
+            $query->byCategory($category);
         }
-        if ($request->filled('price_min') || $request->filled('price_max')) {
-            $query->byPriceRange($request->price_min, $request->price_max);
+
+        if ($priceMin || $priceMax) {
+            $query->byPriceRange($priceMin, $priceMax);
         }
-        switch ($request->get('sort', 'newest')) {
-            case 'oldest':
-                $query->orderBy('created_at', 'asc');
-                break;
-            case 'price_low':
-                $query->orderBy('price', 'asc');
-                break;
-            case 'price_high':
-                $query->orderBy('price', 'desc');
-                break;
-            case 'name_asc':
-                $query->orderBy('name', 'asc');
-                break;
-            case 'name_desc':
-                $query->orderBy('name', 'desc');
-                break;
-            case 'newest':
-            default:
-                $query->orderBy('created_at', 'desc');
-                break;
-        }
+
+        $sortOptions = [
+            'oldest'    => ['created_at', 'asc'],
+            'price_low' => ['price', 'asc'],
+            'price_high' => ['price', 'desc'],
+            'name_asc'  => ['name', 'asc'],
+            'name_desc' => ['name', 'desc'],
+            'newest'    => ['created_at', 'desc'],
+        ];
+
+        [$sortField, $sortDir] = $sortOptions[$sortBy] ?? ['created_at', 'desc'];
+        $query->orderBy($sortField, $sortDir);
+
         $wisataList = $query->paginate(6)->withQueryString();
 
-        return view('pages.wisata', compact(
-            'jam',
-            'tanggal',
-            'format',
-            'headlines',
-            'ProfileDesa',
-            'wisataList',
-            'categories'
-        ));
+        return view('pages.wisata', compact('wisataList', 'categories'));
     }
+
 
     public function show($slug)
     {
-        $timeData = TimeHelper::getFormattedTime();
-        $tanggal = $timeData['tanggal'];
-        $jam = $timeData['jam'];
-        $format = $timeData['format'];
-        $headlines = ArticleService::getHeadlines();
-        $ProfileDesa = ProfileDesa::GetProfileDesa();
         $wisata = Wisata::with('category')
             ->where('slug', $slug)
             ->active()
@@ -95,11 +74,6 @@ class WisataController extends Controller
         }
 
         return view('pages.DetailWisata', compact(
-            'jam',
-            'tanggal',
-            'format',
-            'headlines',
-            'ProfileDesa',
             'wisata',
             'recommendedWisata'
         ));

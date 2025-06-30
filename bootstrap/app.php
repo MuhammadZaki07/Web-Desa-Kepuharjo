@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\CheckAdminRole;
+use App\Http\Middleware\GlobalDataMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
          $middleware->append(CheckAdminRole::class);
+         $middleware->append(GlobalDataMiddleware::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
