@@ -2,6 +2,7 @@
 @section('content')
     <section class="lg:px-20 px-5 py-3">
         <div class="hidden lg:block">
+            <x-running-blog :blogs="$blogs" />
             <x-banner-sejarah :menus="$menus" />
         </div>
         <x-layouts-blogs>
@@ -31,6 +32,7 @@
             </x-flex-one>
             <x-flex-two>
                 <x-latest-blogs :articles="$viralBlogs" />
+                <x-category-blogs :categories="$categories" />
             </x-flex-two>
         </x-layouts-blogs>
     </section>

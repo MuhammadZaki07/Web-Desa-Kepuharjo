@@ -70,7 +70,7 @@
                 <li>
                     <div class="flex items-center">
                         <i class="bi bi-chevron-right text-gray-400"></i>
-                        <a href="{{ route('articles.index') }}" class="ml-1 text-gray-700 hover:text-green-600">Artikel</a>
+                        <a href="{{ route('articles.index') }}" class="ml-1 text-gray-700 hover:text-green-600">Berita</a>
                     </div>
                 </li>
                 <li>
@@ -129,12 +129,11 @@
                                 </svg>
                                 <span>{{ number_format($article->viewers) }} views</span>
                             </div>
-
-                            @if ($article->author)
+                            @if ($article->user)
                                 <div class="flex items-center gap-1">
                                     <i class="bi bi-person"></i>
                                     <span itemprop="author" itemscope itemtype="https://schema.org/Person">
-                                        <span itemprop="name">{{ $article->author->name }}</span>
+                                        <span itemprop="name">{{ $article->user->name }}</span>
                                     </span>
                                 </div>
                             @endif
@@ -198,10 +197,10 @@
                                         loading="lazy" itemprop="image">
                                     <div>
                                         <h3 class="font-bold text-lg text-gray-900" itemprop="name">
-                                            {{ Str::replace("_"," " , $article->author->name) }}</h3>
+                                            {{ $article->author->name }}</h3>
                                         @if ($article->author->role)
                                             <p class="text-gray-600 mt-1" itemprop="description">
-                                                {{ Str::replace("_"," " , $article->author->role) }} | {{ $article->author->email }}</p>
+                                                {{ $article->author->role }} | {{ $article->author->email }}</p>
                                         @endif
                                     </div>
                                 </div>
@@ -265,6 +264,7 @@
                 </div>
             </div>
 
+            <!-- Sidebar -->
             <div class="lg:w-1/4 w-full flex flex-col gap-6 mt-10 lg:mt-0">
                 <x-latest-blogs :articles="$latestArticles" />
                 <x-category-blogs :categories="$categories" />

@@ -1,12 +1,12 @@
 <section class="w-full bg-white py-20 relative lg:px-20 px-5">
-    <div class="absolute top-0 right-0 left-0 flex justify-center flex-col gap-5" data-aos="fade-down" data-aos-duration="800">
+    <div class="absolute top-0 right-0 left-0 flex justify-center flex-col gap-5">
         <x-badge class="py-1 w-56 mx-auto">Lokasi & Kontak</x-badge>
         <h1 class="text-center text-slate-500 lg:font-semibold font-medium lg:text-lg text-sm">Temukan lokasi dan
             informasi
             kontak desa Kepuharjo</h1>
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-9 gap-12 items-center">
-        <div class="col-span-5" data-aos="fade-right" data-aos-duration="800" data-aos-delay="200">
+        <div class="col-span-5">
             <div class="card besar">
                 <div class="rounded-xl py-10">
                     <iframe
@@ -19,7 +19,7 @@
         </div>
 
         <div class="lg:col-span-4 col-span-5 gap-5 flex flex-col">
-            <div class="bg-white shadow rounded-xl p-5 w-full" data-aos="fade-left" data-aos-duration="800" data-aos-delay="300">
+            <div class="bg-white shadow rounded-xl p-5 w-full">
                 <div class="flex gap-3 items-center">
                     <div class="w-12 h-12 rounded-xl bg-sky-400 flex justify-center items-center">
                         <i class="bi bi-telephone-fill text-white text-lg"></i>
@@ -33,7 +33,7 @@
                     desa dan pelayanan yang tersedia.
                 </p>
             </div>
-            <div class="bg-white shadow rounded-xl p-5 w-full" data-aos="fade-left" data-aos-duration="800" data-aos-delay="400">
+            <div class="bg-white shadow rounded-xl p-5 w-full">
                 <div class="flex gap-3 items-center">
                     <div class="w-12 h-12 rounded-xl bg-purple-400 flex justify-center items-center">
                         <i class="bi bi-envelope-fill text-white text-lg"></i>
@@ -46,7 +46,7 @@
                 <p class="text-slate-500 text-sm mt-5">Kirim email untuk pertaanyaan, saran, atau keperluan
                     administrasi desa.</p>
             </div>
-            <div class="bg-white shadow rounded-xl p-5 w-full" data-aos="fade-left" data-aos-duration="800" data-aos-delay="500">
+            <div class="bg-white shadow rounded-xl p-5 w-full">
                 <div class="flex gap-3 items-center">
                     <div class="w-12 h-12 rounded-xl bg-yellow-400 flex justify-center items-center">
                         <i class="bi bi-geo text-white text-lg"></i>

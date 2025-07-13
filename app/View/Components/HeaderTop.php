@@ -11,10 +11,13 @@ class HeaderTop extends Component
     /**
      * Create a new component instance.
      */
-    public $headlines;
+    public $tanggal, $jam, $format, $headlines;
 
-    public function __construct($headlines)
+    public function __construct($tanggal, $jam, $format, $headlines)
     {
+        $this->tanggal = $tanggal;
+        $this->jam = $jam;
+        $this->format = $format;
         $this->headlines = $headlines;
     }
 

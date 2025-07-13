@@ -12,7 +12,16 @@ class SejarahController extends Controller
 {
     public function index()
     {
+        $timeData = TimeHelper::getFormattedTime();
+        $tanggal = $timeData['tanggal'];
+        $jam = $timeData['jam'];
+        $format = $timeData['format'];
+
+        $headlines = ArticleService::getHeadlines();
+        $blogs = ArticleService::getLatestPublishedBlogs();
         $viralBlogs = ArticleService::getViralBlogs(5);
+        $ProfileDesa = ProfileDesa::GetProfileDesa();
+        $categories = ArticleService::getCategoriesWithCount();
 
         $menus = Banner::where('type', 'sejarah')
             ->select('title_sejarah', 'images')
@@ -42,7 +51,14 @@ class SejarahController extends Controller
         $title = 'Sejarah';
 
         return view('pages.sejarah', compact(
+            'tanggal',
+            'jam',
+            'format',
             'viralBlogs',
+            'headlines',
+            'categories',
+            'blogs',
+            'ProfileDesa',
             'menus',
             'title'
         ));

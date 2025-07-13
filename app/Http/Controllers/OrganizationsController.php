@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ProfileDesa;
+use App\Helpers\TimeHelper;
 use App\Models\Gallery;
 use App\Models\Organization;
 use App\Services\ArticleService;
@@ -35,11 +37,14 @@ class OrganizationsController extends Controller
 
     private function renderOrganizationPage(string $type, string $title, string $view)
     {
+        $timeData = $this->getTimeData();
+        $headlines = ArticleService::getHeadlines();
         $blogs = ArticleService::getLatestPublishedBlogs();
         $banner = $this->bannersService->getBanner($type);
         $data = $this->getOrganizationData($type);
         $gallery = $this->getGalleryByType($type);
         $articles = ArticleService::getViralBlogs();
+        $ProfileDesa = ProfileDesa::GetProfileDesa();
         $galleryImages = $gallery->pluck('path')->toArray();
 
         $normalizeToStringArray = function ($fieldData, $defaultData = []) {
@@ -77,10 +82,13 @@ class OrganizationsController extends Controller
         ];
 
         return view($view, array_merge(
+            $timeData,
             [
                 'title' => $title,
+                'headlines' => $headlines,
                 'blogs' => $blogs,
                 'banner' => $banner,
+                'ProfileDesa' => $ProfileDesa,
                 'articles' => $articles,
                 'bannerImagePath' => $this->bannersService->getBannerImagePath($banner),
                 'data' => $dataFormatted,
@@ -89,12 +97,19 @@ class OrganizationsController extends Controller
         ));
     }
 
+    private function getTimeData()
+    {
+        $time = TimeHelper::getFormattedTime();
+        return [
+            'tanggal' => $time['tanggal'],
+            'jam' => $time['jam'],
+            'format' => $time['format'],
+        ];
+    }
+
     private function getGalleryByType($type)
     {
-        return Gallery::where('type', $type)
-            ->orderBy('created_at', 'desc')
-            ->limit(8)
-            ->get();
+        return Gallery::where('type', $type)->get();
     }
 
     private function getOrganizationData($type)

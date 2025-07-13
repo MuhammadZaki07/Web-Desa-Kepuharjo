@@ -11,7 +11,7 @@
                         </label>
                         <div class="relative">
                             <input type="text" name="search" value="{{ request('search') }}"
-                                class="w-full pl-12 pr-4 py-3 border outline-none border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-gray-50 hover:bg-white"
+                                class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-gray-50 hover:bg-white"
                                 placeholder="Cari produk UMKM...">
                             <div class="absolute inset-y-0 left-0 flex items-center pl-4">
                                 <i class="bi bi-search text-gray-400"></i>
@@ -43,7 +43,7 @@
                             Urutkan
                         </label>
                         <select name="sort"
-                            class="w-full py-3 px-4 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                            class="w-full py-3 px-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-gray-50 hover:bg-white">
                             <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Terbaru</option>
                             <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Terlama</option>
                         </select>

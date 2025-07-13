@@ -8,7 +8,7 @@
                 <form id="filterForm" class="flex flex-col md:flex-row gap-4">
                     <div class="flex-1">
                         <input type="text" id="searchInput" name="search" placeholder="Cari gallery..."
-                            class="w-full px-4 py-2 border outline-none cursor-pointer border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="w-full px-4 py-2 border cursor-pointer border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             value="{{ request('search') }}">
                     </div>
                     <div class="flex gap-3">
@@ -127,6 +127,7 @@
         </div>
 
         <div class="lg:w-1/4 w-full flex flex-col gap-5 mt-10 lg:mt-0">
+            <x-category-blogs :categories="$categories" />
             <x-latest-blogs :articles="$articles" />
         </div>
     </div>

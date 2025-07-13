@@ -1,4 +1,5 @@
-<div id="visi-misi" class="tab-content {{ $class }} w-full py-3" data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
+<div id="visi-misi" class="tab-content {{ $class }} w-full py-3">
+    <!-- Header Section -->
     <div class="lg:flex gap-3 items-center hidden">
         <div class="w-[70px] h-[70px] rounded-lg shadow-lg border-4 border-green-600 flex justify-center items-center">
             <i class="bi bi-file-earmark-text text-blue-500 text-3xl"></i>
@@ -9,6 +10,7 @@
         </div>
     </div>
 
+    <!-- Visi Misi Section -->
     <div class="bg-gradient-to-br from-green-50 to-white rounded-3xl shadow-2xl p-10 flex flex-col gap-8 mt-0 lg:mt-8">
         <div class="flex flex-col items-start gap-4">
             <div class="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-1 rounded-full text-sm font-semibold">
@@ -44,7 +46,7 @@
             </div>
         </div>
 
-        <div class="bg-gradient-to-br from-blue-50 to-white rounded-3xl shadow-lg p-5 lg:p-10">
+        <div class="bg-gradient-to-br from-blue-50 to-white rounded-3xl shadow-xl p-8 lg:p-10">
             <div class="program-unggulan-content">
                 {!! $progamUnggulan !!}
             </div>

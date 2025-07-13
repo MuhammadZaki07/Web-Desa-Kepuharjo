@@ -13,7 +13,7 @@
                 ['label' => 'Karang Taruna', 'href' => '/karang-taruna'],
             ],
         ],
-        ['label' => 'Artikel', 'href' => '/artikel'],
+        ['label' => 'Berita', 'href' => '/berita'],
         ['label' => 'Pemerintahan', 'href' => '/pemerintahan'],
         ['label' => 'Galeri', 'href' => '/gallery'],
         ['label' => 'UMKM', 'href' => '/umkm'],

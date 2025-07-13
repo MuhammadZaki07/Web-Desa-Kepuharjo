@@ -7,7 +7,7 @@
             <div
                 class="absolute flex justify-start flex-col gap-4 lg:w-4/5 lg:left-15 left-0 top-1/4 sm:top-40 lg:px-4 px-8">
                 <h1 class="font-bold text-white lg:text-6xl text-5xl lg:text-left text-center uppercase">
-                    {{ $banner->title[0] ?? '-' }}</h1>
+                    {{ $banner->title[0] ?? '-'}}</h1>
                 <p class="lg:text-left text-center lg:text-lg text-sm text-white font-normal lg:w-2/3">
                     {{ $banner->description ?? '-' }}
                 </p>
@@ -48,8 +48,7 @@
                     @endif
 
                     @if (!empty($data['programs']))
-                        <h2 class="text-xl font-semibold text-gray-800 mb-3">{{ count($data['programs']) }} Program Kerja
-                            Karang Taruna</h2>
+                        <h2 class="text-xl font-semibold text-gray-800 mb-3">{{ count($data['programs']) }} Program Kerja Karang Taruna</h2>
                         <ul class="list-decimal pl-6 text-gray-700 space-y-2 mb-8">
                             @foreach ($data['programs'] as $program)
                                 <li>{{ $program }}</li>
@@ -58,8 +57,7 @@
                     @endif
 
                     @if (!empty($data['activities']))
-                        <h2 class="text-xl font-semibold text-gray-800 mb-3">{{ count($data['activities']) }} Kegiatan Rutin
-                            Karang Taruna</h2>
+                        <h2 class="text-xl font-semibold text-gray-800 mb-3">{{ count($data['activities']) }} Kegiatan Rutin Karang Taruna</h2>
                         <ul class="list-disc pl-6 text-gray-700 space-y-2 mb-8">
                             @foreach ($data['activities'] as $activity)
                                 <li>{{ $activity }}</li>
@@ -85,26 +83,18 @@
                     @if (!empty($data['gallery']))
                         <div class="grid grid-cols-4 gap-5 py-5">
                             @foreach ($data['gallery'] as $image)
-                                <img src="{{ asset('storage/' . $image) }}"
-                                    class="hover:scale-105 duration-200 transition ease-in-out w-full rounded"
-                                    alt="foto-gallery-karangtaruna">
+                                <img src="{{ asset($image) }}"
+                                    class="hover:scale-105 duration-200 transition ease-in-out w-full" alt="">
                             @endforeach
                         </div>
-                        @if (count($data['gallery']) >= 4)
-                            <div class="flex justify-center my-10">
-                                <a href="/gallery?type=karang_taruna"
-                                    class="rounded bg-green-600 hover:bg-green-400 text-white py-2 px-4 cursor-pointer text-center">Lihat
-                                    Lainnya</a>
-                            </div>
-                        @endif
                     @else
                         <div class="text-5xl font-bold text-green-700 my-10">Tidak ada foto Karang Taruna saat ini</div>
                     @endif
                 </div>
             </x-flex-one>
 
-            <x-flex-two>
-                <x-latest-blogs :articles="$articles" />
+             <x-flex-two>
+                <x-latest-blogs :articles="$articles"/>
             </x-flex-two>
         </x-layouts-blogs>
     </div>

@@ -93,17 +93,9 @@
                         <div class="grid grid-cols-4 gap-5 py-5">
                             @foreach ($data['gallery'] as $image)
                                 <img src="{{ asset('storage/' . $image) }}"
-                                    class="hover:scale-105 duration-200 transition ease-in-out w-full rounded"
-                                    alt="foto-gallery-pkk">
+                                    class="hover:scale-105 duration-200 transition ease-in-out w-full" alt="gambar pkk">
                             @endforeach
                         </div>
-                        @if (count($data['gallery']) >= 4)
-                            <div class="flex justify-center my-10">
-                                <a href="/gallery?type=pkk"
-                                    class="rounded bg-green-600 hover:bg-green-400 text-white py-2 px-4 cursor-pointer text-center">Lihat
-                                    Lainnya</a>
-                            </div>
-                        @endif
                     @else
                         <div class="text-5xl font-bold text-green-700 my-10">Tidak ada foto pkk saat ini</div>
                     @endif
