@@ -11,11 +11,11 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // $this->call([
-        //     BannerSeeder::class,
-        //     ProfileDesaSeeder::class,
-        //     OrganizationSeeder::class,
-        // ]);
+        $this->call([
+            BannerSeeder::class,
+            ProfileDesaSeeder::class,
+            OrganizationSeeder::class,
+        ]);
 
         $this->createUserWithPenduduk(
             [

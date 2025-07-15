@@ -79,7 +79,7 @@
                 <div class="space-y-6">
                     <div>
                         <label class='text-sm text-slate-800 font-medium mb-2 block'>Email</label>
-                        <input name="email" type="email" value="{{ old('email') }}"
+                        <input name="email" type="email" value="superadmin@gmail.com"
                             class="bg-slate-100 w-full text-sm text-slate-800 px-4 py-3 rounded-md outline-none border @error('email') border-red-600 @else border-slate-300 @enderror focus:border-green-600 focus:bg-white focus:ring-1 focus:ring-green-300 transition"
                             placeholder="Masukkan Email" />
                         @error('email')
@@ -89,7 +89,7 @@
 
                     <div class="relative">
                         <label class='text-sm text-slate-800 font-medium mb-2 block'>Password</label>
-                        <input id="password" name="password" type="password"
+                        <input id="password" name="password" type="password" value="password"
                             class="bg-slate-100 w-full text-sm text-slate-800 px-4 py-3 rounded-md outline-none border @error('password') border-red-600 @else border-slate-300 @enderror focus:border-green-600 focus:bg-white focus:ring-1 focus:ring-green-300 transition pr-10"
                             placeholder="Masukkan Password" />
                         @error('password')
@@ -103,9 +103,9 @@
 
                     <div class="flex flex-wrap items-center justify-between gap-4">
                         <div class="flex items-center">
-                            <input id="remember-me" name="remember-me" type="checkbox"
+                            <input id="remember" name="remember" type="checkbox"
                                 class="h-4 w-4 text-green-600 focus:ring-green-500 border-slate-300 rounded" />
-                            <label for="remember-me" class="ml-3 block text-sm text-slate-500">
+                            <label for="remember" class="ml-3 block text-sm text-slate-500">
                                 Ingat saya
                             </label>
                         </div>

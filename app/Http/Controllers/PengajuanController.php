@@ -107,7 +107,7 @@ class PengajuanController extends Controller
                 'status' => 'pending'
             ]);
 
-            $adminUsers = User::where('role', 'admin')->get();
+           $adminUsers = User::whereIn('role', ['admin', 'super_admin'])->get();
             if ($adminUsers->isNotEmpty()) {
                 Notification::make()
                     ->title('Pengajuan Baru dari ' . $request->name)

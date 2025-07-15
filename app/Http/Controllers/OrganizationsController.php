@@ -71,15 +71,16 @@ class OrganizationsController extends Controller
             return $defaultData;
         };
 
-        $dataFormatted = [
-            'content' => $data->content ?? $this->getDummyData($type)['content'],
-            'structure' => $data->structure ?? $this->getDummyData($type)['structure'],
-            'programs' => $normalizeToStringArray($data->programs, $this->getDummyData($type)['programs']),
-            'activities' => $normalizeToStringArray($data->activities, $this->getDummyData($type)['activities']),
-            'contact_phone' => $data->contact_phone ?? $this->getDummyData($type)['contact_phone'],
-            'gallery' => $galleryImages,
-            'updated_at' => optional($data)->updated_at?->translatedFormat('d F Y') ?? $this->getDummyData($type)['updated_at'],
-        ];
+       $dataFormatted = [
+    'content' => $data->content ?? $this->getDummyData($type)['content'],
+    'structure' => json_decode($data->structure ?? '[]', true) ?: $this->getDummyData($type)['structure'],
+    'programs' => $normalizeToStringArray(json_decode($data->programs ?? '[]', true), $this->getDummyData($type)['programs']),
+    'activities' => $normalizeToStringArray(json_decode($data->activities ?? '[]', true), $this->getDummyData($type)['activities']),
+    'contact_phone' => $data->contact_phone ?? $this->getDummyData($type)['contact_phone'],
+    'gallery' => $galleryImages,
+    'updated_at' => optional($data)->updated_at?->translatedFormat('d F Y') ?? $this->getDummyData($type)['updated_at'],
+];
+
 
         return view($view, array_merge(
             $timeData,

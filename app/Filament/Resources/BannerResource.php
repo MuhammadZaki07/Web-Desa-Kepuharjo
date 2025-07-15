@@ -10,6 +10,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
@@ -49,25 +50,41 @@ class BannerResource extends Resource
             Grid::make(2)->schema([
                 FileUpload::make('images')
                     ->image()
+                    ->dehydrated(true)
                     ->label(fn($record) => $record?->type === 'sejarah' ? 'Upload 5 Gambar Sejarah (Wajib)' : 'Upload Gambar')
                     ->directory('banners')
-                    ->multiple(fn($record) => $record?->type === 'sejarah')
                     ->reorderable(fn($record) => $record?->type === 'sejarah')
                     ->appendFiles(fn($record) => $record?->type === 'sejarah')
-                    ->maxFiles(fn($record) => $record?->type === 'sejarah' ? 5 : 1)
-                    ->minFiles(fn($record) => $record?->type === 'sejarah' ? 5 : 1)
+                    ->multiple(fn(Get $get) => $get('type') === 'sejarah')
+                    ->maxFiles(fn(Get $get) => $get('type') === 'sejarah' ? 5 : 1)
+                    // HAPUS minFiles - ini yang menyebabkan masalah!
+                    // ->minFiles(fn(Get $get) => $get('type') === 'sejarah' ? 5 : 1)
                     ->maxWidth(1440)
                     ->imagePreviewHeight('250')
                     ->required()
-                    ->imageEditor()
+                    ->imageEditor(fn($record) => $record?->type !== 'sejarah')
                     ->hint(
                         fn($record) =>
                         $record?->type === 'sejarah'
                             ? new HtmlString('<span class="text-red-500">Wajib upload tepat 5 gambar</span>')
                             : null
                     )
-                    ->helperText('Geser gambar untuk atur urutan tampil.')
-                    ->columnSpan(2),
+                    ->helperText(fn($record) => $record?->type === "sejarah" ? "Geser gambar untuk atur urutan tampil" : "")
+                    ->columnSpan(2)
+                    // Custom validation rules untuk menggantikan minFiles
+                    ->rules([
+                        function () {
+                            return function (string $attribute, $value, \Closure $fail) {
+                                // Ambil record dari context
+                                $record = request()->route('record');
+                                if ($record && $record->type === 'sejarah') {
+                                    if (!is_array($value) || count($value) !== 5) {
+                                        $fail('Untuk banner sejarah, wajib upload tepat 5 gambar.');
+                                    }
+                                }
+                            };
+                        }
+                    ]),
 
                 Repeater::make('title_sejarah')
                     ->label('Judul Gambar')
@@ -230,6 +247,7 @@ class BannerResource extends Resource
             ->defaultPaginationPageOption(10)
             ->bulkActions([]);
     }
+
 
     public static function getRelations(): array
     {

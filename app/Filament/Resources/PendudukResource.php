@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Exports\PendudukExporter;
+use App\Filament\Imports\PendudukImporter;
 use App\Filament\Resources\PendudukResource\Pages;
 use App\Models\Penduduk;
-use App\Imports\PendudukImport;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,15 +14,12 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\Filter;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Actions\Action;
-use Filament\Actions;
+use Filament\Tables\Actions\ImportAction;
+use Filament\Tables\Actions\ExportAction;
+use Filament\Actions\Imports\ImportColumn;
+use Filament\Actions\Exports\ExportColumn;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\TextInput;
@@ -28,15 +27,11 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Toggle;
-use Filament\Support\Enums\ActionSize;
-use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 use Closure;
-use Filament\Forms\Components\MarkdownEditor;
 use Illuminate\Support\Facades\Auth;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Hash;
 
 class PendudukResource extends Resource
 {
@@ -51,6 +46,7 @@ class PendudukResource extends Resource
     protected static ?string $navigationGroup = "User Management";
 
     protected static ?int $navigationSort = 2;
+
     public static function shouldRegisterNavigation(): bool
     {
         return Auth::check() && in_array(Auth::user()->role, ['super_admin']);
@@ -59,6 +55,14 @@ class PendudukResource extends Resource
     public static function canAccess(): bool
     {
         return Auth::check() && in_array(Auth::user()->role, ['super_admin']);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->whereHas('user', function (Builder $query) {
+                $query->where('role', 'penduduk');
+            });
     }
 
     public static function form(Form $form): Form
@@ -94,12 +98,6 @@ class PendudukResource extends Resource
                                         $set('user.email', strtolower(str_replace(' ', '.', $state)) . '@example.com');
                                     }),
 
-                                // TextInput::make('user.email')
-                                //     ->label('Email')
-                                //     ->email()
-                                //     ->unique(ignoreRecord: true)
-                                //     ->maxLength(255),
-
                                 TextInput::make('user.phone')
                                     ->label('No. Telepon')
                                     ->tel()
@@ -114,7 +112,7 @@ class PendudukResource extends Resource
                                                     $currentUserId = $livewire->getRecord()->user?->id;
                                                 }
 
-                                                $existingUser = \App\Models\User::where('phone', $value)
+                                                $existingUser = User::where('phone', $value)
                                                     ->when($currentUserId, function ($query) use ($currentUserId) {
                                                         $query->where('id', '!=', $currentUserId);
                                                     })
@@ -126,15 +124,6 @@ class PendudukResource extends Resource
                                             };
                                         },
                                     ]),
-
-                                // TextInput::make('user.password')
-                                //     ->label('Password')
-                                //     ->password()
-                                //     ->dehydrateStateUsing(fn($state) => filled($state) ? bcrypt($state) : null)
-                                //     ->dehydrated(fn($state) => filled($state))
-                                //     ->required(fn(string $context): bool => $context === 'create')
-                                //     ->maxLength(255)
-                                //     ->placeholder('Kosongkan jika tidak ingin mengubah'),
                             ]),
                     ]),
 
@@ -146,7 +135,7 @@ class PendudukResource extends Resource
                             ->schema([
                                 TextInput::make('nik')
                                     ->label('NIK')
-                                    // ->required()
+                                    ->required()
                                     ->unique(ignoreRecord: true)
                                     ->length(16)
                                     ->numeric()
@@ -281,139 +270,14 @@ class PendudukResource extends Resource
             ->striped()
             ->filters(static::getTableFilters())
             ->headerActions([
-                Action::make('import')
-                    ->label('Import Excel')
-                    ->icon('heroicon-o-arrow-up-tray')
-                    ->color('success')
-                    ->visible(fn() => in_array(Auth::user()->role, ['super_admin','admin']))
-                    ->form([
-                        Section::make('Upload File Excel')
-                            ->description('Pilih file Excel yang berisi data penduduk')
-                            ->schema([
-                                FileUpload::make('file')
-                                    ->label('File Excel')
-                                    ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel', '.xlsx', '.xls'])
-                                    ->required()
-                                    ->helperText('Format file: .xlsx atau .xls')
-                                    ->columnSpanFull(),
-                            ]),
+                ImportAction::make()
+                    ->importer(PendudukImporter::class)
+                    ->visible(fn() => in_array(Auth::user()->role, ['super_admin','admin'])),
 
-                        Section::make('Petunjuk Format Excel')
-                            ->description('Pastikan file Excel memiliki kolom-kolom berikut:')
-                            ->schema([
-                                MarkdownEditor::make('info')
-                                    ->label(false)
-                                    ->disabled()
-                                    ->columnSpan(2)
-                                    ->default("
-### Kolom Wajib:
-- **nama_lengkap** (Nama lengkap penduduk)
-- **nik** (16 digit NIK)
-- **jenis_kelamin** (L/P atau Laki-laki/Perempuan)
-
-### Kolom Opsional:
-- email, no_telepon, password
-- tempat_lahir, tanggal_lahir
-- alamat, rt, rw
-- agama, status_perkawinan, pekerjaan, pendidikan
-- catatan
-
-### Catatan:
-- Baris pertama harus berisi header kolom
-- Tanggal lahir format: YYYY-MM-DD atau DD/MM/YYYY
-")
-                            ])
-                            ->collapsible(),
-                    ])
-                    ->action(function (array $data) {
-                        try {
-                            $import = new PendudukImport();
-                            Excel::import($import, $data['file']);
-
-                            Notification::make()
-                                ->title('Import Berhasil!')
-                                ->body('Data penduduk berhasil diimport ke database.')
-                                ->success()
-                                ->duration(5000)
-                                ->send();
-                        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-                            $failures = $e->failures();
-                            $errorMessages = [];
-
-                            foreach ($failures as $failure) {
-                                $errorMessages[] = "Baris {$failure->row()}: {$failure->errors()[0]}";
-                            }
-
-                            Notification::make()
-                                ->title('Import Gagal!')
-                                ->body('Terdapat kesalahan validasi: ' . implode(', ', array_slice($errorMessages, 0, 3)) . (count($errorMessages) > 3 ? '...' : ''))
-                                ->danger()
-                                ->duration(10000)
-                                ->send();
-                        } catch (\Exception $e) {
-                            Notification::make()
-                                ->title('Import Gagal!')
-                                ->body('Terjadi kesalahan: ' . $e->getMessage())
-                                ->danger()
-                                ->duration(8000)
-                                ->send();
-                        }
-                    })
-                    ->modalWidth('4xl'),
-
-                Action::make('download_template')
-                    ->label('Template Excel')
-                    ->icon('heroicon-o-document-arrow-down')
-                    ->color('info')
-                    ->visible(fn() => in_array(Auth::user()->role, ['super_admin','admin']))
-                    ->action(function () {
-                        return response()->streamDownload(function () {
-                            $headers = [
-                                'nama_lengkap',
-                                'nik',
-                                'jenis_kelamin',
-                                'email',
-                                'no_telepon',
-                                'password',
-                                'tempat_lahir',
-                                'tanggal_lahir',
-                                'alamat',
-                                'rt',
-                                'rw',
-                                'agama',
-                                'status_perkawinan',
-                                'pekerjaan',
-                                'pendidikan',
-                                'catatan'
-                            ];
-
-                            $sample = [
-                                'John Doe',
-                                '1234567890123456',
-                                'L',
-                                'john@example.com',
-                                '08123456789',
-                                'password123',
-                                'Jakarta',
-                                '1990-01-15',
-                                'Jl. Contoh No. 123',
-                                '001',
-                                '001',
-                                'Islam',
-                                'Belum Kawin',
-                                'Programmer',
-                                'S1',
-                                'Contoh data'
-                            ];
-
-                            echo implode(',', $headers) . "\n";
-                            echo implode(',', $sample) . "\n";
-                        }, 'template_penduduk.csv', [
-                            'Content-Type' => 'text/csv',
-                        ]);
-                    }),
+                ExportAction::make()
+                    ->exporter(PendudukExporter::class)
+                    ->visible(fn() => in_array(Auth::user()->role, ['super_admin','admin'])),
             ])
-
             ->emptyStateHeading('Belum ada data penduduk')
             ->emptyStateDescription('Mulai dengan menambahkan data penduduk pertama.')
             ->emptyStateIcon('heroicon-o-user-group')
@@ -464,7 +328,6 @@ class PendudukResource extends Resource
                     return '-';
                 })
                 ->sortable(),
-
 
             TextColumn::make('alamat')
                 ->label('Alamat')
@@ -591,9 +454,7 @@ class PendudukResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
@@ -607,7 +468,7 @@ class PendudukResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('status_nyawa', 'hidup')->count();
+        return static::getEloquentQuery()->where('status_nyawa', 'hidup')->count();
     }
 
     public static function getNavigationBadgeColor(): ?string

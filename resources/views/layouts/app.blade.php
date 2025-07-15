@@ -15,7 +15,8 @@
         <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('storage/' . $ProfileDesa->logo_desa) }}">
         <link rel="apple-touch-icon" href="{{ asset('storage/' . $ProfileDesa->logo_desa) }}">
     @else
-        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/logo/Logo_Kabupaten_Malang.png') }}">
+        <link rel="icon" type="image/png" sizes="32x32"
+            href="{{ asset('assets/logo/Logo_Kabupaten_Malang.png') }}">
     @endif
 
     <title>
@@ -56,67 +57,10 @@
     @stack('structured_data')
     @stack('head')
     @if (isset($article))
-        <meta property="article:published_time" content="{{ $article->created_at->toISOString() }}">
-        <meta property="article:modified_time" content="{{ $article->updated_at->toISOString() }}">
+        <meta property="article:published_time" content="{{ $article->created_at->toAtomString() }}">
+        <meta property="article:modified_time" content="{{ $article->updated_at->toAtomString() }}">
         <meta property="article:author" content="{{ $article->author->name ?? 'Kepuharjo News' }}">
         <meta property="article:section" content="{{ $article->category->name }}">
-        @if ($article->tags)
-            @foreach ($article->tags as $tag)
-                <meta property="article:tag" content="{{ $tag->name }}">
-            @endforeach
-        @endif
-    @endif
-    @if (isset($article))
-        <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "NewsArticle",
-        "headline": "{{ $article->title }}",
-        "description": "{{ strip_tags($article->excerpt) }}",
-        "image": "{{ $article->featured_image ? asset('storage/' . $article->featured_image) : asset('assets/logo/Logo_Kabupaten_Malang.png') }}",
-        "datePublished": "{{ ($article->published_at ?? $article->created_at)->toISOString() }}",
-        "dateModified": "{{ $article->updated_at->toISOString() }}",
-        "author": {
-            "@type": "Person",
-            "name": "{{ $article->author->name ?? 'Kepuharjo News' }}"
-        },
-        "publisher": {
-            "@type": "Organization",
-            "name": "Berita Desa Kepuharjo",
-            "logo": {
-                "@type": "ImageObject",
-                "url": "{{ asset('assets/logo/Logo_Kabupaten_Malang.png') }}"
-            }
-        },
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "{{ request()->url() }}"
-        }
-    }
-    </script>
-    @else
-        <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Berita Desa Kepuharjo",
-        "description": "Berita terbaru dan informasi penting dari Desa Kepuharjo, Malang, Jawa Timur",
-        "url": "{{ request()->url() }}",
-        "publisher": {
-            "@type": "Organization",
-            "name": "Berita Desa Kepuharjo",
-            "logo": {
-                "@type": "ImageObject",
-                "url": "{{ asset('assets/logo/Logo_Kabupaten_Malang.png') }}"
-            }
-        },
-        "potentialAction": {
-            "@type": "SearchAction",
-            "target": "{{ url('/') }}?search={search_term_string}",
-            "query-input": "required name=search_term_string"
-        }
-    }
-    </script>
     @endif
     <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
     <link rel="dns-prefetch" href="//unpkg.com">
@@ -146,7 +90,7 @@
         @yield('content')
     </main>
 
-    <x-pengajuan :profileDesa="$ProfileDesa"/>
+    <x-pengajuan :profileDesa="$ProfileDesa" />
     @include('partials.footer')
     @stack('js')
 
@@ -166,19 +110,6 @@
         });
     </script>
 
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register("{{ asset('sw.js') }}")
-                    .then(function(registration) {
-                        // console.log('SW registered:', registration);
-                    })
-                    .catch(function(registrationError) {
-                        // console.log('SW registration failed:', registrationError);
-                    });
-            });
-        }
-    </script>
 
 </body>
 

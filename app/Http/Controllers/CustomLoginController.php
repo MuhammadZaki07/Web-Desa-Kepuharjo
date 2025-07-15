@@ -28,7 +28,7 @@ class CustomLoginController extends Controller
         ]);
 
         $credentials = $request->only('email', 'password');
-        $remember = $request->has('remember-me');
+        $remember = $request->has('remember');
 
 
         if (Filament::auth()->attempt($credentials, $remember)) {

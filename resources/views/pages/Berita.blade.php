@@ -245,36 +245,35 @@
     </div>
 
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "CollectionPage",
-        "name": "Berita Desa Kepuharjo",
-        "description": "Berita terbaru dan informasi penting dari Desa Kepuharjo, Malang.",
-        "url": "{{ route('articles.index') }}",
-        "mainEntity": [
-            @foreach ($articles as $article)
-                {
-                    "@type": "NewsArticle",
-                    "headline": "{{ $article->title }}",
-                    "url": "{{ route('articles.show', $article->slug) }}",
-                    "image": "{{ $article->featured_image ? asset('storage/' . $article->featured_image) : asset('assets/images/default-berita-kepuharjo.png') }}",
-                    "datePublished": "{{ $article->created_at->toAtomString() }}",
-                    "dateModified": "{{ $article->updated_at->toAtomString() }}",
-                    "author": {
-                        "@type": "Organization",
-                        "name": "Kepuharjo News"
-                    },
-                    "publisher": {
-                        "@type": "Organization",
-                        "name": "Desa Kepuharjo",
-                        "logo": {
-                            "@type": "ImageObject",
-                            "url": "{{ asset('assets/' . $ProfileDesa->logo) }}"
-                        }
-                    }
-                }{{ !$loop->last ? ',' : '' }}
-            @endforeach
-        ]
-    }
-    </script>
+{!! json_encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'CollectionPage',
+    'name' => 'Berita Desa Kepuharjo',
+    'description' => 'Berita terbaru dan informasi penting dari Desa Kepuharjo, Malang.',
+    'url' => route('articles.index'),
+    'mainEntity' => $articles->map(function ($article) use ($ProfileDesa) {
+        return [
+            '@type' => 'NewsArticle',
+            'headline' => $article->title,
+            'url' => route('articles.show', $article->slug),
+            'image' => $article->featured_image ? asset('storage/' . $article->featured_image) : asset('assets/images/default-berita-kepuharjo.png'),
+            'datePublished' => $article->created_at->toAtomString(),
+            'dateModified' => $article->updated_at->toAtomString(),
+            'author' => [
+                '@type' => 'Organization',
+                'name' => 'Kepuharjo News',
+            ],
+            'publisher' => [
+                '@type' => 'Organization',
+                'name' => 'Desa Kepuharjo',
+                'logo' => [
+                    '@type' => 'ImageObject',
+                    'url' => asset('assets/' . $ProfileDesa->logo),
+                ],
+            ],
+        ];
+    }),
+], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
+</script>
+
 @endsection

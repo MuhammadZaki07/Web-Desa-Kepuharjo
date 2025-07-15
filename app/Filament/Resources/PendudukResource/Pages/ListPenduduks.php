@@ -27,19 +27,6 @@ class ListPenduduks extends ListRecords
         $user = Auth::user();
         if ($user->role === 'super_admin' || $user->role === "admin") {
             return [
-                Action::make('export')
-                    ->label('Export Data')
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->action(function (): BinaryFileResponse {
-                        Notification::make()
-                            ->title('Export sedang diproses...')
-                            ->success()
-                            ->send();
-                        return Excel::download(new PendudukExport, 'data_penduduk.xlsx');
-                    })
-                    ->color('success')
-                    ->requiresConfirmation(),
-
                 CreateAction::make()
                     ->label('Tambah Penduduk')
                     ->icon('heroicon-o-plus')
@@ -53,30 +40,44 @@ class ListPenduduks extends ListRecords
     {
         return [
             'all' => Tab::make('Semua')
-                ->badge(Penduduk::count())
+                ->modifyQueryUsing(fn(Builder $query) => $query->whereHas('user', fn($q) => $q->where('role', 'penduduk')))
+                ->badge(Penduduk::whereHas('user', fn($q) => $q->where('role', 'penduduk'))->count())
                 ->badgeColor('primary'),
 
             'hidup' => Tab::make('Hidup')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('status_nyawa', 'hidup'))
-                ->badge(Penduduk::where('status_nyawa', 'hidup')->count())
+                ->modifyQueryUsing(fn(Builder $query) =>
+                $query->where('status_nyawa', 'hidup')
+                    ->whereHas('user', fn($q) => $q->where('role', 'penduduk')))
+                ->badge(Penduduk::where('status_nyawa', 'hidup')
+                    ->whereHas('user', fn($q) => $q->where('role', 'penduduk'))->count())
                 ->badgeColor('success'),
 
             'meninggal' => Tab::make('Meninggal')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('status_nyawa', 'meninggal'))
-                ->badge(Penduduk::where('status_nyawa', 'meninggal')->count())
+                ->modifyQueryUsing(fn(Builder $query) =>
+                $query->where('status_nyawa', 'meninggal')
+                    ->whereHas('user', fn($q) => $q->where('role', 'penduduk')))
+                ->badge(Penduduk::where('status_nyawa', 'meninggal')
+                    ->whereHas('user', fn($q) => $q->where('role', 'penduduk'))->count())
                 ->badgeColor('danger'),
 
             'laki_laki' => Tab::make('Laki-laki')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('jenis_kelamin', 'L'))
-                ->badge(Penduduk::where('jenis_kelamin', 'L')->count())
+                ->modifyQueryUsing(fn(Builder $query) =>
+                $query->where('jenis_kelamin', 'L')
+                    ->whereHas('user', fn($q) => $q->where('role', 'penduduk')))
+                ->badge(Penduduk::where('jenis_kelamin', 'L')
+                    ->whereHas('user', fn($q) => $q->where('role', 'penduduk'))->count())
                 ->badgeColor('blue'),
 
             'perempuan' => Tab::make('Perempuan')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('jenis_kelamin', 'P'))
-                ->badge(Penduduk::where('jenis_kelamin', 'P')->count())
+                ->modifyQueryUsing(fn(Builder $query) =>
+                $query->where('jenis_kelamin', 'P')
+                    ->whereHas('user', fn($q) => $q->where('role', 'penduduk')))
+                ->badge(Penduduk::where('jenis_kelamin', 'P')
+                    ->whereHas('user', fn($q) => $q->where('role', 'penduduk'))->count())
                 ->badgeColor('pink'),
         ];
     }
+
 
     protected function getHeaderWidgets(): array
     {

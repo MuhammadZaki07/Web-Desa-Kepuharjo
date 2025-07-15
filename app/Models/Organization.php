@@ -24,6 +24,7 @@ class Organization extends Model
         'activities' => 'array',
     ];
 
+
     public function getTypeDisplayAttribute()
     {
         return match ($this->type) {
